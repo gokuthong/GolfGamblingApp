@@ -202,31 +202,21 @@ export const GameHistoryScreen = () => {
     }
   };
 
-  const handleGamePress = (gameId: string) => {
-    crossPlatformAlert("Game Options", "What would you like to do?", [
-      {
-        text: "View Summary",
-        onPress: () => navigation.navigate("GameSummary", { gameId }),
-      },
-      {
-        text: "Edit Scores",
-        onPress: () => {
-          // Navigate to Scoring screen to edit a finished game
-          // Note: Navigation from HistoryStack to HomeStack
-          (navigation as any).navigate("HomeTab", {
-            screen: "Scoring",
-            params: { gameId, isEditingFinished: true },
-          });
-        },
-      },
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-    ]);
+  const handleViewSummary = (gameId: string) => {
+    setMenuGameId(null);
+    navigation.navigate("GameSummary", { gameId });
   };
 
-  const handleDeleteGame = (gameId: string, gameDateText: string) => {
+  const handleEditScores = (gameId: string) => {
+    setMenuGameId(null);
+    (navigation as any).navigate("HomeTab", {
+      screen: "Scoring",
+      params: { gameId, isEditingFinished: true },
+    });
+  };
+
+  const handleDeleteGame = async (gameId: string, gameDateText: string) => {
+    setMenuGameId(null);
     crossPlatformAlert(
       "Delete Game",
       `Are you sure you want to delete the game from ${gameDateText}?`,
@@ -241,7 +231,6 @@ export const GameHistoryScreen = () => {
           onPress: async () => {
             try {
               await dataService.deleteGame(gameId);
-              // Reload games after deletion
               if (user) {
                 const allGames = await dataService.getGamesForUser(user.uid);
                 const completedGames = allGames
