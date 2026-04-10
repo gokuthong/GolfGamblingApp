@@ -1,40 +1,51 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { Platform, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
-import type { LinkingOptions } from '@react-navigation/native';
-import { Provider as PaperProvider, MD3DarkTheme, MD3LightTheme, configureFonts } from 'react-native-paper';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import * as SplashScreen from 'expo-splash-screen';
+import React, { useEffect, useState, useCallback } from "react";
+import { StatusBar } from "expo-status-bar";
 import {
-  useFonts,
-  BebasNeue_400Regular,
-} from '@expo-google-fonts/bebas-neue';
+  Platform,
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import type { LinkingOptions } from "@react-navigation/native";
+import {
+  Provider as PaperProvider,
+  MD3DarkTheme,
+  MD3LightTheme,
+  configureFonts,
+} from "react-native-paper";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import * as SplashScreen from "expo-splash-screen";
+import { useFonts, BebasNeue_400Regular } from "@expo-google-fonts/bebas-neue";
 import {
   DMSans_400Regular,
   DMSans_500Medium,
   DMSans_600SemiBold,
   DMSans_700Bold,
-} from '@expo-google-fonts/dm-sans';
+} from "@expo-google-fonts/dm-sans";
 import {
   JetBrainsMono_400Regular,
   JetBrainsMono_500Medium,
   JetBrainsMono_700Bold,
-} from '@expo-google-fonts/jetbrains-mono';
+} from "@expo-google-fonts/jetbrains-mono";
 
-import { authService } from './src/services/firebase';
-import { localStorageService } from './src/services/storage';
-import { dataService } from './src/services/DataService';
-import { migrateLocalDataToFirestore, seedLocalCacheFromFirestore } from './src/services/dataMigration';
-import { connectivityManager } from './src/services/connectivity';
-import { syncService } from './src/services/sync';
-import { AppNavigator } from './src/navigation/AppNavigator';
-import { AuthNavigator } from './src/navigation/AuthNavigator';
-import { useStore } from './src/store';
-import { fontFamilies } from './src/theme';
-import { darkColors, lightColors } from './src/theme/colors';
-import { ThemeProvider } from './src/contexts/ThemeContext';
-import { ErrorBoundary } from './src/components/ErrorBoundary';
+import { authService } from "./src/services/firebase";
+import { localStorageService } from "./src/services/storage";
+import { dataService } from "./src/services/DataService";
+import {
+  migrateLocalDataToFirestore,
+  seedLocalCacheFromFirestore,
+} from "./src/services/dataMigration";
+import { connectivityManager } from "./src/services/connectivity";
+import { syncService } from "./src/services/sync";
+import { AppNavigator } from "./src/navigation/AppNavigator";
+import { AuthNavigator } from "./src/navigation/AuthNavigator";
+import { useStore } from "./src/store";
+import { fontFamilies } from "./src/theme";
+import { darkColors, lightColors } from "./src/theme/colors";
+import { ThemeProvider } from "./src/contexts/ThemeContext";
+import { ErrorBoundary } from "./src/components/ErrorBoundary";
 
 // Keep splash screen visible while loading fonts - wrapped in try/catch
 // to prevent crash if native module isn't ready
@@ -43,6 +54,54 @@ try {
 } catch (e) {
   // Splash screen native module not available - continue without it
 }
+
+// Linking config — maps navigation state to URLs for browser history support
+const linking: LinkingOptions<any> = {
+  prefixes: ["https://golfgamblingapp.web.app", "golfgamble://"],
+  config: {
+    screens: {
+      // Auth screens (when user is not logged in)
+      Login: "login",
+      Register: "register",
+      ForgotPassword: "forgot-password",
+      // App screens (when user is logged in)
+      HomeTab: {
+        path: "",
+        screens: {
+          Home: "",
+          GameSetup: "game/new",
+          HandicapSetup: "game/handicaps",
+          Scoring: "game/:gameId/scoring",
+          OverallStandings: "game/:gameId/standings",
+          GameSummary: "game/:gameId/summary",
+        },
+      },
+      CoursesTab: {
+        path: "courses",
+        screens: {
+          CoursesList: "",
+          CreateCourse: "new",
+          EditCourse: "edit",
+        },
+      },
+      Players: "players",
+      HistoryTab: {
+        path: "history",
+        screens: {
+          GameHistory: "",
+          GameSummary: ":gameId/summary",
+        },
+      },
+      Settings: {
+        path: "settings",
+        screens: {
+          SettingsMain: "",
+          AdminPanel: "admin",
+        },
+      },
+    },
+  },
+};
 
 // Inner component that has access to theme
 const AppContent = ({ user, onReady }: { user: any; onReady: () => void }) => {
@@ -151,84 +210,89 @@ export default function App() {
         // Initialize super admin (finds user 001 or kp.tey@outlook.com)
         await localStorageService.initializeSuperAdmin();
       } catch (error) {
-        console.error('Migration failed:', error);
+        console.error("Migration failed:", error);
       }
 
       // Set up Firebase auth listener
-      const unsubscribe = authService.onAuthStateChanged(async (firebaseUser) => {
-        if (firebaseUser) {
-          // Switch DataService to online mode for authenticated users
-          dataService.setMode('online', firebaseUser.uid);
+      const unsubscribe = authService.onAuthStateChanged(
+        async (firebaseUser) => {
+          if (firebaseUser) {
+            // Switch DataService to online mode for authenticated users
+            dataService.setMode("online", firebaseUser.uid);
 
-          // Run one-time migration from local storage to Firestore
-          try {
-            await migrateLocalDataToFirestore(firebaseUser.uid);
-          } catch (error) {
-            console.error('Migration failed:', error);
-          }
+            // Run one-time migration from local storage to Firestore
+            try {
+              await migrateLocalDataToFirestore(firebaseUser.uid);
+            } catch (error) {
+              console.error("Migration failed:", error);
+            }
 
-          // Seed local cache from Firestore for offline reads
-          try {
-            await seedLocalCacheFromFirestore(firebaseUser.uid);
-          } catch (error) {
-            console.error('Cache seeding failed:', error);
-          }
+            // Seed local cache from Firestore for offline reads
+            try {
+              await seedLocalCacheFromFirestore(firebaseUser.uid);
+            } catch (error) {
+              console.error("Cache seeding failed:", error);
+            }
 
-          // Push any pending local changes to Firestore
-          syncService.syncAll();
+            // Push any pending local changes to Firestore
+            syncService.syncAll();
 
-          // User is authenticated - load their profile from Firestore
-          const userProfile = await dataService.getUserProfile(firebaseUser.uid);
+            // User is authenticated - load their profile from Firestore
+            const userProfile = await dataService.getUserProfile(
+              firebaseUser.uid,
+            );
 
-          const approvalStatus = userProfile?.approvalStatus || 'approved';
+            const approvalStatus = userProfile?.approvalStatus || "approved";
 
-          // Only allow approved users
-          if (approvalStatus !== 'approved') {
-            await authService.signOut();
-            dataService.setMode('offline');
+            // Only allow approved users
+            if (approvalStatus !== "approved") {
+              await authService.signOut();
+              dataService.setMode("offline");
+              setUser(null);
+              setStoreUser(null as any);
+              setIsLoading(false);
+              return;
+            }
+
+            // Merge Firebase user with profile data
+            const fullUser = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              displayName:
+                firebaseUser.displayName || userProfile?.displayName || "User",
+              photoURL: firebaseUser.photoURL,
+              // Add custom fields from profile
+              userNumber: userProfile?.userNumber || "000",
+              role: userProfile?.role || "user",
+              approvalStatus,
+              isOffline: false,
+              settings: userProfile?.settings || {
+                darkMode: false,
+                hapticFeedback: true,
+                defaultHandicap: 0,
+              },
+            };
+
+            setUser(fullUser as any);
+            setStoreUser(fullUser as any);
+
+            // Run cleanup for authenticated users
+            try {
+              await dataService.deleteGamesOlderThan(firebaseUser.uid, 14);
+              await dataService.enforceGameLimit(firebaseUser.uid, 5);
+            } catch (error) {
+              console.error("Failed to run cleanup:", error);
+            }
+          } else {
+            // No authenticated user - switch to offline mode
+            dataService.setMode("offline");
             setUser(null);
             setStoreUser(null as any);
-            setIsLoading(false);
-            return;
           }
 
-          // Merge Firebase user with profile data
-          const fullUser = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            displayName: firebaseUser.displayName || userProfile?.displayName || 'User',
-            photoURL: firebaseUser.photoURL,
-            // Add custom fields from profile
-            userNumber: userProfile?.userNumber || '000',
-            role: userProfile?.role || 'user',
-            approvalStatus,
-            isOffline: false,
-            settings: userProfile?.settings || {
-              darkMode: false,
-              hapticFeedback: true,
-              defaultHandicap: 0,
-            },
-          };
-
-          setUser(fullUser as any);
-          setStoreUser(fullUser as any);
-
-          // Run cleanup for authenticated users
-          try {
-            await dataService.deleteGamesOlderThan(firebaseUser.uid, 14);
-            await dataService.enforceGameLimit(firebaseUser.uid, 5);
-          } catch (error) {
-            console.error('Failed to run cleanup:', error);
-          }
-        } else {
-          // No authenticated user - switch to offline mode
-          dataService.setMode('offline');
-          setUser(null);
-          setStoreUser(null as any);
-        }
-
-        setIsLoading(false);
-      });
+          setIsLoading(false);
+        },
+      );
 
       return () => {
         unsubscribe();
@@ -265,9 +329,19 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <View style={[styles.centered, { backgroundColor: darkColors.background.primary }]} onLayout={onLayoutRootView}>
+      <View
+        style={[
+          styles.centered,
+          { backgroundColor: darkColors.background.primary },
+        ]}
+        onLayout={onLayoutRootView}
+      >
         <ActivityIndicator size="large" color={darkColors.accent.gold} />
-        <Text style={[styles.loadingText, { color: darkColors.text.secondary }]}>Loading...</Text>
+        <Text
+          style={[styles.loadingText, { color: darkColors.text.secondary }]}
+        >
+          Loading...
+        </Text>
       </View>
     );
   }
@@ -284,8 +358,8 @@ export default function App() {
 const styles = StyleSheet.create({
   centered: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   loadingText: {
     marginTop: 10,
