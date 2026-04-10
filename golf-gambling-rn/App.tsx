@@ -172,7 +172,18 @@ const AppContent = ({ user, onReady }: { user: any; onReady: () => void }) => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider theme={paperTheme}>
         <StatusBar style={isDarkMode ? "light" : "dark"} />
-        <NavigationContainer theme={navigationTheme} onReady={onReady}>
+        <NavigationContainer
+          theme={navigationTheme}
+          onReady={onReady}
+          linking={Platform.OS === "web" ? linking : undefined}
+          documentTitle={{
+            formatter: (options, route) =>
+              `${options?.title ?? route?.name ?? ""} — Golf Gamble Tracker`.replace(
+                /^\s*—\s*/,
+                "",
+              ),
+          }}
+        >
           {user ? <AppNavigator /> : <AuthNavigator />}
         </NavigationContainer>
       </PaperProvider>
