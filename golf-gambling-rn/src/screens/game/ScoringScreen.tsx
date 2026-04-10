@@ -595,6 +595,23 @@ export const ScoringScreen = () => {
                       x4
                     </Text>
                   </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[
+                      styles.multiplierButton,
+                      isCompactLayout && styles.multiplierButtonCompact,
+                      playerMultiplier === 6 && styles.multiplierButtonActive,
+                    ].filter(Boolean)}
+                    onPress={() => setPlayerMultiplier(player.id, 6)}
+                  >
+                    <Text style={[
+                      styles.multiplierText,
+                      isCompactLayout && styles.multiplierTextCompact,
+                      playerMultiplier === 6 && styles.multiplierTextActive
+                    ].filter(Boolean)}>
+                      x6
+                    </Text>
+                  </TouchableOpacity>
                 </View>
 
                 {/* Score Counter and Points - Moved below multipliers */}
