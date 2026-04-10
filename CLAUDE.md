@@ -52,7 +52,10 @@
 - Always handle storage errors with try/catch
 - One-time migration: local-to-Firestore on first login (`migrateLocalDataToFirestore` + `seedLocalCacheFromFirestore`)
 
-## Testing
+## Deployment & Testing
+- Build + deploy: `cd golf-gambling-rn && npm run deploy:web`
+- **Testing URL**: Always test against https://golfgamblingapp.web.app (the live Firebase Hosting site) — never localhost
+- Deploy first, then test on the live URL
 - Write function-level tests for every code change in `src/utils/__tests__/<feature>.test.ts`
 - Run with `npx tsx <test-file>` — all must pass before work is complete
 - Test both online and offline modes
