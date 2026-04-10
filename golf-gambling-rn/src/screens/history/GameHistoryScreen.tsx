@@ -271,7 +271,7 @@ export const GameHistoryScreen = () => {
     return (
       <TouchableOpacity
         style={styles.gameCard}
-        onPress={() => handleGamePress(game.id)}
+        onPress={() => handleViewSummary(game.id)}
         activeOpacity={0.7}
       >
         <View style={styles.cardHeader}>
@@ -283,17 +283,42 @@ export const GameHistoryScreen = () => {
               </View>
             )}
           </View>
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={() => handleDeleteGame(game.id, gameDateText)}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          <Menu
+            visible={menuGameId === game.id}
+            onDismiss={() => setMenuGameId(null)}
+            anchor={
+              <TouchableOpacity
+                style={styles.menuButton}
+                onPress={() => setMenuGameId(menuGameId === game.id ? null : game.id)}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <MaterialCommunityIcons
+                  name="dots-vertical"
+                  size={22}
+                  color={colors.text.secondary}
+                />
+              </TouchableOpacity>
+            }
+            contentStyle={[styles.menuContent, { backgroundColor: colors.background.card }]}
           >
-            <MaterialCommunityIcons
-              name="delete"
-              size={20}
-              color={colors.error || "#D32F2F"}
+            <Menu.Item
+              onPress={() => handleViewSummary(game.id)}
+              title="View Summary"
+              leadingIcon="clipboard-text-outline"
             />
-          </TouchableOpacity>
+            <Menu.Item
+              onPress={() => handleEditScores(game.id)}
+              title="Edit Scores"
+              leadingIcon="pencil-outline"
+            />
+            <Divider />
+            <Menu.Item
+              onPress={() => handleDeleteGame(game.id, gameDateText)}
+              title="Delete"
+              leadingIcon="delete-outline"
+              titleStyle={{ color: colors.error || "#D32F2F" }}
+            />
+          </Menu>
         </View>
 
         <View style={styles.playersSection}>
