@@ -58,6 +58,11 @@
 - Test both online and offline modes
 - Bug fixes require a regression test reproducing the exact scenario
 
+## Test Account
+- Email: kp.tey@outlook.com
+- Password: Teeoff75
+- IMPORTANT: Do NOT delete or modify existing games, courses, or player data on this account
+
 ## Do NOT
 - Edit `.env` files or expose API keys
 - Use `localStorageService` directly in screens (use `dataService`)
