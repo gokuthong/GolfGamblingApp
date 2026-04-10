@@ -227,9 +227,11 @@ class DataService {
       return localStorageService.getActiveGamesForUser(userId);
     }
 
+    // Prefer Firestore so completed games disappear from active list immediately
     return this.readWithFallback(
       () => firestoreService.getActiveGamesForUser(userId),
       () => localStorageService.getActiveGamesForUser(userId),
+      { preferFirestore: true },
     );
   }
 
