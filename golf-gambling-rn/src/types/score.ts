@@ -7,7 +7,7 @@ export interface Score {
   handicap: number; // 0-2
   isUp?: boolean; // Per-player 2x multiplier (deprecated - use multiplier instead)
   isBurn?: boolean; // Per-player 3x multiplier (deprecated - use multiplier instead)
-  multiplier?: number; // Multiplier value: 1 (none), 2, 3, or 4
+  multiplier?: number; // Multiplier value: 1 (none), 2, 3, 4, or 6
 }
 
 export interface ScoreData extends Omit<Score, 'id'> {}
