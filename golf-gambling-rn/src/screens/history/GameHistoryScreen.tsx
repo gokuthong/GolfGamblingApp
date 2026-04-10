@@ -49,59 +49,45 @@ export const GameHistoryScreen = () => {
   const [detailsRefreshTrigger, setDetailsRefreshTrigger] = useState(0);
   const [menuGameId, setMenuGameId] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadGames = useCallback(async () => {
     if (!user || !user.uid) {
-      console.log("GameHistoryScreen: No user or uid found", { user });
       setLoading(false);
       return;
     }
 
-    const loadGames = async () => {
-      try {
-        console.log("GameHistoryScreen: Loading games for user", user.uid);
+    try {
+      // Auto-delete games older than 14 days
+      await dataService.deleteGamesOlderThan(user.uid, 14);
 
-        // Auto-delete games older than 14 days
-        await dataService.deleteGamesOlderThan(user.uid, 14);
+      // Enforce 5-game limit
+      await dataService.enforceGameLimit(user.uid, 5);
 
-        // Enforce 5-game limit
-        await dataService.enforceGameLimit(user.uid, 5);
+      // Load completed games
+      const allGames = await dataService.getGamesForUser(user.uid);
 
-        // Load completed games
-        const allGames = await dataService.getGamesForUser(user.uid);
-        console.log("GameHistoryScreen: Found games", allGames.length);
+      const completedGames = allGames
+        .filter((game) => game.status === "completed")
+        .sort((a, b) => {
+          const aTime = a.completedAt?.getTime() || 0;
+          const bTime = b.completedAt?.getTime() || 0;
+          return bTime - aTime;
+        })
+        .slice(0, 5);
 
-        const completedGames = allGames
-          .filter((game) => game.status === "completed")
-          .sort((a, b) => {
-            const aTime = a.completedAt?.getTime() || 0;
-            const bTime = b.completedAt?.getTime() || 0;
-            return bTime - aTime; // descending order (most recent first)
-          })
-          .slice(0, 5); // Only show max 5 games
-
-        console.log(
-          "GameHistoryScreen: Completed games",
-          completedGames.length,
-        );
-        setGames(completedGames);
-        setLoading(false);
-        setRefreshing(false);
-      } catch (error) {
-        console.error("Failed to load games:", error);
-        setLoading(false);
-        setRefreshing(false);
-      }
-    };
-
-    loadGames();
+      setGames(completedGames);
+    } catch (error) {
+      console.error("Failed to load games:", error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
   }, [user]);
 
-  // Reload game details when screen comes into focus
+  // Reload full games list every time screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      // Trigger a reload of game details
-      setDetailsRefreshTrigger((prev) => prev + 1);
-    }, []),
+      loadGames();
+    }, [loadGames]),
   );
 
   // Load details for each game (players, scores, etc.)
