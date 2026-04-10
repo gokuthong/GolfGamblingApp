@@ -184,7 +184,9 @@ class DataService {
 
     await localStorageService.completeGame(gameId);
 
-    this.syncToFirestore('game', gameId, async () => {
+    // Await Firestore sync for game completion — this is a critical state
+    // change that must reach the server before the user navigates away.
+    await this.syncToFirestore('game', gameId, async () => {
       await firestoreService.completeGame(gameId);
     });
   }
