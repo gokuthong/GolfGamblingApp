@@ -1,9 +1,9 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { firestoreService } from './firebase/firestore';
-import { localStorageService } from './storage/LocalStorageService';
-import { StorageKeys } from './storage/storageUtils';
-import { connectivityManager } from './connectivity';
-import { syncService } from './sync';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { firestoreService } from "./firebase/firestore";
+import { localStorageService } from "./storage/LocalStorageService";
+import { StorageKeys } from "./storage/storageUtils";
+import { connectivityManager } from "./connectivity";
+import { syncService } from "./sync";
 import {
   Game,
   GameData,
@@ -16,12 +16,12 @@ import {
   Course,
   CourseData,
   CourseHole,
-} from '../types';
+} from "../types";
 
-type ServiceMode = 'online' | 'offline';
+type ServiceMode = "online" | "offline";
 
 class DataService {
-  private mode: ServiceMode = 'offline';
+  private mode: ServiceMode = "offline";
   private userId: string | null = null;
 
   setMode(mode: ServiceMode, userId?: string) {
@@ -34,7 +34,7 @@ class DataService {
   }
 
   private get isOnline(): boolean {
-    return this.mode === 'online';
+    return this.mode === "online";
   }
 
   /**
@@ -43,7 +43,7 @@ class DataService {
   private async syncToFirestore(
     entityType: string,
     entityId: string,
-    firestoreOp: () => Promise<void>
+    firestoreOp: () => Promise<void>,
   ): Promise<void> {
     if (!connectivityManager.isOnline) {
       await syncService.markDirty({ entityType, entityId });
@@ -52,7 +52,10 @@ class DataService {
     try {
       await firestoreOp();
     } catch (error) {
-      console.error(`DataService: Firestore sync failed for ${entityType}:${entityId}, marking dirty`, error);
+      console.error(
+        `DataService: Firestore sync failed for ${entityType}:${entityId}, marking dirty`,
+        error,
+      );
       await syncService.markDirty({ entityType, entityId });
     }
   }
@@ -63,7 +66,7 @@ class DataService {
   private async syncDeleteToFirestore(
     entityType: string,
     entityId: string,
-    firestoreOp: () => Promise<void>
+    firestoreOp: () => Promise<void>,
   ): Promise<void> {
     if (!connectivityManager.isOnline) {
       await syncService.markDelete({ entityType, entityId });
@@ -72,7 +75,10 @@ class DataService {
     try {
       await firestoreOp();
     } catch (error) {
-      console.error(`DataService: Firestore delete failed for ${entityType}:${entityId}, queuing`, error);
+      console.error(
+        `DataService: Firestore delete failed for ${entityType}:${entityId}, queuing`,
+        error,
+      );
       await syncService.markDelete({ entityType, entityId });
     }
   }
@@ -96,7 +102,7 @@ class DataService {
   private async readWithFallback<T>(
     firestoreOp: () => Promise<T>,
     localOp: () => Promise<T>,
-    options?: { preferFirestore?: boolean }
+    options?: { preferFirestore?: boolean },
   ): Promise<T> {
     if (!connectivityManager.isOnline) {
       return localOp();
@@ -107,7 +113,10 @@ class DataService {
       try {
         return await firestoreOp();
       } catch (error) {
-        console.warn('DataService: Firestore read failed, falling back to local', error);
+        console.warn(
+          "DataService: Firestore read failed, falling back to local",
+          error,
+        );
         return localOp();
       }
     }
@@ -126,7 +135,7 @@ class DataService {
     try {
       return await firestoreOp();
     } catch (error) {
-      console.warn('DataService: Firestore read also failed', error);
+      console.warn("DataService: Firestore read also failed", error);
       return localResult;
     }
   }
@@ -137,18 +146,28 @@ class DataService {
     playerIds: string[],
     userId?: string,
     courseId?: string,
-    courseName?: string
+    courseName?: string,
   ): Promise<string> {
     if (!this.isOnline) {
-      return localStorageService.createGame(playerIds, userId, courseId, courseName);
+      return localStorageService.createGame(
+        playerIds,
+        userId,
+        courseId,
+        courseName,
+      );
     }
 
     // Always write to local first (generates a UUID)
-    const gameId = await localStorageService.createGame(playerIds, userId, courseId, courseName);
+    const gameId = await localStorageService.createGame(
+      playerIds,
+      userId,
+      courseId,
+      courseName,
+    );
 
     // Mark dirty and let SyncService push with setDoc using the same UUID.
     // Do NOT call firestoreService.createGame — it uses addDoc which generates a different ID.
-    await syncService.markDirty({ entityType: 'game', entityId: gameId });
+    await syncService.markDirty({ entityType: "game", entityId: gameId });
     syncService.syncAll();
 
     return gameId;
@@ -161,7 +180,7 @@ class DataService {
 
     return this.readWithFallback(
       () => firestoreService.getGame(gameId),
-      () => localStorageService.getGame(gameId)
+      () => localStorageService.getGame(gameId),
     );
   }
 
@@ -172,7 +191,7 @@ class DataService {
 
     await localStorageService.updateGame(gameId, updates);
 
-    this.syncToFirestore('game', gameId, async () => {
+    this.syncToFirestore("game", gameId, async () => {
       await firestoreService.updateGame(gameId, updates);
     });
   }
@@ -186,7 +205,7 @@ class DataService {
 
     // Await Firestore sync for game completion — this is a critical state
     // change that must reach the server before the user navigates away.
-    await this.syncToFirestore('game', gameId, async () => {
+    await this.syncToFirestore("game", gameId, async () => {
       await firestoreService.completeGame(gameId);
     });
   }
@@ -198,7 +217,7 @@ class DataService {
 
     await localStorageService.deleteGame(gameId);
 
-    this.syncDeleteToFirestore('game', gameId, async () => {
+    this.syncDeleteToFirestore("game", gameId, async () => {
       await firestoreService.deleteGame(gameId);
     });
   }
@@ -210,7 +229,7 @@ class DataService {
 
     return this.readWithFallback(
       () => firestoreService.getActiveGamesForUser(userId),
-      () => localStorageService.getActiveGamesForUser(userId)
+      () => localStorageService.getActiveGamesForUser(userId),
     );
   }
 
@@ -219,9 +238,12 @@ class DataService {
       return localStorageService.getGamesForUser(userId);
     }
 
+    // Prefer Firestore for game lists — local-first can return stale status
+    // (e.g. game still shows "active" locally when Firestore has "completed")
     return this.readWithFallback(
       () => firestoreService.getGamesForUser(userId),
-      () => localStorageService.getGamesForUser(userId)
+      () => localStorageService.getGamesForUser(userId),
+      { preferFirestore: true },
     );
   }
 
@@ -237,7 +259,7 @@ class DataService {
 
     return this.readWithFallback(
       () => firestoreService.getGameWithDetails(gameId),
-      () => localStorageService.getGameWithDetails(gameId)
+      () => localStorageService.getGameWithDetails(gameId),
     );
   }
 
@@ -247,14 +269,20 @@ class DataService {
     }
 
     // Delete from local first
-    const localDeleted = await localStorageService.deleteGamesOlderThan(userId, days);
+    const localDeleted = await localStorageService.deleteGamesOlderThan(
+      userId,
+      days,
+    );
 
     // Try Firestore cleanup too
     if (connectivityManager.isOnline) {
       try {
         await firestoreService.deleteGamesOlderThan(userId, days);
       } catch (error) {
-        console.warn('DataService: Firestore deleteGamesOlderThan failed', error);
+        console.warn(
+          "DataService: Firestore deleteGamesOlderThan failed",
+          error,
+        );
       }
     }
 
@@ -272,7 +300,7 @@ class DataService {
       try {
         await firestoreService.enforceGameLimit(userId, maxGames);
       } catch (error) {
-        console.warn('DataService: Firestore enforceGameLimit failed', error);
+        console.warn("DataService: Firestore enforceGameLimit failed", error);
       }
     }
   }
@@ -287,7 +315,10 @@ class DataService {
     const holeId = await localStorageService.createHole(holeData);
 
     // Mark the parent game as dirty — SyncService pushes the full game (with holes) using setDoc
-    await syncService.markDirty({ entityType: 'game', entityId: holeData.gameId });
+    await syncService.markDirty({
+      entityType: "game",
+      entityId: holeData.gameId,
+    });
     syncService.syncAll();
 
     return holeId;
@@ -304,7 +335,7 @@ class DataService {
     // we mark dirty after the Firestore op or on failure.
     const gameId = updates.gameId;
     if (gameId) {
-      this.syncToFirestore('game', gameId, async () => {
+      this.syncToFirestore("game", gameId, async () => {
         await firestoreService.updateHole(holeId, updates);
       });
     } else {
@@ -316,20 +347,26 @@ class DataService {
           // We don't know the gameId here — try to find it from local storage
           const holesGame = await this.findGameIdForHole(holeId);
           if (holesGame) {
-            await syncService.markDirty({ entityType: 'game', entityId: holesGame });
+            await syncService.markDirty({
+              entityType: "game",
+              entityId: holesGame,
+            });
           }
         }
       } else {
         const holesGame = await this.findGameIdForHole(holeId);
         if (holesGame) {
-          await syncService.markDirty({ entityType: 'game', entityId: holesGame });
+          await syncService.markDirty({
+            entityType: "game",
+            entityId: holesGame,
+          });
         }
       }
     }
   }
 
   async batchUpdateHoles(
-    holeUpdates: Array<{ holeId: string; updates: Partial<HoleData> }>
+    holeUpdates: Array<{ holeId: string; updates: Partial<HoleData> }>,
   ): Promise<void> {
     if (!this.isOnline) {
       return localStorageService.batchUpdateHoles(holeUpdates);
@@ -349,24 +386,32 @@ class DataService {
       } catch (error) {
         // Mark all affected games as dirty
         for (const gameId of gameIds) {
-          await syncService.markDirty({ entityType: 'game', entityId: gameId });
+          await syncService.markDirty({ entityType: "game", entityId: gameId });
         }
         // If we couldn't determine gameIds from updates, try to find them
         if (gameIds.size === 0 && holeUpdates.length > 0) {
-          const foundGameId = await this.findGameIdForHole(holeUpdates[0].holeId);
+          const foundGameId = await this.findGameIdForHole(
+            holeUpdates[0].holeId,
+          );
           if (foundGameId) {
-            await syncService.markDirty({ entityType: 'game', entityId: foundGameId });
+            await syncService.markDirty({
+              entityType: "game",
+              entityId: foundGameId,
+            });
           }
         }
       }
     } else {
       for (const gameId of gameIds) {
-        await syncService.markDirty({ entityType: 'game', entityId: gameId });
+        await syncService.markDirty({ entityType: "game", entityId: gameId });
       }
       if (gameIds.size === 0 && holeUpdates.length > 0) {
         const foundGameId = await this.findGameIdForHole(holeUpdates[0].holeId);
         if (foundGameId) {
-          await syncService.markDirty({ entityType: 'game', entityId: foundGameId });
+          await syncService.markDirty({
+            entityType: "game",
+            entityId: foundGameId,
+          });
         }
       }
     }
@@ -379,7 +424,7 @@ class DataService {
 
     return this.readWithFallback(
       () => firestoreService.getHolesForGame(gameId),
-      () => localStorageService.getHolesForGame(gameId)
+      () => localStorageService.getHolesForGame(gameId),
     );
   }
 
@@ -391,13 +436,19 @@ class DataService {
     await localStorageService.initializeHolesForGame(gameId);
 
     // Mark game dirty — SyncService pushes full game+holes using setDoc
-    await syncService.markDirty({ entityType: 'game', entityId: gameId });
+    await syncService.markDirty({ entityType: "game", entityId: gameId });
     syncService.syncAll();
   }
 
-  async initializeHolesForGameFromCourse(gameId: string, courseId: string): Promise<void> {
+  async initializeHolesForGameFromCourse(
+    gameId: string,
+    courseId: string,
+  ): Promise<void> {
     if (!this.isOnline) {
-      return localStorageService.initializeHolesForGameFromCourse(gameId, courseId);
+      return localStorageService.initializeHolesForGameFromCourse(
+        gameId,
+        courseId,
+      );
     }
 
     // The course must exist locally for local initialization.
@@ -408,7 +459,7 @@ class DataService {
         const firestoreCourse = await firestoreService.getCourse(courseId);
         if (firestoreCourse) {
           // Seed this course into local storage so initializeHolesForGameFromCourse works
-          const userId = firestoreCourse.createdBy || this.userId || 'default';
+          const userId = firestoreCourse.createdBy || this.userId || "default";
           const courses = await localStorageService.getAllCourses(userId);
           if (!courses.find((c) => c.id === firestoreCourse.id)) {
             courses.push(firestoreCourse);
@@ -419,25 +470,31 @@ class DataService {
                   ...c,
                   createdAt: c.createdAt?.toISOString?.() || c.createdAt,
                   updatedAt: c.updatedAt?.toISOString?.() || c.updatedAt,
-                }))
-              )
+                })),
+              ),
             );
           }
           localCourse = firestoreCourse;
         }
       } catch (error) {
-        console.error('DataService: Failed to fetch course from Firestore for local seeding', error);
+        console.error(
+          "DataService: Failed to fetch course from Firestore for local seeding",
+          error,
+        );
       }
     }
 
     if (!localCourse) {
-      throw new Error('Course not found');
+      throw new Error("Course not found");
     }
 
-    await localStorageService.initializeHolesForGameFromCourse(gameId, courseId);
+    await localStorageService.initializeHolesForGameFromCourse(
+      gameId,
+      courseId,
+    );
 
     // Mark game dirty — SyncService pushes full game+holes using setDoc
-    await syncService.markDirty({ entityType: 'game', entityId: gameId });
+    await syncService.markDirty({ entityType: "game", entityId: gameId });
     syncService.syncAll();
   }
 
@@ -452,7 +509,7 @@ class DataService {
 
     // Mark the parent game as dirty
     if (scoreData.gameId) {
-      this.syncToFirestore('game', scoreData.gameId, async () => {
+      this.syncToFirestore("game", scoreData.gameId, async () => {
         await firestoreService.upsertScore(scoreData);
       });
     }
@@ -478,12 +535,12 @@ class DataService {
         await firestoreService.batchUpsertScores(scoresData);
       } catch (error) {
         for (const gameId of gameIds) {
-          await syncService.markDirty({ entityType: 'game', entityId: gameId });
+          await syncService.markDirty({ entityType: "game", entityId: gameId });
         }
       }
     } else {
       for (const gameId of gameIds) {
-        await syncService.markDirty({ entityType: 'game', entityId: gameId });
+        await syncService.markDirty({ entityType: "game", entityId: gameId });
       }
     }
   }
@@ -495,7 +552,7 @@ class DataService {
 
     return this.readWithFallback(
       () => firestoreService.getScoresForHole(holeId),
-      () => localStorageService.getScoresForHole(holeId)
+      () => localStorageService.getScoresForHole(holeId),
     );
   }
 
@@ -506,7 +563,7 @@ class DataService {
 
     return this.readWithFallback(
       () => firestoreService.getScoresForGame(gameId),
-      () => localStorageService.getScoresForGame(gameId)
+      () => localStorageService.getScoresForGame(gameId),
     );
   }
 
@@ -525,7 +582,7 @@ class DataService {
     const playerId = await localStorageService.createPlayer(playerData);
 
     // Mark dirty — SyncService pushes with setDoc using the same UUID
-    await syncService.markDirty({ entityType: 'player', entityId: playerId });
+    await syncService.markDirty({ entityType: "player", entityId: playerId });
     syncService.syncAll();
 
     return playerId;
@@ -536,16 +593,28 @@ class DataService {
     createdBy?: string,
     userNumber?: string,
     userId?: string,
-    isGuest: boolean = false
+    isGuest: boolean = false,
   ): Promise<string> {
     if (!this.isOnline) {
-      return localStorageService.createPlayerLegacy(name, createdBy, userNumber, userId, isGuest);
+      return localStorageService.createPlayerLegacy(
+        name,
+        createdBy,
+        userNumber,
+        userId,
+        isGuest,
+      );
     }
 
-    const playerId = await localStorageService.createPlayerLegacy(name, createdBy, userNumber, userId, isGuest);
+    const playerId = await localStorageService.createPlayerLegacy(
+      name,
+      createdBy,
+      userNumber,
+      userId,
+      isGuest,
+    );
 
     // Mark dirty — SyncService pushes with setDoc using the same UUID
-    await syncService.markDirty({ entityType: 'player', entityId: playerId });
+    await syncService.markDirty({ entityType: "player", entityId: playerId });
     syncService.syncAll();
 
     return playerId;
@@ -558,7 +627,7 @@ class DataService {
 
     return this.readWithFallback(
       () => firestoreService.getPlayer(playerId),
-      () => localStorageService.getPlayer(playerId)
+      () => localStorageService.getPlayer(playerId),
     );
   }
 
@@ -569,18 +638,21 @@ class DataService {
 
     return this.readWithFallback(
       () => firestoreService.getAllPlayers(),
-      () => localStorageService.getAllPlayers(userId)
+      () => localStorageService.getAllPlayers(userId),
     );
   }
 
-  async updatePlayer(playerId: string, updates: Partial<PlayerData>): Promise<void> {
+  async updatePlayer(
+    playerId: string,
+    updates: Partial<PlayerData>,
+  ): Promise<void> {
     if (!this.isOnline) {
       return localStorageService.updatePlayer(playerId, updates);
     }
 
     await localStorageService.updatePlayer(playerId, updates);
 
-    this.syncToFirestore('player', playerId, async () => {
+    this.syncToFirestore("player", playerId, async () => {
       await firestoreService.updatePlayer(playerId, updates);
     });
   }
@@ -592,7 +664,7 @@ class DataService {
 
     await localStorageService.deletePlayer(playerId);
 
-    this.syncDeleteToFirestore('player', playerId, async () => {
+    this.syncDeleteToFirestore("player", playerId, async () => {
       await firestoreService.deletePlayer(playerId);
     });
   }
@@ -605,7 +677,7 @@ class DataService {
     return this.readWithFallback(
       () => firestoreService.getAllRegisteredPlayers(),
       () => localStorageService.getAllRegisteredPlayers(),
-      { preferFirestore: true }
+      { preferFirestore: true },
     );
   }
 
@@ -617,7 +689,7 @@ class DataService {
     return this.readWithFallback(
       () => firestoreService.searchUsers(searchTerm),
       () => localStorageService.searchUsers(searchTerm),
-      { preferFirestore: true }
+      { preferFirestore: true },
     );
   }
 
@@ -626,16 +698,24 @@ class DataService {
   async createCourse(
     name: string,
     holes: CourseHole[] | { holeNumber: number; par: number }[],
-    userId?: string
+    userId?: string,
   ): Promise<string> {
     if (!this.isOnline) {
-      return localStorageService.createCourse(name, holes as CourseHole[], userId);
+      return localStorageService.createCourse(
+        name,
+        holes as CourseHole[],
+        userId,
+      );
     }
 
-    const courseId = await localStorageService.createCourse(name, holes as CourseHole[], userId);
+    const courseId = await localStorageService.createCourse(
+      name,
+      holes as CourseHole[],
+      userId,
+    );
 
     // Mark dirty — SyncService pushes with setDoc using the same UUID
-    await syncService.markDirty({ entityType: 'course', entityId: courseId });
+    await syncService.markDirty({ entityType: "course", entityId: courseId });
     syncService.syncAll();
 
     return courseId;
@@ -648,18 +728,21 @@ class DataService {
 
     return this.readWithFallback(
       () => firestoreService.getCourse(courseId),
-      () => localStorageService.getCourse(courseId)
+      () => localStorageService.getCourse(courseId),
     );
   }
 
-  async updateCourse(courseId: string, updates: Partial<CourseData>): Promise<void> {
+  async updateCourse(
+    courseId: string,
+    updates: Partial<CourseData>,
+  ): Promise<void> {
     if (!this.isOnline) {
       return localStorageService.updateCourse(courseId, updates);
     }
 
     await localStorageService.updateCourse(courseId, updates);
 
-    this.syncToFirestore('course', courseId, async () => {
+    this.syncToFirestore("course", courseId, async () => {
       await firestoreService.updateCourse(courseId, updates);
     });
   }
@@ -671,7 +754,7 @@ class DataService {
 
     await localStorageService.deleteCourse(courseId);
 
-    this.syncDeleteToFirestore('course', courseId, async () => {
+    this.syncDeleteToFirestore("course", courseId, async () => {
       await firestoreService.deleteCourse(courseId);
     });
   }
@@ -683,7 +766,7 @@ class DataService {
 
     return this.readWithFallback(
       () => firestoreService.getAllCourses(userId),
-      () => localStorageService.getAllCourses(userId)
+      () => localStorageService.getAllCourses(userId),
     );
   }
 
@@ -707,7 +790,7 @@ class DataService {
         for (const p of localPlayers) playerMap.set(p.id, p);
         return Array.from(playerMap.values());
       } catch (error) {
-        console.warn('DataService: Firestore getPlayersForGame failed', error);
+        console.warn("DataService: Firestore getPlayersForGame failed", error);
       }
     }
 
@@ -724,11 +807,15 @@ class DataService {
     return this.readWithFallback(
       () => firestoreService.getNextUserNumber(),
       () => localStorageService.getNextUserNumber(),
-      { preferFirestore: true }
+      { preferFirestore: true },
     );
   }
 
-  async createUserProfile(userId: string, email: string, displayName: string): Promise<string> {
+  async createUserProfile(
+    userId: string,
+    email: string,
+    displayName: string,
+  ): Promise<string> {
     if (!this.isOnline) {
       return localStorageService.createUserProfile(userId, email, displayName);
     }
@@ -737,18 +824,29 @@ class DataService {
     // (uses a counter doc). Try Firestore first when online.
     if (connectivityManager.isOnline) {
       try {
-        const userNumber = await firestoreService.createUserProfile(userId, email, displayName);
+        const userNumber = await firestoreService.createUserProfile(
+          userId,
+          email,
+          displayName,
+        );
         // Also write to local so offline reads work
         await localStorageService.createUserProfile(userId, email, displayName);
         return userNumber;
       } catch (error) {
-        console.warn('DataService: Firestore createUserProfile failed, falling back to local', error);
+        console.warn(
+          "DataService: Firestore createUserProfile failed, falling back to local",
+          error,
+        );
       }
     }
 
     // Fallback: create locally and mark dirty
-    const userNumber = await localStorageService.createUserProfile(userId, email, displayName);
-    await syncService.markDirty({ entityType: 'user', entityId: userId });
+    const userNumber = await localStorageService.createUserProfile(
+      userId,
+      email,
+      displayName,
+    );
+    await syncService.markDirty({ entityType: "user", entityId: userId });
     syncService.syncAll();
     return userNumber;
   }
@@ -760,7 +858,7 @@ class DataService {
 
     return this.readWithFallback(
       () => firestoreService.getUserProfile(userId),
-      () => localStorageService.getUserProfile(userId)
+      () => localStorageService.getUserProfile(userId),
     );
   }
 
@@ -773,7 +871,7 @@ class DataService {
 
     return this.readWithFallback(
       () => firestoreService.getUserRole(userId),
-      () => localStorageService.getUserRole(userId)
+      () => localStorageService.getUserRole(userId),
     );
   }
 
@@ -784,7 +882,7 @@ class DataService {
 
     await localStorageService.setUserRole(userId, role);
 
-    this.syncToFirestore('user', userId, async () => {
+    this.syncToFirestore("user", userId, async () => {
       await firestoreService.setUserRole(userId, role);
     });
   }
@@ -796,7 +894,7 @@ class DataService {
 
     return this.readWithFallback(
       () => firestoreService.getApprovalStatus(userId),
-      () => localStorageService.getApprovalStatus(userId)
+      () => localStorageService.getApprovalStatus(userId),
     );
   }
 
@@ -807,7 +905,7 @@ class DataService {
 
     await localStorageService.setApprovalStatus(userId, status);
 
-    this.syncToFirestore('user', userId, async () => {
+    this.syncToFirestore("user", userId, async () => {
       await firestoreService.setApprovalStatus(userId, status);
     });
   }
@@ -822,7 +920,7 @@ class DataService {
     await localStorageService.addPendingUser(userId, userData);
 
     // Pending users use setDoc with userId as the doc ID, so no ID mismatch issue
-    this.syncToFirestore('pendingUser', userId, async () => {
+    this.syncToFirestore("pendingUser", userId, async () => {
       await firestoreService.addPendingUser(userId, userData);
     });
   }
@@ -835,7 +933,7 @@ class DataService {
     return this.readWithFallback(
       () => firestoreService.getPendingUsers(),
       () => localStorageService.getPendingUsers(),
-      { preferFirestore: true }
+      { preferFirestore: true },
     );
   }
 
@@ -846,7 +944,7 @@ class DataService {
 
     await localStorageService.removePendingUser(userId);
 
-    this.syncDeleteToFirestore('pendingUser', userId, async () => {
+    this.syncDeleteToFirestore("pendingUser", userId, async () => {
       await firestoreService.removePendingUser(userId);
     });
   }
@@ -858,7 +956,7 @@ class DataService {
 
     await localStorageService.approvePendingUser(userId);
 
-    this.syncToFirestore('user', userId, async () => {
+    this.syncToFirestore("user", userId, async () => {
       await firestoreService.approvePendingUser(userId);
     });
   }
@@ -870,7 +968,7 @@ class DataService {
 
     await localStorageService.rejectPendingUser(userId);
 
-    this.syncToFirestore('user', userId, async () => {
+    this.syncToFirestore("user", userId, async () => {
       await firestoreService.rejectPendingUser(userId);
     });
   }
@@ -885,7 +983,7 @@ class DataService {
     return this.readWithFallback(
       () => firestoreService.getAllUsers(),
       () => localStorageService.getAllUsers(),
-      { preferFirestore: true }
+      { preferFirestore: true },
     );
   }
 
@@ -897,7 +995,7 @@ class DataService {
     return this.readWithFallback(
       () => firestoreService.getUserStats(userId),
       () => localStorageService.getUserStats(userId),
-      { preferFirestore: true }
+      { preferFirestore: true },
     );
   }
 
@@ -908,7 +1006,7 @@ class DataService {
 
     await localStorageService.deleteUser(userId);
 
-    this.syncDeleteToFirestore('user', userId, async () => {
+    this.syncDeleteToFirestore("user", userId, async () => {
       await firestoreService.deleteUser(userId);
     });
   }
