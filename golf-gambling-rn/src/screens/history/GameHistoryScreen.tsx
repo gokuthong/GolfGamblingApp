@@ -289,7 +289,9 @@ export const GameHistoryScreen = () => {
             anchor={
               <TouchableOpacity
                 style={styles.menuButton}
-                onPress={() => setMenuGameId(menuGameId === game.id ? null : game.id)}
+                onPress={() =>
+                  setMenuGameId(menuGameId === game.id ? null : game.id)
+                }
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
                 <MaterialCommunityIcons
@@ -299,7 +301,10 @@ export const GameHistoryScreen = () => {
                 />
               </TouchableOpacity>
             }
-            contentStyle={[styles.menuContent, { backgroundColor: colors.background.card }]}
+            contentStyle={[
+              styles.menuContent,
+              { backgroundColor: colors.background.card },
+            ]}
           >
             <Menu.Item
               onPress={() => handleViewSummary(game.id)}
@@ -484,8 +489,12 @@ const createStyles = (colors: any) =>
       fontWeight: "600",
       color: colors.text.primary,
     },
-    deleteButton: {
+    menuButton: {
       padding: spacing.xs,
+    },
+    menuContent: {
+      borderRadius: 12,
+      minWidth: 180,
     },
     winnerBadge: {
       backgroundColor: colors.primary[100],
