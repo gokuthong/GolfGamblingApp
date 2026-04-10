@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a472a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d2818;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="ballGrad" cx="40%" cy="35%" r="55%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#e8e8e8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d0d0d0;stop-opacity:1" />
+    </radialGradient>
+    <radialGradient id="shadowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:0.25" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:0" />
+    </radialGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFC107;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF9800;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFC107;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E6A817;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1024" height="1024" rx="192" ry="192" fill="url(#bgGrad)" />
+
+  <!-- Subtle gold border -->
+  <rect x="28" y="28" width="968" height="968" rx="170" ry="170" fill="none" stroke="url(#ringGrad)" stroke-width="5" opacity="0.35" />
+
+  <!-- Ball shadow -->
+  <ellipse cx="524" cy="680" rx="220" ry="40" fill="url(#shadowGrad)" />
+
+  <!-- Golf ball -->
+  <circle cx="512" cy="480" r="280" fill="url(#ballGrad)" />
+
+  <!-- Dimple rows -->
+  <!-- Row 1 -->
+  <circle cx="464" cy="256" r="16" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.6"/>
+  <circle cx="512" cy="240" r="16" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.6"/>
+  <circle cx="560" cy="256" r="16" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.6"/>
+  <!-- Row 2 -->
+  <circle cx="400" cy="296" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.55"/>
+  <circle cx="624" cy="296" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.55"/>
+  <!-- Row 3 -->
+  <circle cx="344" cy="350" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.5"/>
+  <circle cx="400" cy="356" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.5"/>
+  <circle cx="624" cy="356" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.5"/>
+  <circle cx="680" cy="350" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.5"/>
+  <!-- Row 4 -->
+  <circle cx="296" cy="416" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.45"/>
+  <circle cx="352" cy="424" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.45"/>
+  <circle cx="672" cy="424" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.45"/>
+  <circle cx="728" cy="416" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.45"/>
+  <!-- Row 5 (sides only - center clear for $) -->
+  <circle cx="272" cy="480" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.4"/>
+  <circle cx="320" cy="488" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.4"/>
+  <circle cx="704" cy="488" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.4"/>
+  <circle cx="752" cy="480" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.4"/>
+  <!-- Row 6 -->
+  <circle cx="296" cy="544" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.45"/>
+  <circle cx="352" cy="552" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.45"/>
+  <circle cx="672" cy="552" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.45"/>
+  <circle cx="728" cy="544" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.45"/>
+  <!-- Row 7 -->
+  <circle cx="344" cy="610" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.5"/>
+  <circle cx="400" cy="604" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.5"/>
+  <circle cx="624" cy="604" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.5"/>
+  <circle cx="680" cy="610" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.5"/>
+  <!-- Row 8 -->
+  <circle cx="400" cy="664" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.55"/>
+  <circle cx="624" cy="664" r="17" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.55"/>
+  <!-- Row 9 -->
+  <circle cx="464" cy="704" r="16" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.6"/>
+  <circle cx="512" cy="716" r="16" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.6"/>
+  <circle cx="560" cy="704" r="16" fill="none" stroke="#c8c8c8" stroke-width="2.5" opacity="0.6"/>
+
+  <!-- Dollar sign as path (font-independent) - centered on ball -->
+  <g transform="translate(512, 480)">
+    <!-- Shadow -->
+    <path d="M 12,-108 L 12,-90 C 52,-86 82,-68 82,-36 C 82,-4 56,16 12,20 L 12,76 C 36,72 52,60 60,44 L 86,60 C 74,84 50,98 12,102 L 12,120 L -8,120 L -8,102 C -52,98 -86,78 -86,42 C -86,8 -56,-14 -8,-18 L -8,-72 C -32,-68 -48,-56 -56,-40 L -82,-56 C -70,-80 -46,-92 -8,-96 L -8,-108 Z M -8,20 C -40,24 -56,38 -56,54 C -56,70 -40,82 -8,86 Z M 12,-18 C 40,-22 56,-36 56,-50 C 56,-64 40,-76 12,-80 Z"
+          fill="#000000" opacity="0.15" />
+    <!-- Main $ -->
+    <path d="M 10,-110 L 10,-92 C 50,-88 80,-70 80,-38 C 80,-6 54,14 10,18 L 10,74 C 34,70 50,58 58,42 L 84,58 C 72,82 48,96 10,100 L 10,118 L -10,118 L -10,100 C -54,96 -88,76 -88,40 C -88,6 -58,-16 -10,-20 L -10,-74 C -34,-70 -50,-58 -58,-42 L -84,-58 C -72,-82 -48,-94 -10,-98 L -10,-110 Z M -10,18 C -42,22 -58,36 -58,52 C -58,68 -42,80 -10,84 Z M 10,-20 C 38,-24 54,-38 54,-52 C 54,-66 38,-78 10,-82 Z"
+          fill="url(#goldGrad)" stroke="#B8860B" stroke-width="3" />
+  </g>
+</svg>

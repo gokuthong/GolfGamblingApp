@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read/write their own profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null; // Others can read profiles
+    }
+
+    // Games: authenticated users can read/write
+    match /games/{gameId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Holes: authenticated users can read/write
+    match /holes/{holeId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Scores: authenticated users can read/write
+    match /scores/{scoreId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Players: authenticated users can read/write
+    match /players/{playerId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Courses: authenticated users can read/write
+    match /courses/{courseId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Counters: authenticated users can read/write
+    match /counters/{counterId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Pending users: authenticated users can read/write
+    match /pendingUsers/{userId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

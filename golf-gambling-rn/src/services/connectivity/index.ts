@@ -1,0 +1,1 @@
+export { connectivityManager } from './ConnectivityManager';

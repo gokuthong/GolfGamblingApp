@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "Golf Gamble Tracker",
+    "slug": "golf-gambling-rn",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0d2818"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.xtatty.golfgambletracker"
+    },
+    "android": {
+      "package": "com.anonymous.golfgamblingrn",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0d2818"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png",
+      "name": "Golf Gamble Tracker",
+      "shortName": "Golf Gamble",
+      "themeColor": "#0d2818",
+      "backgroundColor": "#0d2818"
+    },
+    "plugins": [
+      "expo-font",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableProguardInReleaseBuilds": false,
+            "enableMinifyInReleaseBuilds": false
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "63e528a0-5cde-4168-9494-b87590455411"
+      }
+    },
+    "owner": "danielwilliams"
+  }
+}

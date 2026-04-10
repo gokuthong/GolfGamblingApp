@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "defaultMode": "plan",
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(flutter create:*)",
+      "Bash(flutter pub get:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter devices:*)",
+      "Bash(flutter run:*)",
+      "Bash(timeout 30 bash:*)",
+      "Bash(rd /s /q \"C:\\Users\\USER\\AppData\\Local\\Android\\sdk\\ndk\\28.2.13676358\")",
+      "Bash(timeout 60 bash:*)",
+      "Bash(timeout 90 bash:*)",
+      "Bash(timeout 120 bash:*)",
+      "Bash(start ms-settings:developers)",
+      "Bash(flutter build:*)",
+      "Bash(timeout 10 bash:*)",
+      "Bash(where node npm npx)",
+      "Bash(npx create-expo-app@latest:*)",
+      "Bash(npm install:*)",
+      "Bash(npx expo install expo-haptics expo-sharing)",
+      "Bash(cat:*)",
+      "Bash(npx tsc:*)",
+      "Bash(ls:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

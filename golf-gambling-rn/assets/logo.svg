@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a472a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d2818;stop-opacity:1" />
+    </linearGradient>
+    <!-- Golf ball gradient -->
+    <radialGradient id="ballGrad" cx="40%" cy="35%" r="55%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#e8e8e8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d0d0d0;stop-opacity:1" />
+    </radialGradient>
+    <!-- Ball shadow -->
+    <radialGradient id="shadowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:0" />
+    </radialGradient>
+    <!-- Gold gradient for dollar sign -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFC107;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF9800;stop-opacity:1" />
+    </linearGradient>
+    <!-- Outer ring gradient -->
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFC107;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E6A817;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect x="0" y="0" width="512" height="512" rx="96" ry="96" fill="url(#bgGrad)" />
+
+  <!-- Subtle inner border ring -->
+  <rect x="16" y="16" width="480" height="480" rx="82" ry="82" fill="none" stroke="url(#ringGrad)" stroke-width="3" opacity="0.4" />
+
+  <!-- Ball shadow -->
+  <ellipse cx="264" cy="340" rx="120" ry="24" fill="url(#shadowGrad)" />
+
+  <!-- Golf ball body -->
+  <circle cx="256" cy="240" r="140" fill="url(#ballGrad)" />
+
+  <!-- Golf ball dimples - arranged in a pattern -->
+  <!-- Row 1 (top) -->
+  <circle cx="232" cy="128" r="8" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="256" cy="120" r="8" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="280" cy="128" r="8" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Row 2 -->
+  <circle cx="200" cy="148" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.55"/>
+  <circle cx="312" cy="148" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.55"/>
+
+  <!-- Row 3 -->
+  <circle cx="172" cy="175" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="200" cy="178" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="312" cy="178" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="340" cy="175" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Row 4 -->
+  <circle cx="148" cy="208" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="176" cy="212" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="336" cy="212" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="364" cy="208" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.45"/>
+
+  <!-- Row 5 (middle band - leave clear for $ sign) -->
+  <circle cx="136" cy="240" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.4"/>
+  <circle cx="160" cy="244" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.4"/>
+  <circle cx="352" cy="244" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.4"/>
+  <circle cx="376" cy="240" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.4"/>
+
+  <!-- Row 6 -->
+  <circle cx="148" cy="272" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="176" cy="276" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="336" cy="276" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="364" cy="272" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.45"/>
+
+  <!-- Row 7 -->
+  <circle cx="172" cy="305" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="200" cy="302" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="312" cy="302" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="340" cy="305" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Row 8 -->
+  <circle cx="200" cy="332" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.55"/>
+  <circle cx="312" cy="332" r="9" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.55"/>
+
+  <!-- Row 9 (bottom) -->
+  <circle cx="232" cy="352" r="8" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="256" cy="358" r="8" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="280" cy="352" r="8" fill="none" stroke="#c8c8c8" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Dollar sign - centered on ball, bold and prominent -->
+  <g transform="translate(256, 240)">
+    <!-- Dollar sign shadow for depth -->
+    <text x="2" y="2" text-anchor="middle" dominant-baseline="central"
+          font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="140"
+          fill="#000000" opacity="0.2">$</text>
+    <!-- Dollar sign main -->
+    <text x="0" y="0" text-anchor="middle" dominant-baseline="central"
+          font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="140"
+          fill="url(#goldGrad)" stroke="#B8860B" stroke-width="2">$</text>
+  </g>
+
+  <!-- App name arc at bottom -->
+  <text x="256" y="440" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700"
+        font-size="36" fill="#FFD700" letter-spacing="6" opacity="0.9">GOLF GAMBLE</text>
+  <text x="256" y="468" text-anchor="middle" font-family="Arial, sans-serif" font-weight="400"
+        font-size="16" fill="#8fbc8f" letter-spacing="8" opacity="0.7">TRACKER</text>
+</svg>
