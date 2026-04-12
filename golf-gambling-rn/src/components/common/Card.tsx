@@ -1,5 +1,11 @@
 import React from "react";
-import { StyleSheet, ViewStyle, Pressable, View } from "react-native";
+import {
+  StyleSheet,
+  ViewStyle,
+  Pressable,
+  View,
+  StyleProp,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
