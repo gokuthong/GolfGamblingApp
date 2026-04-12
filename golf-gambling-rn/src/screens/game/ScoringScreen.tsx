@@ -1100,7 +1100,7 @@ const createStyles = (colors: any) =>
       minHeight: 1,
     },
     playerCardWrapperCompact: {
-      marginBottom: 14,
+      marginBottom: 8,
       flex: 1,
     },
     playerCard: {
