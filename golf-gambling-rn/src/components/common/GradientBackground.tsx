@@ -1,25 +1,23 @@
-import React from 'react';
-import { StyleSheet, View, ViewStyle, StyleProp, Dimensions } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import React from "react";
+import { StyleSheet, View, ViewStyle, StyleProp } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withRepeat,
   withTiming,
   Easing,
-} from 'react-native-reanimated';
-import { colors } from '../../theme';
-
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+} from "react-native-reanimated";
+import { useThemedColors } from "../../contexts/ThemeContext";
 
 type GradientVariant =
-  | 'dark'
-  | 'header'
-  | 'card'
-  | 'gold'
-  | 'green'
-  | 'greenFade'
-  | 'radialGold';
+  | "dark"
+  | "header"
+  | "card"
+  | "gold"
+  | "green"
+  | "greenFade"
+  | "radialGold";
 
 interface GradientBackgroundProps {
   variant?: GradientVariant;
@@ -28,67 +26,21 @@ interface GradientBackgroundProps {
   animated?: boolean;
 }
 
-const gradientConfigs: Record<GradientVariant, {
-  colors: string[];
-  start?: { x: number; y: number };
-  end?: { x: number; y: number };
-  locations?: number[];
-}> = {
-  dark: {
-    colors: [colors.background.secondary, colors.background.primary],
-    start: { x: 0, y: 0 },
-    end: { x: 0, y: 1 },
-  },
-  header: {
-    colors: colors.gradients.header,
-    start: { x: 0, y: 0 },
-    end: { x: 0, y: 1 },
-    locations: [0, 0.5, 1],
-  },
-  card: {
-    colors: colors.gradients.card,
-    start: { x: 0, y: 0 },
-    end: { x: 1, y: 1 },
-  },
-  gold: {
-    colors: colors.gradients.gold,
-    start: { x: 0, y: 0 },
-    end: { x: 1, y: 1 },
-  },
-  green: {
-    colors: colors.gradients.primary,
-    start: { x: 0, y: 0 },
-    end: { x: 1, y: 1 },
-    locations: [0, 0.5, 1],
-  },
-  greenFade: {
-    colors: colors.gradients.primaryDark,
-    start: { x: 0, y: 0 },
-    end: { x: 0, y: 1 },
-    locations: [0, 0.4, 1],
-  },
-  radialGold: {
-    colors: [colors.glow.gold, 'transparent'],
-    start: { x: 0.5, y: 0.5 },
-    end: { x: 1, y: 1 },
-  },
-};
-
 export const GradientBackground: React.FC<GradientBackgroundProps> = ({
-  variant = 'dark',
+  variant = "dark",
   style,
   children,
   animated = false,
 }) => {
-  const config = gradientConfigs[variant];
+  const colors = useThemedColors();
   const opacity = useSharedValue(1);
 
   React.useEffect(() => {
     if (animated) {
       opacity.value = withRepeat(
-        withTiming(0.85, { duration: 3000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.9, { duration: 3500, easing: Easing.inOut(Easing.ease) }),
         -1,
-        true
+        true,
       );
     }
   }, [animated]);
@@ -96,6 +48,63 @@ export const GradientBackground: React.FC<GradientBackgroundProps> = ({
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
   }));
+
+  const getConfig = (): {
+    colors: [string, string, ...string[]];
+    start: { x: number; y: number };
+    end: { x: number; y: number };
+    locations?: number[];
+  } => {
+    switch (variant) {
+      case "header":
+        return {
+          colors: colors.gradients.header as [string, string, ...string[]],
+          start: { x: 0, y: 0 },
+          end: { x: 0, y: 1 },
+        };
+      case "card":
+        return {
+          colors: colors.gradients.card as [string, string, ...string[]],
+          start: { x: 0, y: 0 },
+          end: { x: 1, y: 1 },
+        };
+      case "gold":
+        return {
+          colors: colors.gradients.gold as [string, string, ...string[]],
+          start: { x: 0, y: 0 },
+          end: { x: 1, y: 1 },
+        };
+      case "green":
+        return {
+          colors: colors.gradients.primary as [string, string, ...string[]],
+          start: { x: 0, y: 0 },
+          end: { x: 1, y: 1 },
+        };
+      case "greenFade":
+        return {
+          colors: colors.gradients.primaryDark as [string, string, ...string[]],
+          start: { x: 0, y: 0 },
+          end: { x: 0, y: 1 },
+        };
+      case "radialGold":
+        return {
+          colors: [colors.glow.gold, "transparent"],
+          start: { x: 0.5, y: 0.5 },
+          end: { x: 1, y: 1 },
+        };
+      default:
+        return {
+          colors: [
+            colors.background.secondary,
+            colors.background.primary,
+          ],
+          start: { x: 0, y: 0 },
+          end: { x: 0, y: 1 },
+        };
+    }
+  };
+
+  const config = getConfig();
 
   const GradientComponent = animated ? (
     <Animated.View style={[StyleSheet.absoluteFill, animatedStyle]}>
@@ -125,29 +134,29 @@ export const GradientBackground: React.FC<GradientBackgroundProps> = ({
   );
 };
 
-// Gold glow orb - decorative element
 interface GoldGlowProps {
   size?: number;
-  intensity?: 'light' | 'medium' | 'strong';
+  intensity?: "light" | "medium" | "strong";
   position?: { top?: number; left?: number; right?: number; bottom?: number };
   animated?: boolean;
 }
 
 export const GoldGlow: React.FC<GoldGlowProps> = ({
-  size = 200,
-  intensity = 'medium',
-  position = { top: -50, right: -50 },
+  size = 220,
+  intensity = "light",
+  position = { top: -60, right: -60 },
   animated = true,
 }) => {
   const scale = useSharedValue(1);
-  const glowOpacity = intensity === 'light' ? 0.15 : intensity === 'strong' ? 0.4 : 0.25;
+  const glowOpacity =
+    intensity === "light" ? 0.08 : intensity === "strong" ? 0.2 : 0.12;
 
   React.useEffect(() => {
     if (animated) {
       scale.value = withRepeat(
-        withTiming(1.1, { duration: 4000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(1.08, { duration: 5000, easing: Easing.inOut(Easing.ease) }),
         -1,
-        true
+        true,
       );
     }
   }, [animated]);
@@ -170,7 +179,7 @@ export const GoldGlow: React.FC<GoldGlowProps> = ({
       ]}
     >
       <LinearGradient
-        colors={[`rgba(255, 215, 0, ${glowOpacity})`, 'transparent']}
+        colors={[`rgba(212, 175, 55, ${glowOpacity})`, "transparent"]}
         start={{ x: 0.5, y: 0.5 }}
         end={{ x: 1, y: 1 }}
         style={[styles.glowGradient, { borderRadius: size / 2 }]}
@@ -179,7 +188,6 @@ export const GoldGlow: React.FC<GoldGlowProps> = ({
   );
 };
 
-// Screen wrapper with dark background and optional decorative elements
 interface DarkScreenProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
@@ -193,8 +201,15 @@ export const DarkScreen: React.FC<DarkScreenProps> = ({
   showGlow = false,
   glowPosition,
 }) => {
+  const colors = useThemedColors();
   return (
-    <View style={[styles.darkScreen, style]}>
+    <View
+      style={[
+        styles.screen,
+        { backgroundColor: colors.background.primary },
+        style,
+      ]}
+    >
       {showGlow && <GoldGlow position={glowPosition} />}
       {children}
     </View>
@@ -204,15 +219,14 @@ export const DarkScreen: React.FC<DarkScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
-  darkScreen: {
+  screen: {
     flex: 1,
-    backgroundColor: colors.background.primary,
   },
   glowOrb: {
-    position: 'absolute',
-    overflow: 'hidden',
+    position: "absolute",
+    overflow: "hidden",
   },
   glowGradient: {
     flex: 1,
