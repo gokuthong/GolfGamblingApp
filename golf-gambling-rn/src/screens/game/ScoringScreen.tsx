@@ -1135,15 +1135,15 @@ const createStyles = (colors: any) =>
       alignItems: "center",
     },
     playerName: {
-      fontFamily: fontFamilies.display,
-      fontSize: 20,
+      fontFamily: fontFamilies.bodySemiBold,
+      fontSize: 17,
       color: colors.text.primary,
       marginRight: spacing.xs,
-      letterSpacing: -0.4,
+      letterSpacing: -0.1,
     },
     playerNameCompact: {
-      fontSize: 17,
-      letterSpacing: -0.3,
+      fontSize: 15,
+      letterSpacing: -0.1,
     },
     playerNumber: {
       fontFamily: fontFamilies.mono,
