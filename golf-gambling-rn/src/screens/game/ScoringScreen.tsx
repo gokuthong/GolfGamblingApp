@@ -621,13 +621,86 @@ export const ScoringScreen = () => {
                   </TouchableOpacity>
                 </View>
 
-                {/* Score Counter and Points - Moved below multipliers */}
+                {/* Score row: name (left) + counter (center) + points (right) */}
                 <View
                   style={[
                     styles.scoreAndPointsRow,
                     isCompactLayout && styles.scoreAndPointsRowCompact,
                   ]}
                 >
+                  {/* Name cell on the left of the score row */}
+                  <View style={styles.nameCell}>
+                    <Text
+                      style={[
+                        styles.playerName,
+                        isCompactLayout && styles.playerNameCompact,
+                        { color: playerColor },
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {player.name}
+                    </Text>
+                    <TouchableOpacity
+                      style={[
+                        styles.handicapButton,
+                        isCompactLayout && styles.handicapButtonCompact,
+                      ]}
+                      onPress={() => openHandicapModal(player)}
+                    >
+                      {(() => {
+                        let givesStrokes = false;
+                        let receivesStrokes = false;
+                        if (game?.handicaps && currentHole) {
+                          players.forEach((opponent) => {
+                            if (opponent.id !== player.id) {
+                              const strokesGiven = getHandicapForHole(
+                                game.handicaps,
+                                currentHole.holeNumber,
+                                player.id,
+                                opponent.id,
+                              );
+                              const strokesReceived = getHandicapForHole(
+                                game.handicaps,
+                                currentHole.holeNumber,
+                                opponent.id,
+                                player.id,
+                              );
+                              if (strokesGiven > 0) givesStrokes = true;
+                              if (strokesReceived > 0) receivesStrokes = true;
+                            }
+                          });
+                        }
+                        return (
+                          <>
+                            {(givesStrokes || receivesStrokes) && (
+                              <View
+                                style={[
+                                  styles.handicapDot,
+                                  isCompactLayout && styles.handicapDotCompact,
+                                  receivesStrokes && styles.handicapDotReceives,
+                                  givesStrokes && styles.handicapDotGives,
+                                ]}
+                              />
+                            )}
+                            <Text
+                              style={[
+                                styles.handicapText,
+                                isCompactLayout && styles.handicapTextCompact,
+                              ]}
+                            >
+                              {getHandicapSummary(player.id)}
+                            </Text>
+                            <Icon
+                              name="chevron-right"
+                              size={isCompactLayout ? 10 : 14}
+                              color={colors.text.secondary}
+                            />
+                          </>
+                        );
+                      })()}
+                    </TouchableOpacity>
+                  </View>
+
                   <View
                     style={[
                       styles.scoreSection,
