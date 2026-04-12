@@ -1231,11 +1231,11 @@ const createStyles = (colors: any) =>
       minWidth: 45,
     },
     strokesValue: {
-      fontFamily: fontFamilies.display,
-      fontSize: 44,
+      fontFamily: fontFamilies.monoBold,
+      fontSize: 40,
       color: colors.text.primary,
-      lineHeight: 48,
-      letterSpacing: -1.2,
+      lineHeight: 46,
+      letterSpacing: -0.5,
     },
     // Multiplier buttons (now on top, smaller than score buttons)
     multiplierRow: {
