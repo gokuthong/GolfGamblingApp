@@ -510,16 +510,20 @@ export const ScoringScreen = () => {
         showsVerticalScrollIndicator={false}
         scrollEnabled={!isCompactLayout || isEditingFinished}
       >
-        {players.map((player) => {
+        {players.map((player, playerIndex) => {
           const strokes = getPlayerScore(player.id);
           const playerScore = scores.find(
             (s) => s.holeId === currentHole?.id && s.playerId === player.id,
           );
           const playerMultiplier = playerScore?.multiplier || 1;
           const playerPoints = holePoints[player.id] || 0;
+          const playerColor = getPlayerColor(playerIndex);
 
           // Build card style without falsy values
-          const cardStyle = [styles.playerCard];
+          const cardStyle: any[] = [
+            styles.playerCard,
+            { borderLeftColor: playerColor },
+          ];
           if (isCompactLayout) cardStyle.push(styles.playerCardCompact);
           if (playerPoints > 0) cardStyle.push(styles.playerCardWinning);
           if (playerPoints < 0) cardStyle.push(styles.playerCardLosing);
@@ -532,7 +536,7 @@ export const ScoringScreen = () => {
                 isCompactLayout && styles.playerCardWrapperCompact,
               ]}
             >
-              <Card glass goldBorder={playerPoints > 0} style={cardStyle}>
+              <Card goldBorder={playerPoints > 0} style={cardStyle}>
                 {/* Player Header */}
                 <View
                   style={[
