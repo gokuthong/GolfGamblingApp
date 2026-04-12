@@ -1,15 +1,15 @@
-import React from 'react';
-import { StyleSheet, ViewStyle, Pressable, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import React from "react";
+import { StyleSheet, ViewStyle, Pressable, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   Easing,
-} from 'react-native-reanimated';
-import { Skeleton } from './Skeleton';
-import { spacing, borderRadius } from '../../theme';
-import { useThemedColors } from '../../contexts/ThemeContext';
+} from "react-native-reanimated";
+import { Skeleton } from "./Skeleton";
+import { spacing, borderRadius } from "../../theme";
+import { useThemedColors } from "../../contexts/ThemeContext";
 
 interface CardProps {
   children: React.ReactNode;
@@ -52,20 +52,28 @@ export const Card: React.FC<CardProps> = ({
 
   const handlePressIn = () => {
     if (!onPress) return;
-    translateY.value = withTiming(1, { duration: 120, easing: Easing.out(Easing.quad) });
+    translateY.value = withTiming(1, {
+      duration: 120,
+      easing: Easing.out(Easing.quad),
+    });
     shadowOpacity.value = withTiming(0.04, { duration: 120 });
   };
 
   const handlePressOut = () => {
     if (!onPress) return;
-    translateY.value = withTiming(0, { duration: 200, easing: Easing.out(Easing.quad) });
-    shadowOpacity.value = withTiming(elevation >= 2 ? 0.1 : 0.06, { duration: 200 });
+    translateY.value = withTiming(0, {
+      duration: 200,
+      easing: Easing.out(Easing.quad),
+    });
+    shadowOpacity.value = withTiming(elevation >= 2 ? 0.1 : 0.06, {
+      duration: 200,
+    });
   };
 
   const baseBg = glass
     ? colors.glass.medium
     : gradient
-      ? 'transparent'
+      ? "transparent"
       : colors.background.card;
 
   const baseBorder: ViewStyle = goldBorder
@@ -74,13 +82,15 @@ export const Card: React.FC<CardProps> = ({
       ? { borderWidth: 1, borderColor: colors.glass.border }
       : { borderWidth: 1, borderColor: colors.border.light };
 
-  const shadowColor = goldBorder ? colors.accent.gold : colors.shadowColors.default;
+  const shadowColor = goldBorder
+    ? colors.accent.gold
+    : colors.shadowColors.default;
 
   const cardStyles: ViewStyle = {
     backgroundColor: baseBg,
     borderRadius: borderRadius.xl,
     padding,
-    overflow: 'hidden',
+    overflow: "hidden",
     ...baseBorder,
     shadowColor,
     shadowOffset: { width: 0, height: 8 },
@@ -100,10 +110,13 @@ export const Card: React.FC<CardProps> = ({
     if (gradient) {
       return (
         <LinearGradient
-          colors={gradient}
+          colors={gradient as unknown as readonly [string, string, ...string[]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={[StyleSheet.absoluteFillObject, { borderRadius: borderRadius.xl }]}
+          style={[
+            StyleSheet.absoluteFillObject,
+            { borderRadius: borderRadius.xl },
+          ]}
         />
       );
     }
