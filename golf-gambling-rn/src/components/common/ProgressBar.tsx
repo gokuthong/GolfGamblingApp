@@ -1,105 +1,84 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ViewStyle, StyleProp } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet, ViewStyle, StyleProp } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   withTiming,
-} from 'react-native-reanimated';
-import { colors, typography, spacing, borderRadius, animations } from '../../theme';
+} from "react-native-reanimated";
+import {
+  typography,
+  spacing,
+  borderRadius,
+  animations,
+} from "../../theme";
+import { useThemedColors } from "../../contexts/ThemeContext";
 
 export interface ProgressBarProps {
-  /**
-   * Progress value (0-100)
-   */
   progress: number;
-  /**
-   * Optional label to display
-   */
   label?: string;
-  /**
-   * Show percentage text
-   */
   showPercentage?: boolean;
-  /**
-   * Use gradient fill
-   */
   gradient?: boolean;
-  /**
-   * Color variant
-   */
-  variant?: 'primary' | 'positive' | 'negative' | 'accent';
-  /**
-   * Height of the progress bar
-   */
+  variant?: "primary" | "positive" | "negative" | "accent" | "gold";
   height?: number;
-  /**
-   * Custom style
-   */
   style?: StyleProp<ViewStyle>;
-  /**
-   * Animation type
-   */
   animated?: boolean;
 }
 
-/**
- * Animated progress bar with gradient support
- * Perfect for showing score differentials and stats
- */
 export const ProgressBar: React.FC<ProgressBarProps> = ({
   progress,
   label,
   showPercentage = true,
   gradient = true,
-  variant = 'primary',
-  height = 8,
+  variant = "gold",
+  height = 6,
   style,
   animated = true,
 }) => {
+  const colors = useThemedColors();
   const animatedWidth = useSharedValue(0);
 
   useEffect(() => {
-    const clampedProgress = Math.max(0, Math.min(100, progress));
+    const clamped = Math.max(0, Math.min(100, progress));
     if (animated) {
-      animatedWidth.value = withSpring(clampedProgress, animations.spring.gentle);
+      animatedWidth.value = withSpring(clamped, animations.spring.gentle);
     } else {
-      animatedWidth.value = withTiming(clampedProgress, {
+      animatedWidth.value = withTiming(clamped, {
         duration: animations.timing.fast,
       });
     }
   }, [progress, animated]);
 
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      width: `${animatedWidth.value}%`,
-    };
-  });
+  const animatedStyle = useAnimatedStyle(() => ({
+    width: `${animatedWidth.value}%`,
+  }));
 
-  const getColors = (): [string, string] => {
+  const getGradientColors = (): [string, string] => {
     switch (variant) {
-      case 'positive':
-        return [colors.gradients.victory[0], colors.gradients.victory[1]];
-      case 'negative':
-        return [colors.multipliers.burn, '#D32F2F'];
-      case 'accent':
-        return [colors.gradients.accent[0], colors.gradients.accent[1]];
+      case "positive":
+        return [colors.scoring.positive, colors.scoring.positive];
+      case "negative":
+        return [colors.scoring.negative, colors.scoring.negative];
+      case "accent":
+        return [colors.accent.gold, colors.accent.goldDark];
+      case "primary":
+        return [colors.primary[500], colors.primary[700]];
       default:
-        return [colors.gradients.primary[0], colors.gradients.primary[1]];
+        return [colors.accent.gold, colors.accent.goldDark];
     }
   };
 
   const getSolidColor = (): string => {
     switch (variant) {
-      case 'positive':
+      case "positive":
         return colors.scoring.positive;
-      case 'negative':
+      case "negative":
         return colors.scoring.negative;
-      case 'accent':
-        return colors.accent.main;
-      default:
+      case "primary":
         return colors.primary[500];
+      default:
+        return colors.accent.gold;
     }
   };
 
@@ -107,18 +86,31 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     <View style={[styles.container, style]}>
       {(label || showPercentage) && (
         <View style={styles.labelRow}>
-          {label && <Text style={styles.label}>{label}</Text>}
+          {label && (
+            <Text style={[styles.label, { color: colors.text.secondary }]}>
+              {label}
+            </Text>
+          )}
           {showPercentage && (
-            <Text style={styles.percentage}>{Math.round(progress)}%</Text>
+            <Text
+              style={[styles.percentage, { color: colors.text.primary }]}
+            >
+              {Math.round(progress)}%
+            </Text>
           )}
         </View>
       )}
 
-      <View style={[styles.track, { height }]}>
+      <View
+        style={[
+          styles.track,
+          { height, backgroundColor: colors.surfaces.level2 },
+        ]}
+      >
         <Animated.View style={[styles.fillContainer, animatedStyle]}>
           {gradient ? (
             <LinearGradient
-              colors={getColors()}
+              colors={getGradientColors()}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.fill}
@@ -134,34 +126,33 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: "100%",
   },
   labelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: spacing.xs,
   },
   label: {
     ...typography.bodySmall,
-    color: colors.text.secondary,
   },
   percentage: {
     ...typography.bodySmall,
-    fontWeight: '600',
-    color: colors.text.primary,
+    fontWeight: "600",
   },
   track: {
-    width: '100%',
-    backgroundColor: colors.surfaces.level2,
+    width: "100%",
     borderRadius: borderRadius.full,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   fillContainer: {
-    height: '100%',
+    height: "100%",
   },
   fill: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 });
+
+export default ProgressBar;
