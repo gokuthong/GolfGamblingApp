@@ -1300,9 +1300,6 @@ const createStyles = (colors: any) =>
     multiplierTextActive: {
       color: colors.text.inverse,
     },
-    multiplierTextActive: {
-      color: colors.text.inverse,
-    },
     pointsContainer: {
       alignItems: "center",
       minWidth: 60,
