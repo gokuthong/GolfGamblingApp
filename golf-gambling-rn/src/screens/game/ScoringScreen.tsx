@@ -1214,14 +1214,14 @@ const createStyles = (colors: any) =>
       flex: 1,
     },
     counterButton: {
-      width: 50,
-      height: 50,
-      borderRadius: 25,
-      backgroundColor: colors.surfaces.level3,
+      width: 46,
+      height: 46,
+      borderRadius: 23,
+      backgroundColor: colors.background.card,
       alignItems: "center",
       justifyContent: "center",
-      borderWidth: 2,
-      borderColor: colors.border.medium,
+      borderWidth: 1,
+      borderColor: colors.border.goldSubtle,
     },
     strokesDisplay: {
       alignItems: "center",
@@ -1232,9 +1232,10 @@ const createStyles = (colors: any) =>
     },
     strokesValue: {
       fontFamily: fontFamilies.display,
-      fontSize: 48,
+      fontSize: 44,
       color: colors.text.primary,
-      lineHeight: 52,
+      lineHeight: 48,
+      letterSpacing: -1.2,
     },
     // Multiplier buttons (now on top, smaller than score buttons)
     multiplierRow: {
