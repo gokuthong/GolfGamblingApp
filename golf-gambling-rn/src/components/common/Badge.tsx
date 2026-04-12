@@ -9,25 +9,17 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { Icon } from './Icon';
-import { colors, typography, spacing, borderRadius, animations } from '../../theme';
+import { typography, spacing, borderRadius, animations } from '../../theme';
+import { useThemedColors } from '../../contexts/ThemeContext';
 
 interface BadgeProps {
   label: string;
-  variant?: 'up' | 'burn' | 'birdie' | 'eagle' | 'positive' | 'negative' | 'neutral' | 'primary';
+  variant?: 'up' | 'burn' | 'birdie' | 'eagle' | 'positive' | 'negative' | 'neutral' | 'primary' | 'gold';
   size?: 'small' | 'medium';
   style?: ViewStyle;
   textStyle?: TextStyle;
-  /**
-   * Icon name from MaterialCommunityIcons
-   */
   icon?: string;
-  /**
-   * Use gradient background
-   */
   gradient?: boolean;
-  /**
-   * Pulse animation for active states
-   */
   pulse?: boolean;
 }
 
@@ -41,67 +33,64 @@ export const Badge: React.FC<BadgeProps> = ({
   gradient = false,
   pulse = false,
 }) => {
+  const colors = useThemedColors();
   const scale = useSharedValue(1);
 
   useEffect(() => {
     if (pulse) {
       scale.value = withRepeat(
         withSequence(
-          withTiming(1.1, { duration: animations.timing.fast }),
-          withTiming(1, { duration: animations.timing.fast })
+          withTiming(1.08, { duration: animations.timing.fast }),
+          withTiming(1, { duration: animations.timing.fast }),
         ),
-        -1, // infinite
-        false
+        -1,
+        false,
       );
     }
   }, [pulse]);
 
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: scale.value }],
-    };
-  });
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   const getBackgroundColor = (): string => {
     switch (variant) {
-      case 'up':
-        return colors.multipliers.up;
-      case 'burn':
-        return colors.multipliers.burn;
-      case 'birdie':
-        return colors.scoring.birdie;
-      case 'eagle':
-        return colors.scoring.eagle;
-      case 'positive':
-        return colors.scoring.positive;
-      case 'negative':
-        return colors.scoring.negative;
-      case 'primary':
-        return colors.primary[500];
-      default:
-        return colors.scoring.neutral;
+      case 'up': return colors.multipliers.up;
+      case 'burn': return colors.multipliers.burn;
+      case 'birdie': return colors.scoring.birdie;
+      case 'eagle': return colors.scoring.eagle;
+      case 'positive': return colors.scoring.positive;
+      case 'negative': return colors.scoring.negative;
+      case 'primary': return colors.primary[500];
+      case 'gold': return colors.accent.gold;
+      default: return colors.surfaces.level3;
     }
+  };
+
+  const getTextColor = (): string => {
+    if (variant === 'neutral') return colors.text.secondary;
+    return colors.text.inverse;
   };
 
   const getGradientColors = (): [string, string] => {
     switch (variant) {
-      case 'positive':
-        return [colors.gradients.victory[0], colors.gradients.victory[1]];
-      case 'primary':
-        return [colors.gradients.primary[0], colors.gradients.primary[1]];
-      case 'up':
-        return [colors.multipliers.up, '#F57C00'];
-      case 'burn':
-        return [colors.multipliers.burn, '#D32F2F'];
-      default:
-        return [getBackgroundColor(), getBackgroundColor()];
+      case 'positive': return [colors.scoring.positive, colors.scoring.positive];
+      case 'primary': return [colors.primary[500], colors.primary[700]];
+      case 'gold': return [colors.accent.gold, colors.accent.goldDark];
+      case 'up': return [colors.multipliers.up, colors.multipliers.up];
+      case 'burn': return [colors.multipliers.burn, colors.multipliers.burn];
+      default: return [getBackgroundColor(), getBackgroundColor()];
     }
   };
 
+  const bg = getBackgroundColor();
+  const txtColor = getTextColor();
+
   const baseStyles = [
     styles.base,
-    styles[size],
-    !gradient && { backgroundColor: getBackgroundColor() },
+    size === 'small' ? styles.small : styles.medium,
+    !gradient && { backgroundColor: bg },
+    variant === 'neutral' && { borderWidth: 1, borderColor: colors.border.light },
     style,
   ];
 
@@ -110,12 +99,21 @@ export const Badge: React.FC<BadgeProps> = ({
       {icon && (
         <Icon
           name={icon}
-          size={size === 'small' ? 12 : 14}
-          color={colors.text.inverse}
+          size={size === 'small' ? 11 : 13}
+          color={txtColor}
           style={styles.icon}
         />
       )}
-      <Text style={[styles.text, styles[`${size}Text`], textStyle]}>{label}</Text>
+      <Text
+        style={[
+          styles.text,
+          size === 'small' ? styles.smallText : styles.mediumText,
+          { color: txtColor },
+          textStyle,
+        ]}
+      >
+        {label}
+      </Text>
     </>
   );
 
@@ -134,11 +132,7 @@ export const Badge: React.FC<BadgeProps> = ({
     );
   }
 
-  return (
-    <Animated.View style={[animatedStyle, baseStyles]}>
-      {content}
-    </Animated.View>
-  );
+  return <Animated.View style={[animatedStyle, baseStyles]}>{content}</Animated.View>;
 };
 
 const styles = StyleSheet.create({
@@ -153,27 +147,29 @@ const styles = StyleSheet.create({
   },
   small: {
     minWidth: 32,
+    paddingVertical: 3,
   },
   medium: {
     minWidth: 48,
-    paddingVertical: spacing.xs,
+    paddingVertical: 5,
+    paddingHorizontal: spacing.md,
   },
   text: {
-    ...typography.bodySmall,
-    color: colors.text.inverse,
-    fontWeight: '700',
+    fontFamily: typography.bodyMedium.fontFamily,
+    fontWeight: '600',
   },
   smallText: {
-    ...typography.bodySmall,
-    fontSize: typography.bodySmall.fontSize - 2,
-    fontWeight: '700' as const,
+    fontSize: 10,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
   mediumText: {
-    ...typography.bodySmall,
-    fontWeight: '700' as const,
+    fontSize: 11,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
   icon: {
-    marginRight: spacing.xs,
+    marginRight: 4,
   },
   gradientContent: {
     flexDirection: 'row',
@@ -183,3 +179,5 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
 });
+
+export default Badge;
