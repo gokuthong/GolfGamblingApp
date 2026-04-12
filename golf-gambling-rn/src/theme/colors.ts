@@ -184,6 +184,7 @@ export const darkColors = {
     primary: "#F5F2EA", // warm white
     secondary: "#B3ADA0", // warm gray
     tertiary: "#7A7468",
+    muted: "#7A7468", // alias
     disabled: "#3A3630",
     gold: "#E8C866",
     inverse: "#0A0A0A",
