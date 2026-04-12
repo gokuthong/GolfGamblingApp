@@ -120,7 +120,9 @@ export const GradientBackground: React.FC<GradientBackgroundProps> = ({
       colors={config.colors}
       start={config.start}
       end={config.end}
-      locations={config.locations}
+      locations={
+        config.locations as unknown as readonly [number, number, ...number[]]
+      }
       style={StyleSheet.absoluteFill}
     />
   );
