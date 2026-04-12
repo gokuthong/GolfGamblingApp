@@ -2,73 +2,41 @@ import React from 'react';
 import { View, Text, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import { Icon } from './Icon';
 import { Button } from './Button';
-import { colors, typography, spacing } from '../../theme';
+import { typography, spacing } from '../../theme';
+import { useThemedColors } from '../../contexts/ThemeContext';
 
 export interface EmptyStateProps {
-  /**
-   * Icon name from MaterialCommunityIcons
-   */
   icon?: string;
-  /**
-   * Title text
-   */
   title: string;
-  /**
-   * Description text
-   */
   description?: string;
-  /**
-   * Optional action button
-   */
   actionLabel?: string;
-  /**
-   * Action button callback
-   */
   onAction?: () => void;
-  /**
-   * Custom style
-   */
   style?: StyleProp<ViewStyle>;
 }
 
-/**
- * Empty state component for screens with no data
- * Replaces basic "No items" text with helpful visuals and actions
- */
 export const EmptyState: React.FC<EmptyStateProps> = ({
-  icon = 'inbox',
+  icon = 'inbox-outline',
   title,
   description,
   actionLabel,
   onAction,
   style,
 }) => {
+  const colors = useThemedColors();
   return (
     <View style={[styles.container, style]}>
       {icon && (
-        <View style={styles.iconContainer}>
-          <Icon
-            name={icon}
-            size={64}
-            color={colors.text.disabled}
-            accessibilityLabel={`${title} icon`}
-          />
+        <View style={[styles.iconContainer, { backgroundColor: colors.surfaces.level2 }]}>
+          <Icon name={icon} size={32} color={colors.text.tertiary} />
         </View>
       )}
-
-      <Text style={styles.title}>{title}</Text>
-
+      <Text style={[styles.title, { color: colors.text.primary }]}>{title}</Text>
       {description && (
-        <Text style={styles.description}>{description}</Text>
+        <Text style={[styles.description, { color: colors.text.secondary }]}>{description}</Text>
       )}
-
       {actionLabel && onAction && (
         <View style={styles.actionContainer}>
-          <Button
-            title={actionLabel}
-            onPress={onAction}
-            variant="primary"
-          />
+          <Button title={actionLabel} onPress={onAction} variant="primary" />
         </View>
       )}
     </View>
@@ -77,30 +45,32 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     padding: spacing.xl,
   },
   iconContainer: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.lg,
-    opacity: 0.5,
   },
   title: {
     ...typography.h3,
-    color: colors.text.primary,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.xs,
     textAlign: 'center',
   },
   description: {
     ...typography.bodyMedium,
-    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: spacing.lg,
-    maxWidth: 300,
+    maxWidth: 320,
   },
   actionContainer: {
-    marginTop: spacing.md,
+    marginTop: spacing.sm,
     minWidth: 200,
   },
 });
+
+export default EmptyState;
