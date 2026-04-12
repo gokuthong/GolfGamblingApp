@@ -1354,13 +1354,17 @@ const createStyles = (colors: any) =>
     holeSummaryCard: {
       padding: spacing.sm,
       marginTop: spacing.xs,
+      borderWidth: 1,
+      borderColor: colors.border.light,
     },
     holeSummaryTitle: {
       fontFamily: fontFamilies.bodySemiBold,
-      fontSize: 12,
-      color: colors.text.secondary,
+      fontSize: 10,
+      color: colors.text.tertiary,
       textAlign: "center",
       marginBottom: spacing.sm,
+      letterSpacing: 1.4,
+      textTransform: "uppercase",
     },
     holeSummaryRow: {
       flexDirection: "row",
