@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -18,9 +18,9 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { HistoryStackParamList } from "../../types";
 import { dataService } from "../../services/DataService";
 import { useStore } from "../../store";
-import { typography, spacing } from "../../theme";
+import { typography, spacing, fontFamilies, borderRadius } from "../../theme";
 import { useThemedColors } from "../../contexts/ThemeContext";
-import { Game, Player, Score, Hole } from "../../types";
+import { Game, Player } from "../../types";
 import { ScoreCalculator } from "../../utils/scoreCalculator";
 
 type GameHistoryNavigationProp = NativeStackNavigationProp<
@@ -46,7 +46,6 @@ export const GameHistoryScreen = () => {
   );
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [detailsRefreshTrigger, setDetailsRefreshTrigger] = useState(0);
   const [menuGameId, setMenuGameId] = useState<string | null>(null);
 
   const loadGames = useCallback(async () => {
@@ -56,15 +55,10 @@ export const GameHistoryScreen = () => {
     }
 
     try {
-      // Auto-delete games older than 14 days
       await dataService.deleteGamesOlderThan(user.uid, 14);
-
-      // Enforce 5-game limit
       await dataService.enforceGameLimit(user.uid, 5);
 
-      // Load completed games
       const allGames = await dataService.getGamesForUser(user.uid);
-
       const completedGames = allGames
         .filter((game) => game.status === "completed")
         .sort((a, b) => {
@@ -83,25 +77,20 @@ export const GameHistoryScreen = () => {
     }
   }, [user]);
 
-  // Reload full games list every time screen comes into focus
   useFocusEffect(
     useCallback(() => {
       loadGames();
     }, [loadGames]),
   );
 
-  // Load details for each game (players, scores, etc.)
   useEffect(() => {
     const loadGameDetails = async () => {
       const detailsPromises = games.map(async (game) => {
         const details = await dataService.getGameWithDetails(game.id);
-        if (!details) {
-          return null;
-        }
+        if (!details) return null;
 
         const { players, holes, scores } = details;
 
-        // Calculate final points for each player
         const finalPoints: Record<string, number> = {};
         const totalStrokes: Record<string, number> = {};
         game.playerIds.forEach((playerId) => {
@@ -123,14 +112,12 @@ export const GameHistoryScreen = () => {
               (finalPoints[playerId] || 0) + holePoints[playerId];
           });
 
-          // Calculate total strokes for each player
           game.playerIds.forEach((playerId) => {
             const score = holeScores.find((s) => s.playerId === playerId);
             totalStrokes[playerId] += score?.strokes ?? hole.par;
           });
         });
 
-        // Determine winner (player with highest points)
         let winner: Player | null = null;
         let maxPoints = -Infinity;
 
@@ -142,13 +129,7 @@ export const GameHistoryScreen = () => {
           }
         });
 
-        return {
-          game,
-          players,
-          winner,
-          finalPoints,
-          totalStrokes,
-        };
+        return { game, players, winner, finalPoints, totalStrokes };
       });
 
       const results = await Promise.all(detailsPromises);
@@ -162,14 +143,13 @@ export const GameHistoryScreen = () => {
     } else {
       setGamesWithDetails([]);
     }
-  }, [games, detailsRefreshTrigger]);
+  }, [games]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
     if (!user) return;
 
     try {
-      // Reload games
       const allGames = await dataService.getGamesForUser(user.uid);
       const completedGames = allGames
         .filter((game) => game.status === "completed")
@@ -204,13 +184,10 @@ export const GameHistoryScreen = () => {
   const handleDeleteGame = async (gameId: string, gameDateText: string) => {
     setMenuGameId(null);
     crossPlatformAlert(
-      "Delete Game",
+      "Delete game",
       `Are you sure you want to delete the game from ${gameDateText}?`,
       [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
+        { text: "Cancel", style: "cancel" },
         {
           text: "Delete",
           style: "destructive",
@@ -240,32 +217,39 @@ export const GameHistoryScreen = () => {
   };
 
   const formatDate = (date: Date): string => {
-    const options: Intl.DateTimeFormatOptions = {
+    return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
-    };
-    return date.toLocaleDateString("en-US", options);
+    });
   };
+
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   const renderGameCard = ({ item }: { item: GameWithDetails }) => {
     const { game, players, winner, finalPoints, totalStrokes } = item;
     const gameDateText = game.completedAt
       ? formatDate(game.completedAt)
       : formatDate(game.date);
+    const sortedPlayers = [...players].sort(
+      (a, b) => (finalPoints[b.id] || 0) - (finalPoints[a.id] || 0),
+    );
 
     return (
       <TouchableOpacity
         style={styles.gameCard}
         onPress={() => handleViewSummary(game.id)}
-        activeOpacity={0.7}
+        activeOpacity={0.85}
       >
         <View style={styles.cardHeader}>
           <View style={styles.cardHeaderLeft}>
+            <Text style={styles.dateEyebrow}>Completed</Text>
             <Text style={styles.dateText}>{gameDateText}</Text>
             {winner && (
-              <View style={styles.winnerBadge}>
-                <Text style={styles.winnerBadgeText}>🏆 {winner.name}</Text>
+              <View style={styles.winnerRow}>
+                <View style={styles.winnerDot} />
+                <Text style={styles.winnerLabel}>Champion</Text>
+                <Text style={styles.winnerName}>{winner.name}</Text>
               </View>
             )}
           </View>
@@ -282,7 +266,7 @@ export const GameHistoryScreen = () => {
               >
                 <MaterialCommunityIcons
                   name="dots-vertical"
-                  size={22}
+                  size={20}
                   color={colors.text.secondary}
                 />
               </TouchableOpacity>
@@ -294,12 +278,12 @@ export const GameHistoryScreen = () => {
           >
             <Menu.Item
               onPress={() => handleViewSummary(game.id)}
-              title="View Summary"
+              title="View summary"
               leadingIcon="clipboard-text-outline"
             />
             <Menu.Item
               onPress={() => handleEditScores(game.id)}
-              title="Edit Scores"
+              title="Edit scores"
               leadingIcon="pencil-outline"
             />
             <Divider />
@@ -307,70 +291,55 @@ export const GameHistoryScreen = () => {
               onPress={() => handleDeleteGame(game.id, gameDateText)}
               title="Delete"
               leadingIcon="delete-outline"
-              titleStyle={{ color: colors.error || "#D32F2F" }}
+              titleStyle={{ color: colors.scoring.negative }}
             />
           </Menu>
         </View>
 
-        <View style={styles.playersSection}>
-          <Text style={styles.playersLabel}>Players:</Text>
-          <View style={styles.playersList}>
-            {players.map((player, index) => (
-              <Text key={player.id} style={styles.playerName}>
-                {player.name}
-                {index < players.length - 1 && ", "}
-              </Text>
-            ))}
-          </View>
+        <View style={styles.divider} />
+
+        <Text style={styles.sectionLabel}>Final scores</Text>
+        <View style={styles.scoresList}>
+          {sortedPlayers.map((player, idx) => {
+            const points = finalPoints[player.id] || 0;
+            const strokes = totalStrokes[player.id] || 0;
+            const isWinner = player.id === winner?.id;
+
+            return (
+              <View key={player.id} style={styles.scoreRow}>
+                <Text style={styles.rankNumber}>{idx + 1}</Text>
+                <Text
+                  style={[
+                    styles.scorePlayerName,
+                    isWinner && styles.winnerText,
+                  ]}
+                  numberOfLines={1}
+                >
+                  {player.name}
+                </Text>
+                <Text style={styles.scoreStrokes}>{strokes}</Text>
+                <Text
+                  style={[
+                    styles.scorePoints,
+                    points > 0 && styles.positivePoints,
+                    points < 0 && styles.negativePoints,
+                  ]}
+                >
+                  {points > 0 ? "+" : ""}
+                  {points}
+                </Text>
+              </View>
+            );
+          })}
         </View>
 
-        <View style={styles.scoresSection}>
-          <Text style={styles.scoresLabel}>Final Scores:</Text>
-          <View style={styles.scoresList}>
-            {players
-              .sort(
-                (a, b) => (finalPoints[b.id] || 0) - (finalPoints[a.id] || 0),
-              )
-              .map((player) => {
-                const points = finalPoints[player.id] || 0;
-                const strokes = totalStrokes[player.id] || 0;
-                const isWinner = player.id === winner?.id;
-
-                return (
-                  <View key={player.id} style={styles.scoreRow}>
-                    <Text
-                      style={[
-                        styles.scorePlayerName,
-                        isWinner && styles.winnerText,
-                      ]}
-                    >
-                      {player.name}
-                    </Text>
-                    <View style={styles.scoreValues}>
-                      <Text
-                        style={[
-                          styles.scoreStrokes,
-                          isWinner && styles.winnerText,
-                        ]}
-                      >
-                        {strokes} strokes
-                      </Text>
-                      <Text
-                        style={[
-                          styles.scorePoints,
-                          isWinner && styles.winnerText,
-                          points > 0 && styles.positivePoints,
-                          points < 0 && styles.negativePoints,
-                        ]}
-                      >
-                        {points > 0 ? "+" : ""}
-                        {points} pts
-                      </Text>
-                    </View>
-                  </View>
-                );
-              })}
-          </View>
+        <View style={styles.viewSummaryRow}>
+          <Text style={styles.viewSummaryText}>View full summary</Text>
+          <MaterialCommunityIcons
+            name="arrow-right"
+            size={14}
+            color={colors.accent.gold}
+          />
         </View>
       </TouchableOpacity>
     );
@@ -378,27 +347,39 @@ export const GameHistoryScreen = () => {
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
-      <Text style={styles.emptyIcon}>📊</Text>
-      <Text style={styles.emptyTitle}>No Games Yet</Text>
+      <View style={styles.emptyIconWrap}>
+        <MaterialCommunityIcons
+          name="history"
+          size={32}
+          color={colors.accent.gold}
+        />
+      </View>
+      <Text style={styles.emptyTitle}>No games yet</Text>
       <Text style={styles.emptyMessage}>
         Complete a game to see your history here
       </Text>
     </View>
   );
 
-  const styles = createStyles(colors);
-
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary[500]} />
-        <Text style={styles.loadingText}>Loading games...</Text>
+        <ActivityIndicator size="large" color={colors.accent.gold} />
+        <Text style={styles.loadingText}>Loading games…</Text>
       </View>
     );
   }
 
   return (
     <SafeAreaView style={styles.container} edges={["left", "right", "bottom"]}>
+      <View style={styles.header}>
+        <Text style={styles.eyebrow}>Archive</Text>
+        <Text style={styles.headerTitle}>Game history</Text>
+        <View style={styles.goldRule} />
+        <Text style={styles.headerSubtitle}>
+          Your last five completed rounds
+        </Text>
+      </View>
       <FlatList
         data={gamesWithDetails}
         renderItem={renderGameCard}
@@ -413,8 +394,8 @@ export const GameHistoryScreen = () => {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={handleRefresh}
-              tintColor={colors.primary[500]}
-              colors={[colors.primary[500]]}
+              tintColor={colors.accent.gold}
+              colors={[colors.accent.gold]}
             />
           ) : undefined
         }
@@ -440,8 +421,36 @@ const createStyles = (colors: any) =>
       color: colors.text.secondary,
       marginTop: spacing.md,
     },
+    header: {
+      paddingHorizontal: spacing.xl,
+      paddingTop: spacing.xxxl,
+      paddingBottom: spacing.lg,
+    },
+    eyebrow: {
+      ...typography.label,
+      color: colors.text.tertiary,
+      textTransform: "uppercase",
+      marginBottom: spacing.sm,
+    },
+    headerTitle: {
+      ...typography.displayMedium,
+      color: colors.text.primary,
+      marginBottom: spacing.md,
+    },
+    goldRule: {
+      height: 1.5,
+      width: 48,
+      backgroundColor: colors.accent.gold,
+      borderRadius: 1,
+      marginBottom: spacing.md,
+    },
+    headerSubtitle: {
+      ...typography.bodyLarge,
+      color: colors.text.secondary,
+    },
     listContent: {
-      padding: spacing.lg,
+      paddingHorizontal: spacing.xl,
+      paddingBottom: spacing.xxl,
     },
     emptyListContent: {
       flexGrow: 1,
@@ -449,113 +458,115 @@ const createStyles = (colors: any) =>
     },
     gameCard: {
       backgroundColor: colors.background.card,
-      borderRadius: 12,
+      borderRadius: borderRadius.xl,
       padding: spacing.lg,
       marginBottom: spacing.md,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
+      borderWidth: 1,
+      borderColor: colors.border.light,
     },
     cardHeader: {
       flexDirection: "row",
       justifyContent: "space-between",
-      alignItems: "center",
+      alignItems: "flex-start",
       marginBottom: spacing.md,
     },
     cardHeaderLeft: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: spacing.sm,
       flex: 1,
     },
+    dateEyebrow: {
+      ...typography.label,
+      color: colors.text.tertiary,
+      textTransform: "uppercase",
+      marginBottom: spacing.xs,
+    },
     dateText: {
-      ...typography.bodyLarge,
-      fontWeight: "600",
+      fontFamily: fontFamilies.display,
+      fontSize: 22,
       color: colors.text.primary,
+      letterSpacing: -0.4,
+      marginBottom: spacing.sm,
+    },
+    winnerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.xs,
+    },
+    winnerDot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+      backgroundColor: colors.accent.gold,
+    },
+    winnerLabel: {
+      ...typography.label,
+      color: colors.text.tertiary,
+      textTransform: "uppercase",
+    },
+    winnerName: {
+      ...typography.bodySmall,
+      fontFamily: fontFamilies.bodySemiBold,
+      color: colors.accent.gold,
+      marginLeft: spacing.xs,
     },
     menuButton: {
       padding: spacing.xs,
     },
     menuContent: {
-      borderRadius: 12,
+      borderRadius: borderRadius.md,
       minWidth: 180,
     },
-    winnerBadge: {
-      backgroundColor: colors.primary[100],
-      paddingHorizontal: spacing.sm,
-      paddingVertical: spacing.xs,
-      borderRadius: 8,
-    },
-    winnerBadgeText: {
-      ...typography.bodySmall,
-      fontWeight: "600",
-      color: colors.primary[700],
-    },
-    playersSection: {
+    divider: {
+      height: 1,
+      backgroundColor: colors.border.light,
       marginBottom: spacing.md,
     },
-    playersLabel: {
-      ...typography.bodySmall,
-      color: colors.text.secondary,
-      marginBottom: spacing.xs,
+    sectionLabel: {
+      ...typography.label,
+      color: colors.text.tertiary,
       textTransform: "uppercase",
-      fontWeight: "600",
-    },
-    playersList: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-    },
-    playerName: {
-      ...typography.bodyMedium,
-      color: colors.text.primary,
-    },
-    scoresSection: {
-      borderTopWidth: 1,
-      borderTopColor: colors.border.light,
-      paddingTop: spacing.md,
-    },
-    scoresLabel: {
-      ...typography.bodySmall,
-      color: colors.text.secondary,
       marginBottom: spacing.sm,
-      textTransform: "uppercase",
-      fontWeight: "600",
     },
     scoresList: {
       gap: spacing.xs,
+      marginBottom: spacing.md,
     },
     scoreRow: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
       paddingVertical: spacing.xs,
+      gap: spacing.sm,
+    },
+    rankNumber: {
+      fontFamily: fontFamilies.display,
+      fontSize: 16,
+      color: colors.text.tertiary,
+      width: 20,
+      letterSpacing: -0.2,
     },
     scorePlayerName: {
       ...typography.bodyMedium,
+      fontFamily: fontFamilies.bodySemiBold,
       color: colors.text.primary,
       flex: 1,
     },
-    scoreValues: {
-      flexDirection: "row",
-      gap: spacing.md,
-      alignItems: "center",
-    },
     scoreStrokes: {
-      ...typography.bodySmall,
-      color: colors.text.secondary,
-    },
-    scorePoints: {
-      ...typography.bodyMedium,
-      fontWeight: "600",
-      color: colors.text.primary,
-      minWidth: 60,
+      fontFamily: fontFamilies.mono,
+      fontSize: typography.bodySmall.fontSize,
+      color: colors.text.tertiary,
+      letterSpacing: 0.3,
+      minWidth: 32,
       textAlign: "right",
     },
+    scorePoints: {
+      fontFamily: fontFamilies.monoBold,
+      fontSize: typography.bodyMedium.fontSize,
+      color: colors.text.primary,
+      minWidth: 44,
+      textAlign: "right",
+      letterSpacing: 0.3,
+    },
     winnerText: {
-      color: colors.primary[600],
-      fontWeight: "700",
+      color: colors.accent.gold,
     },
     positivePoints: {
       color: colors.scoring.positive,
@@ -563,19 +574,44 @@ const createStyles = (colors: any) =>
     negativePoints: {
       color: colors.scoring.negative,
     },
+    viewSummaryRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "flex-end",
+      gap: spacing.xs,
+      paddingTop: spacing.sm,
+      borderTopWidth: 1,
+      borderTopColor: colors.border.light,
+    },
+    viewSummaryText: {
+      fontFamily: fontFamilies.bodySemiBold,
+      fontSize: typography.bodySmall.fontSize,
+      color: colors.accent.gold,
+      letterSpacing: 0.3,
+    },
     emptyContainer: {
       alignItems: "center",
       justifyContent: "center",
       padding: spacing.xl,
     },
-    emptyIcon: {
-      fontSize: 64,
-      marginBottom: spacing.md,
+    emptyIconWrap: {
+      width: 72,
+      height: 72,
+      borderRadius: 36,
+      backgroundColor: colors.surfaces.level2,
+      borderWidth: 1,
+      borderColor: colors.border.goldSubtle,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: spacing.lg,
     },
     emptyTitle: {
       ...typography.h2,
+      fontFamily: fontFamilies.display,
+      color: colors.text.primary,
       marginBottom: spacing.sm,
       textAlign: "center",
+      letterSpacing: -0.5,
     },
     emptyMessage: {
       ...typography.bodyLarge,
