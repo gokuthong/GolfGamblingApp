@@ -203,14 +203,16 @@ export default function App() {
 
   // Load all custom fonts
   const [fontsLoaded, fontError] = useFonts({
-    BebasNeue_400Regular,
+    Fraunces_400Regular,
+    Fraunces_600SemiBold,
+    Fraunces_700Bold,
     DMSans_400Regular,
     DMSans_500Medium,
     DMSans_600SemiBold,
     DMSans_700Bold,
-    JetBrainsMono_400Regular,
-    JetBrainsMono_500Medium,
-    JetBrainsMono_700Bold,
+    IBMPlexMono_400Regular,
+    IBMPlexMono_500Medium,
+    IBMPlexMono_700Bold,
   });
 
   useEffect(() => {
