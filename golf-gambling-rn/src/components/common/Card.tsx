@@ -1,14 +1,15 @@
 import React from 'react';
-import { StyleSheet, ViewStyle, TouchableOpacity, View } from 'react-native';
-import { Surface } from 'react-native-paper';
+import { StyleSheet, ViewStyle, Pressable, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withSpring,
+  withTiming,
+  Easing,
 } from 'react-native-reanimated';
 import { Skeleton } from './Skeleton';
-import { colors, spacing, borderRadius, animations } from '../../theme';
+import { spacing, borderRadius } from '../../theme';
+import { useThemedColors } from '../../contexts/ThemeContext';
 
 interface CardProps {
   children: React.ReactNode;
@@ -20,19 +21,19 @@ interface CardProps {
   gradient?: string[];
   loading?: boolean;
   accessibilityLabel?: string;
-  /** Gold border glow effect */
+  /** Subtle gold border + soft gold shadow */
   goldBorder?: boolean;
-  /** Glass effect card */
+  /** Light translucent card (used on hero backgrounds) */
   glass?: boolean;
 }
 
-const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export const Card: React.FC<CardProps> = ({
   children,
   style,
   elevation = 1,
-  padding = spacing.md,
+  padding = spacing.lg,
   onPress,
   gradient,
   loading = false,
@@ -40,219 +41,98 @@ export const Card: React.FC<CardProps> = ({
   goldBorder = false,
   glass = false,
 }) => {
-  const scale = useSharedValue(1);
+  const colors = useThemedColors();
+  const translateY = useSharedValue(0);
+  const shadowOpacity = useSharedValue(elevation >= 2 ? 0.1 : 0.06);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
+    transform: [{ translateY: translateY.value }],
+    shadowOpacity: shadowOpacity.value,
   }));
 
   const handlePressIn = () => {
-    if (onPress) {
-      scale.value = withSpring(0.98, animations.spring.snappy);
-    }
+    if (!onPress) return;
+    translateY.value = withTiming(1, { duration: 120, easing: Easing.out(Easing.quad) });
+    shadowOpacity.value = withTiming(0.04, { duration: 120 });
   };
 
   const handlePressOut = () => {
-    if (onPress) {
-      scale.value = withSpring(1, animations.spring.snappy);
-    }
+    if (!onPress) return;
+    translateY.value = withTiming(0, { duration: 200, easing: Easing.out(Easing.quad) });
+    shadowOpacity.value = withTiming(elevation >= 2 ? 0.1 : 0.06, { duration: 200 });
   };
 
-  // Build styles without false values
-  const buildCardStyles = (): ViewStyle[] => {
-    const result: ViewStyle[] = [styles.card, { padding }];
+  const baseBg = glass
+    ? colors.glass.medium
+    : gradient
+      ? 'transparent'
+      : colors.background.card;
 
-    if (glass) {
-      result.push(styles.glassCard);
-    }
+  const baseBorder: ViewStyle = goldBorder
+    ? { borderWidth: 1, borderColor: colors.border.goldSubtle }
+    : glass
+      ? { borderWidth: 1, borderColor: colors.glass.border }
+      : { borderWidth: 1, borderColor: colors.border.light };
 
-    if (goldBorder) {
-      result.push(styles.goldBorder);
-    }
+  const shadowColor = goldBorder ? colors.accent.gold : colors.shadowColors.default;
 
-    // Handle style prop (can be single object or array)
-    if (style) {
-      if (Array.isArray(style)) {
-        // Filter out falsy values from style array
-        style.forEach(s => {
-          if (s && typeof s === 'object') {
-            result.push(s);
-          }
-        });
-      } else {
-        result.push(style);
-      }
-    }
-
-    return result;
-  };
-
-  const cardStyles = buildCardStyles();
-
-  // Build container styles (for shadow/glow)
-  const buildContainerStyles = (): ViewStyle[] => {
-    const result: ViewStyle[] = [styles.cardContainer];
-    if (goldBorder) {
-      result.push(styles.goldGlow);
-    }
-    return result;
+  const cardStyles: ViewStyle = {
+    backgroundColor: baseBg,
+    borderRadius: borderRadius.xl,
+    padding,
+    overflow: 'hidden',
+    ...baseBorder,
+    shadowColor,
+    shadowOffset: { width: 0, height: 8 },
+    shadowRadius: 30,
+    elevation: elevation * 2,
   };
 
   if (loading) {
     return (
-      <Surface style={[styles.card, { padding }, style as ViewStyle]} elevation={elevation}>
+      <View style={[cardStyles, style as ViewStyle]}>
         <Skeleton height={100} />
-      </Surface>
+      </View>
     );
   }
 
-  // Gradient card
-  if (gradient) {
-    if (onPress) {
+  const renderContent = () => {
+    if (gradient) {
       return (
-        <AnimatedTouchable
-          style={[animatedStyle, ...buildContainerStyles()]}
-          onPress={onPress}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-          activeOpacity={0.9}
-          accessible
-          accessibilityRole="button"
-          accessibilityLabel={accessibilityLabel}
-        >
-          <LinearGradient
-            colors={gradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={[styles.gradient, ...cardStyles]}
-          >
-            {children}
-          </LinearGradient>
-        </AnimatedTouchable>
-      );
-    }
-
-    return (
-      <View style={buildContainerStyles()}>
         <LinearGradient
           colors={gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={[styles.gradient, ...cardStyles]}
-        >
-          {children}
-        </LinearGradient>
-      </View>
-    );
-  }
-
-  // Glass effect card (most common in ScoringScreen)
-  if (glass) {
-    const containerStyles = buildContainerStyles();
-
-    if (onPress) {
-      return (
-        <AnimatedTouchable
-          style={[animatedStyle, ...containerStyles]}
-          onPress={onPress}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-          activeOpacity={0.9}
-          accessible
-          accessibilityRole="button"
-          accessibilityLabel={accessibilityLabel}
-        >
-          <View style={cardStyles}>
-            {children}
-          </View>
-        </AnimatedTouchable>
+          style={[StyleSheet.absoluteFillObject, { borderRadius: borderRadius.xl }]}
+        />
       );
     }
+    return null;
+  };
 
-    // Non-pressable glass card - use nested structure to avoid shadow/overflow conflicts
-    // Outer View handles shadow/glow, inner View handles card styles with overflow
-    return (
-      <View style={containerStyles}>
-        <View style={cardStyles}>
-          {children}
-        </View>
-      </View>
-    );
-  }
-
-  // Standard card with Paper Surface
   if (onPress) {
     return (
-      <AnimatedTouchable
-        style={[animatedStyle, styles.cardContainer]}
+      <AnimatedPressable
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        activeOpacity={0.9}
         accessible
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
+        style={[animatedStyle, cardStyles, style]}
       >
-        <Surface
-          style={[...cardStyles, goldBorder ? styles.goldGlow : undefined].filter(Boolean) as ViewStyle[]}
-          elevation={elevation}
-        >
-          {children}
-        </Surface>
-      </AnimatedTouchable>
+        {renderContent()}
+        <View style={{ zIndex: 1 }}>{children}</View>
+      </AnimatedPressable>
     );
   }
 
   return (
-    <Surface
-      style={[...cardStyles, goldBorder ? styles.goldGlow : undefined].filter(Boolean) as ViewStyle[]}
-      elevation={elevation}
-    >
-      {children}
-    </Surface>
+    <View style={[cardStyles, style]}>
+      {renderContent()}
+      <View style={{ zIndex: 1 }}>{children}</View>
+    </View>
   );
 };
-
-const styles = StyleSheet.create({
-  cardContainer: {
-    // Base container styles - always present to ensure stable rendering
-    flexShrink: 0,
-    // Minimal base shadow to prevent rendering bugs when goldGlow is removed
-    // These values are nearly invisible but keep the shadow layer active
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.01,
-    shadowRadius: 1,
-    elevation: 0.5,
-    // Ensure the view is always rendered on its own layer
-    opacity: 1,
-  },
-  card: {
-    backgroundColor: colors.background.card,
-    borderRadius: borderRadius.lg,
-    overflow: 'hidden',
-  },
-  glassCard: {
-    backgroundColor: colors.glass.medium,
-    borderWidth: 1,
-    borderColor: colors.glass.border,
-    // Ensure opacity is always 1 to prevent visibility issues
-    opacity: 1,
-  },
-  goldBorder: {
-    borderWidth: 1,
-    borderColor: colors.border.goldSubtle,
-  },
-  goldGlow: {
-    shadowColor: colors.accent.gold,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  gradient: {
-    overflow: 'hidden',
-  },
-});
 
 export default Card;
