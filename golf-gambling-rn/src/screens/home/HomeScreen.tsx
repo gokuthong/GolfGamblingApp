@@ -352,12 +352,12 @@ const createStyles = (colors: any) =>
       marginBottom: spacing.xl,
     },
     primaryAction: {
-      flex: 1,
+      flex: 7,
       padding: 0,
       minHeight: 130,
     },
     secondaryAction: {
-      flex: 1,
+      flex: 3,
       padding: 0,
       minHeight: 130,
     },
