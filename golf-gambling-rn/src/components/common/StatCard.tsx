@@ -2,47 +2,20 @@ import React from 'react';
 import { View, Text, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Icon } from './Icon';
-import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
+import { typography, spacing, borderRadius } from '../../theme';
+import { useThemedColors } from '../../contexts/ThemeContext';
 
 export interface StatCardProps {
-  /**
-   * Large stat value to display (e.g., "42", "+15.5")
-   */
   value: string | number;
-  /**
-   * Label describing the stat (e.g., "TOTAL POINTS", "AVG PER HOLE")
-   */
   label: string;
-  /**
-   * Optional icon name from MaterialCommunityIcons
-   */
   icon?: string;
-  /**
-   * Trend indicator: 'up', 'down', or 'neutral'
-   */
   trend?: 'up' | 'down' | 'neutral';
-  /**
-   * Comparison value (e.g., "vs 12.0")
-   */
   comparison?: string;
-  /**
-   * Use gradient background
-   */
   gradient?: boolean;
-  /**
-   * Color variant for the card
-   */
-  variant?: 'default' | 'positive' | 'negative' | 'primary';
-  /**
-   * Custom style
-   */
+  variant?: 'default' | 'positive' | 'negative' | 'primary' | 'gold';
   style?: StyleProp<ViewStyle>;
 }
 
-/**
- * ESPN-style stat card for displaying key metrics
- * Perfect for player stats, game summaries, and leaderboards
- */
 export const StatCard: React.FC<StatCardProps> = ({
   value,
   label,
@@ -53,30 +26,28 @@ export const StatCard: React.FC<StatCardProps> = ({
   variant = 'default',
   style,
 }) => {
-  const getColors = (): [string, string] => {
+  const colors = useThemedColors();
+
+  const getGradientColors = (): [string, string] => {
     switch (variant) {
-      case 'positive':
-        return [colors.gradients.victory[0], colors.gradients.victory[1]];
-      case 'negative':
-        return [colors.multipliers.burn, '#D32F2F'];
-      case 'primary':
-        return [colors.gradients.primary[0], colors.gradients.primary[1]];
-      default:
-        return [colors.surfaces.level1, colors.surfaces.level2];
+      case 'positive': return [colors.scoring.positive, colors.scoring.positive];
+      case 'negative': return [colors.scoring.negative, colors.scoring.negative];
+      case 'primary': return [colors.primary[500], colors.primary[700]];
+      case 'gold': return [colors.accent.gold, colors.accent.goldDark];
+      default: return [colors.background.card, colors.background.card];
     }
   };
 
   const getValueColor = (): string => {
-    switch (variant) {
-      case 'positive':
-        return colors.scoring.positive;
-      case 'negative':
-        return colors.scoring.negative;
-      case 'primary':
-        return colors.primary[500];
-      default:
-        return colors.text.primary;
-    }
+    if (gradient || variant === 'gold' || variant === 'primary') return colors.text.inverse;
+    if (variant === 'positive') return colors.scoring.positive;
+    if (variant === 'negative') return colors.scoring.negative;
+    return colors.text.primary;
+  };
+
+  const getLabelColor = (): string => {
+    if (gradient || variant === 'gold' || variant === 'primary') return colors.text.inverse;
+    return colors.text.tertiary;
   };
 
   const getTrendIcon = (): string | undefined => {
@@ -92,53 +63,33 @@ export const StatCard: React.FC<StatCardProps> = ({
 
   const content = (
     <View style={styles.content}>
-      {/* Icon and Label Row */}
       <View style={styles.labelRow}>
         {icon && (
           <Icon
             name={icon}
-            size={16}
-            color={variant === 'default' ? colors.text.secondary : colors.text.inverse}
+            size={13}
+            color={getLabelColor()}
             style={styles.labelIcon}
           />
         )}
-        <Text
-          style={[
-            styles.label,
-            variant !== 'default' && styles.labelInverse,
-          ]}
-        >
-          {label.toUpperCase()}
-        </Text>
+        <Text style={[styles.label, { color: getLabelColor() }]}>{label.toUpperCase()}</Text>
       </View>
-
-      {/* Stat Value */}
       <View style={styles.valueRow}>
-        <Text
-          style={[
-            styles.value,
-            variant !== 'default' && styles.valueInverse,
-            { color: gradient ? colors.text.inverse : getValueColor() },
-          ]}
-        >
-          {value}
-        </Text>
+        <Text style={[styles.value, { color: getValueColor() }]}>{value}</Text>
         {getTrendIcon() && (
           <Icon
             name={getTrendIcon()!}
-            size={24}
+            size={20}
             color={gradient ? colors.text.inverse : getTrendColor()}
             style={styles.trendIcon}
           />
         )}
       </View>
-
-      {/* Comparison */}
       {comparison && (
         <Text
           style={[
             styles.comparison,
-            variant !== 'default' && styles.comparisonInverse,
+            { color: gradient ? colors.text.inverse : colors.text.tertiary },
           ]}
         >
           {comparison}
@@ -147,13 +98,21 @@ export const StatCard: React.FC<StatCardProps> = ({
     </View>
   );
 
-  if (gradient) {
+  const shadow: ViewStyle = {
+    shadowColor: colors.shadowColors.soft,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.8,
+    shadowRadius: 24,
+    elevation: 2,
+  };
+
+  if (gradient || variant === 'gold' || variant === 'primary') {
     return (
       <LinearGradient
-        colors={getColors()}
+        colors={getGradientColors()}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={[styles.container, shadows.medium, style]}
+        style={[styles.container, shadow, style]}
       >
         {content}
       </LinearGradient>
@@ -161,7 +120,18 @@ export const StatCard: React.FC<StatCardProps> = ({
   }
 
   return (
-    <View style={[styles.container, styles.solidBackground, shadows.medium, style]}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.background.card,
+          borderWidth: 1,
+          borderColor: colors.border.light,
+        },
+        shadow,
+        style,
+      ]}
+    >
       {content}
     </View>
   );
@@ -169,53 +139,38 @@ export const StatCard: React.FC<StatCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
     overflow: 'hidden',
-    minWidth: 120,
-  },
-  solidBackground: {
-    backgroundColor: colors.background.card,
+    minWidth: 100,
   },
   content: {
-    padding: spacing.md,
+    padding: spacing.lg,
   },
   labelRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.xs,
+    marginBottom: spacing.sm,
   },
   labelIcon: {
-    marginRight: spacing.xs,
+    marginRight: 6,
   },
   label: {
     ...typography.statLabel,
-    color: colors.text.secondary,
-  },
-  labelInverse: {
-    color: colors.text.inverse,
-    opacity: 0.8,
   },
   valueRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.xs,
   },
   value: {
     ...typography.statDisplay,
-    color: colors.text.primary,
-  },
-  valueInverse: {
-    color: colors.text.inverse,
   },
   trendIcon: {
     marginLeft: spacing.sm,
   },
   comparison: {
     ...typography.bodySmall,
-    color: colors.text.secondary,
-  },
-  comparisonInverse: {
-    color: colors.text.inverse,
-    opacity: 0.7,
+    marginTop: 4,
   },
 });
+
+export default StatCard;
