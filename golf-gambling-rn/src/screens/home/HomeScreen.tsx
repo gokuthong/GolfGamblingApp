@@ -189,11 +189,7 @@ export const HomeScreen = () => {
               label="Games"
               style={styles.statItem}
             />
-            <StatCard
-              value={stats.wins}
-              label="Wins"
-              style={styles.statItem}
-            />
+            <StatCard value={stats.wins} label="Wins" style={styles.statItem} />
             <StatCard
               value={stats.bestScore || "—"}
               label="Best"
@@ -266,11 +262,7 @@ export const HomeScreen = () => {
               onPress={() => navigation.navigate("HistoryTab")}
               style={styles.quickCard}
             >
-              <Icon
-                name="history"
-                size={22}
-                color={colors.accent.gold}
-              />
+              <Icon name="history" size={22} color={colors.accent.gold} />
               <Text style={styles.quickLabel}>History</Text>
             </Card>
             <Card
@@ -288,22 +280,14 @@ export const HomeScreen = () => {
               onPress={() => navigation.navigate("CoursesTab")}
               style={styles.quickCard}
             >
-              <Icon
-                name="golf-tee"
-                size={22}
-                color={colors.accent.gold}
-              />
+              <Icon name="golf-tee" size={22} color={colors.accent.gold} />
               <Text style={styles.quickLabel}>Courses</Text>
             </Card>
             <Card
               onPress={() => navigation.navigate("Settings")}
               style={styles.quickCard}
             >
-              <Icon
-                name="cog-outline"
-                size={22}
-                color={colors.accent.gold}
-              />
+              <Icon name="cog-outline" size={22} color={colors.accent.gold} />
               <Text style={styles.quickLabel}>Settings</Text>
             </Card>
           </View>
@@ -351,7 +335,7 @@ const createStyles = (colors: any) =>
       marginBottom: 4,
     },
     nameText: {
-      ...typography.display3,
+      ...typography.displayMedium,
       fontFamily: fontFamilies.display,
       color: colors.text.primary,
       marginBottom: spacing.md,
