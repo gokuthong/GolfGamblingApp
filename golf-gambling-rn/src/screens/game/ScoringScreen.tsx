@@ -1134,9 +1134,9 @@ const createStyles = (colors: any) =>
       alignItems: "flex-start",
       justifyContent: "center",
       gap: 4,
-      flexShrink: 1,
+      flex: 1,
       minWidth: 110,
-      maxWidth: 180,
+      maxWidth: 200,
     },
     playerName: {
       fontFamily: fontFamilies.bodySemiBold,
