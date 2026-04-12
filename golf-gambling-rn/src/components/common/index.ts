@@ -2,6 +2,7 @@ export { Button } from './Button';
 export { Card } from './Card';
 export { Input } from './Input';
 export { Badge } from './Badge';
+export { Divider } from './Divider';
 export { Icon, IconSizes, getIconColor } from './Icon';
 export type { IconProps } from './Icon';
 
