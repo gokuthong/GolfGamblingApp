@@ -17,7 +17,12 @@ import {
 } from "react-native-paper";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SplashScreen from "expo-splash-screen";
-import { useFonts, BebasNeue_400Regular } from "@expo-google-fonts/bebas-neue";
+import {
+  useFonts,
+  Fraunces_400Regular,
+  Fraunces_600SemiBold,
+  Fraunces_700Bold,
+} from "@expo-google-fonts/fraunces";
 import {
   DMSans_400Regular,
   DMSans_500Medium,
@@ -25,10 +30,10 @@ import {
   DMSans_700Bold,
 } from "@expo-google-fonts/dm-sans";
 import {
-  JetBrainsMono_400Regular,
-  JetBrainsMono_500Medium,
-  JetBrainsMono_700Bold,
-} from "@expo-google-fonts/jetbrains-mono";
+  IBMPlexMono_400Regular,
+  IBMPlexMono_500Medium,
+  IBMPlexMono_700Bold,
+} from "@expo-google-fonts/ibm-plex-mono";
 
 import { authService } from "./src/services/firebase";
 import { localStorageService } from "./src/services/storage";
