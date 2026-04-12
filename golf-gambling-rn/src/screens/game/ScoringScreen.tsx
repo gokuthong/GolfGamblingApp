@@ -28,6 +28,17 @@ import {
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
+// Warm-toned, distinct player colors — visible in light mode, brand-adjacent
+const PLAYER_COLORS = [
+  "#D9715B", // terra cotta (warm red)
+  "#6B8CAE", // slate (soft blue)
+  "#7A9D6B", // sage (warm green)
+  "#A67BA0", // dusty plum
+  "#D4AF37", // gold (fallback)
+];
+const getPlayerColor = (index: number) =>
+  PLAYER_COLORS[index % PLAYER_COLORS.length];
+
 export const ScoringScreen = () => {
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
