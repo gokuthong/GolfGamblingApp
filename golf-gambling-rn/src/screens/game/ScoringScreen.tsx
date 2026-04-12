@@ -1441,22 +1441,26 @@ const createStyles = (colors: any) =>
       fontSize: 16,
       color: colors.text.primary,
     },
-    // Compact layout styles for 4 players
+    // Compact layout styles for 4 players — cards flex to fill screen
     playersContentCompact: {
-      padding: spacing.xs - 2,
+      padding: spacing.sm,
       paddingBottom: spacing.xs,
       flexGrow: 1,
     },
     playerCardCompact: {
-      padding: spacing.xs - 2,
+      padding: spacing.sm,
+      flex: 1,
+      justifyContent: "space-between",
     },
     scoreSectionCompact: {
       gap: spacing.sm,
+      paddingVertical: 3,
+      paddingHorizontal: spacing.xs,
     },
     counterButtonCompact: {
-      width: 36,
-      height: 36,
-      borderRadius: 18,
+      width: 40,
+      height: 40,
+      borderRadius: 20,
     },
     strokesValueCompact: {
       fontSize: 32,
