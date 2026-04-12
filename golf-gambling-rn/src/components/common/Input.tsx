@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { TextInput as PaperTextInput, HelperText } from 'react-native-paper';
-import { colors, typography, spacing, borderRadius } from '../../theme';
+import { typography, spacing, borderRadius } from '../../theme';
+import { useThemedColors } from '../../contexts/ThemeContext';
 
 interface InputProps {
   label?: string;
@@ -19,9 +20,7 @@ interface InputProps {
   numberOfLines?: number;
   maxLength?: number;
   accessibilityLabel?: string;
-  /** Left icon name from MaterialCommunityIcons */
   leftIcon?: string;
-  /** Right icon name from MaterialCommunityIcons */
   rightIcon?: string;
   onRightIconPress?: () => void;
 }
@@ -46,6 +45,7 @@ export const Input: React.FC<InputProps> = ({
   rightIcon,
   onRightIconPress,
 }) => {
+  const colors = useThemedColors();
   return (
     <View style={[styles.container, containerStyle]}>
       <PaperTextInput
@@ -72,7 +72,7 @@ export const Input: React.FC<InputProps> = ({
             onPress={onRightIconPress}
           />
         ) : undefined}
-        style={styles.input}
+        style={[styles.input, { backgroundColor: colors.background.card }]}
         contentStyle={styles.inputContent}
         outlineStyle={styles.outline}
         outlineColor={colors.border.light}
@@ -93,7 +93,7 @@ export const Input: React.FC<InputProps> = ({
         }}
       />
       {error && (
-        <HelperText type="error" visible={!!error} style={styles.errorText}>
+        <HelperText type="error" visible={!!error} style={[styles.errorText, { color: colors.status.error }]}>
           {error}
         </HelperText>
       )}
@@ -106,18 +106,18 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   input: {
-    backgroundColor: colors.background.card,
     fontFamily: typography.bodyMedium.fontFamily,
   },
   inputContent: {
     fontFamily: typography.bodyMedium.fontFamily,
+    fontSize: 15,
   },
   outline: {
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1.25,
   },
   errorText: {
     fontFamily: typography.bodySmall.fontFamily,
-    color: colors.status.error,
     marginTop: -spacing.xs,
   },
 });
