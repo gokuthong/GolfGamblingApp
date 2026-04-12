@@ -1,159 +1,121 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  Dimensions,
   RefreshControl,
   TouchableOpacity,
   Platform,
-} from 'react-native';
-import { crossPlatformAlert } from '../../utils/crossPlatformAlert';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import Animated, {
-  FadeInUp,
-  FadeInDown,
-  FadeInRight,
-  useSharedValue,
-  useAnimatedStyle,
-  withRepeat,
-  withTiming,
-  Easing,
-} from 'react-native-reanimated';
-import { Button, Card, Icon, EmptyState, UserAvatarButton } from '../../components/common';
-import { AuthModal } from '../../components/auth/AuthModal';
-import { typography, spacing, fontFamilies, borderRadius } from '../../theme';
-import { useThemedColors } from '../../contexts/ThemeContext';
-import { useNavigation } from '@react-navigation/native';
-import { useAuth, useStore } from '../../store';
-import { dataService } from '../../services/DataService';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+} from "react-native";
+import { crossPlatformAlert } from "../../utils/crossPlatformAlert";
+import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  Card,
+  Icon,
+  EmptyState,
+  UserAvatarButton,
+  Divider,
+  StatCard,
+} from "../../components/common";
+import { AuthModal } from "../../components/auth/AuthModal";
+import { typography, spacing, fontFamilies, borderRadius } from "../../theme";
+import { useThemedColors } from "../../contexts/ThemeContext";
+import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../../store";
+import { dataService } from "../../services/DataService";
 
 export const HomeScreen = () => {
   const navigation = useNavigation<any>();
   const { user } = useAuth();
   const colors = useThemedColors();
-  const settings = useStore((state) => state.settings);
-  const [recentGames, setRecentGames] = useState<any[]>([]);
   const [ongoingGames, setOngoingGames] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [stats, setStats] = useState({ gamesPlayed: 0, wins: 0 });
+  const [stats, setStats] = useState({
+    gamesPlayed: 0,
+    wins: 0,
+    bestScore: 0,
+  });
   const [showAuthModal, setShowAuthModal] = useState(false);
 
-  // Animated gold line
-  const lineWidth = useSharedValue(0);
-
   useEffect(() => {
-    lineWidth.value = withTiming(SCREEN_WIDTH - spacing.lg * 2, {
-      duration: 1000,
-      easing: Easing.out(Easing.ease),
-    });
-    loadRecentGames();
+    loadData();
   }, []);
 
-  const lineStyle = useAnimatedStyle(() => ({
-    width: lineWidth.value,
-  }));
-
-  const loadRecentGames = async () => {
+  const loadData = async () => {
     if (!user) return;
-
     try {
-      // Load active ongoing games
       const activeGames = await dataService.getActiveGamesForUser(user.uid);
       setOngoingGames(activeGames);
-
-      // Note: Recent games would be loaded here if needed
-      setRecentGames([]);
     } catch (error) {
-      console.error('Failed to load games:', error);
+      console.error("Failed to load games:", error);
     }
   };
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadRecentGames();
+    await loadData();
     setRefreshing(false);
   };
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good Morning';
-    if (hour < 17) return 'Good Afternoon';
-    return 'Good Evening';
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
   };
 
-  const handleAvatarPress = () => {
-    const isGuest = user?.role === 'guest' || user?.isOffline;
+  const displayName = (() => {
+    if (!user) return "Guest";
+    if (user.role === "guest" || user.isOffline) return "Guest";
+    const name = user.displayName || user.email?.split("@")[0] || "Player";
+    return name.split(" ")[0];
+  })();
 
+  const handleAvatarPress = () => {
+    const isGuest = user?.role === "guest" || user?.isOffline;
     if (isGuest) {
       setShowAuthModal(true);
     } else {
-      // Navigate to settings for authenticated users
-      navigation.navigate('Settings');
+      navigation.navigate("Settings");
     }
-  };
-
-  const handleSignUp = () => {
-    navigation.navigate('Register');
-  };
-
-  const handleSignIn = () => {
-    navigation.navigate('Login');
   };
 
   const handleDeleteGame = (gameId: string) => {
     crossPlatformAlert(
-      'Delete Game',
-      'Are you sure you want to delete this ongoing game? This cannot be undone.',
+      "Delete Game",
+      "Are you sure you want to delete this ongoing game? This cannot be undone.",
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: "Cancel", style: "cancel" },
         {
-          text: 'Delete',
-          style: 'destructive',
+          text: "Delete",
+          style: "destructive",
           onPress: async () => {
             try {
               await dataService.deleteGame(gameId);
-              await loadRecentGames();
+              await loadData();
             } catch (error) {
-              crossPlatformAlert('Error', 'Failed to delete game');
+              crossPlatformAlert("Error", "Failed to delete game");
             }
           },
         },
-      ]
+      ],
     );
   };
+
+  const mostRecentOngoing = ongoingGames[0];
 
   const styles = useMemo(() => createStyles(colors), [colors]);
 
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
-      {/* Background Gradient - Fixed */}
-      <LinearGradient
-        colors={
-          settings.darkMode
-            ? [colors.primary[900], colors.background.primary]
-            : [colors.primary[300], colors.background.primary]
-        }
-        locations={[0, 0.35]}
-        style={styles.headerGradient}
-      />
+    <SafeAreaView style={styles.container} edges={["left", "right", "bottom"]}>
+      <UserAvatarButton user={user} onPress={handleAvatarPress} />
 
-      {/* User Avatar Button - Fixed at root level */}
-      <UserAvatarButton
-        user={user}
-        onPress={handleAvatarPress}
-      />
-
-      {/* Auth Modal for Guest Users */}
       <AuthModal
         visible={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        onSignUp={handleSignUp}
-        onSignIn={handleSignIn}
+        onSignUp={() => navigation.navigate("Register")}
+        onSignIn={() => navigation.navigate("Login")}
       />
 
       <ScrollView
@@ -161,7 +123,7 @@ export const HomeScreen = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          Platform.OS !== 'web' ? (
+          Platform.OS !== "web" ? (
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
@@ -170,441 +132,371 @@ export const HomeScreen = () => {
           ) : undefined
         }
       >
-        {/* Header Section */}
-        <Animated.View
-          entering={FadeInDown.delay(100).duration(500)}
-          style={styles.headerSection}
-        >
-          <Text style={styles.greeting}>{getGreeting()}</Text>
-          <Text style={styles.welcomeText}>Ready to play?</Text>
-        </Animated.View>
+        <View style={styles.headerSection}>
+          <Text style={styles.greeting}>{getGreeting()},</Text>
+          <Text style={styles.nameText}>{displayName}</Text>
+          <View style={styles.goldRule} />
+        </View>
 
-        {/* Animated gold accent line */}
-        <Animated.View style={[styles.goldLine, lineStyle]} />
-
-        {/* Primary CTA - New Game */}
-        <Animated.View
-          entering={FadeInUp.delay(200).duration(600)}
-          style={styles.ctaSection}
-        >
+        <View style={styles.actionsRow}>
           <Card
+            onPress={() => navigation.navigate("GameSetup")}
+            style={styles.primaryAction}
             gradient={[colors.accent.gold, colors.accent.goldDark]}
-            goldBorder
-            onPress={() => navigation.navigate('GameSetup')}
-            style={styles.newGameCard}
           >
-            <View style={styles.newGameContent}>
-              <View style={styles.newGameLeft}>
-                <Text style={styles.newGameLabel}>START</Text>
-                <Text style={styles.newGameTitle}>NEW GAME</Text>
-                <Text style={styles.newGameSubtitle}>
-                  Set up players and begin scoring
-                </Text>
-              </View>
-              <View style={styles.newGameIcon}>
-                <Icon name="golf" size={48} color={colors.text.inverse} />
-              </View>
+            <View style={styles.actionInner}>
+              <Icon name="golf-tee" size={28} color={colors.text.inverse} />
+              <Text style={styles.primaryActionLabel}>New game</Text>
+              <Text style={styles.primaryActionSub}>Set up and begin</Text>
             </View>
           </Card>
-        </Animated.View>
 
-        {/* Quick Stats Row */}
-        <Animated.View
-          entering={FadeInUp.delay(300).duration(500)}
-          style={styles.statsRow}
-        >
-          <Card glass style={styles.statCard}>
-            <Text style={styles.statNumber}>{stats.gamesPlayed}</Text>
-            <Text style={styles.statLabel}>GAMES PLAYED</Text>
+          <Card
+            onPress={
+              mostRecentOngoing
+                ? () =>
+                    navigation.navigate("Scoring", {
+                      gameId: mostRecentOngoing.id,
+                    })
+                : () => navigation.navigate("HistoryTab")
+            }
+            style={styles.secondaryAction}
+            goldBorder={!!mostRecentOngoing}
+          >
+            <View style={styles.actionInner}>
+              <Icon
+                name={mostRecentOngoing ? "play-circle-outline" : "history"}
+                size={28}
+                color={colors.accent.gold}
+              />
+              <Text style={styles.secondaryActionLabel}>
+                {mostRecentOngoing ? "Resume" : "History"}
+              </Text>
+              <Text style={styles.secondaryActionSub}>
+                {mostRecentOngoing
+                  ? `${ongoingGames.length} active`
+                  : "Past games"}
+              </Text>
+            </View>
           </Card>
-          <Card glass style={styles.statCard}>
-            <Text style={styles.statNumber}>{stats.wins}</Text>
-            <Text style={styles.statLabel}>WINS</Text>
-          </Card>
-        </Animated.View>
+        </View>
 
-        {/* Ongoing Games */}
+        <View style={styles.statsSection}>
+          <Text style={styles.sectionEyebrow}>At a glance</Text>
+          <View style={styles.statsRow}>
+            <StatCard
+              value={stats.gamesPlayed}
+              label="Games"
+              style={styles.statItem}
+            />
+            <StatCard
+              value={stats.wins}
+              label="Wins"
+              style={styles.statItem}
+            />
+            <StatCard
+              value={stats.bestScore || "—"}
+              label="Best"
+              style={styles.statItem}
+            />
+          </View>
+        </View>
+
         {ongoingGames.length > 0 && (
-          <Animated.View
-            entering={FadeInUp.delay(350).duration(500)}
-            style={styles.ongoingGamesSection}
-          >
+          <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Ongoing Games</Text>
-              <Text style={styles.sectionSubtitle}>{ongoingGames.length} active</Text>
+              <Text style={styles.sectionTitle}>Ongoing games</Text>
+              <Text style={styles.sectionMeta}>
+                {ongoingGames.length} active
+              </Text>
             </View>
-            {ongoingGames.map((game, index) => (
+            <Divider gold thin style={styles.sectionRule} />
+            {ongoingGames.map((game) => (
               <Card
                 key={game.id}
-                glass
-                onPress={() => navigation.navigate('Scoring', { gameId: game.id })}
-                style={styles.ongoingGameCard}
+                onPress={() =>
+                  navigation.navigate("Scoring", { gameId: game.id })
+                }
+                style={styles.ongoingCard}
               >
-                <View style={styles.ongoingGameContent}>
-                  <View style={styles.ongoingGameLeft}>
-                    <View style={styles.ongoingGameHeader}>
-                      <Icon name="golf" size={20} color={colors.accent.gold} />
-                      <Text style={styles.ongoingGameTitle}>Game #{game.id.slice(-6)}</Text>
-                    </View>
-                    <Text style={styles.ongoingGameDate}>
-                      Started {game.createdAt?.toLocaleDateString()}
+                <View style={styles.ongoingContent}>
+                  <View style={styles.ongoingLeft}>
+                    <Text style={styles.ongoingTitle}>
+                      Game #{game.id.slice(-6).toUpperCase()}
                     </Text>
-                    <Text style={styles.ongoingGamePlayers}>
-                      {game.playerIds.length} players
+                    <Text style={styles.ongoingMeta}>
+                      {game.playerIds.length} players · started{" "}
+                      {game.createdAt
+                        ? new Date(game.createdAt).toLocaleDateString()
+                        : ""}
                     </Text>
                   </View>
-                  <View style={styles.ongoingGameActions}>
+                  <View style={styles.ongoingActions}>
                     <TouchableOpacity
-                      style={styles.deleteGameButton}
+                      style={styles.deleteButton}
                       onPress={(e) => {
                         e.stopPropagation();
                         handleDeleteGame(game.id);
                       }}
                       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     >
-                      <Icon name="delete" size={20} color={colors.scoring.negative} />
+                      <Icon
+                        name="delete-outline"
+                        size={18}
+                        color={colors.text.tertiary}
+                      />
                     </TouchableOpacity>
-                    <View style={styles.resumeButton}>
-                      <Icon name="play-circle" size={32} color={colors.accent.gold} />
-                      <Text style={styles.resumeText}>Resume</Text>
-                    </View>
+                    <Icon
+                      name="chevron-right"
+                      size={22}
+                      color={colors.accent.gold}
+                    />
                   </View>
                 </View>
               </Card>
             ))}
-          </Animated.View>
+          </View>
         )}
 
-        {/* Quick Actions */}
-        <Animated.View
-          entering={FadeInUp.delay(400).duration(500)}
-          style={styles.quickActionsSection}
-        >
-          <Text style={styles.sectionTitle}>Quick Actions</Text>
-          <View style={styles.quickActionsGrid}>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Explore</Text>
+          <Divider gold thin style={styles.sectionRule} />
+          <View style={styles.quickGrid}>
             <Card
-              glass
-              onPress={() => navigation.navigate('HistoryTab')}
-              style={styles.quickActionCard}
+              onPress={() => navigation.navigate("HistoryTab")}
+              style={styles.quickCard}
             >
-              <Icon name="history" size={28} color={colors.accent.gold} />
-              <Text style={styles.quickActionText}>Game History</Text>
+              <Icon
+                name="history"
+                size={22}
+                color={colors.accent.gold}
+              />
+              <Text style={styles.quickLabel}>History</Text>
             </Card>
             <Card
-              glass
-              onPress={() => navigation.navigate('Players')}
-              style={styles.quickActionCard}
+              onPress={() => navigation.navigate("Players")}
+              style={styles.quickCard}
             >
-              <Icon name="account-group" size={28} color={colors.accent.gold} />
-              <Text style={styles.quickActionText}>Players</Text>
+              <Icon
+                name="account-group-outline"
+                size={22}
+                color={colors.accent.gold}
+              />
+              <Text style={styles.quickLabel}>Players</Text>
             </Card>
             <Card
-              glass
-              onPress={() => navigation.navigate('CoursesTab')}
-              style={styles.quickActionCard}
+              onPress={() => navigation.navigate("CoursesTab")}
+              style={styles.quickCard}
             >
-              <Icon name="golf-tee" size={28} color={colors.accent.gold} />
-              <Text style={styles.quickActionText}>Courses</Text>
+              <Icon
+                name="golf-tee"
+                size={22}
+                color={colors.accent.gold}
+              />
+              <Text style={styles.quickLabel}>Courses</Text>
             </Card>
             <Card
-              glass
-              onPress={() => navigation.navigate('Settings')}
-              style={styles.quickActionCard}
+              onPress={() => navigation.navigate("Settings")}
+              style={styles.quickCard}
             >
-              <Icon name="cog" size={28} color={colors.accent.gold} />
-              <Text style={styles.quickActionText}>Settings</Text>
+              <Icon
+                name="cog-outline"
+                size={22}
+                color={colors.accent.gold}
+              />
+              <Text style={styles.quickLabel}>Settings</Text>
             </Card>
           </View>
-        </Animated.View>
+        </View>
 
-        {/* Recent Activity */}
-        <Animated.View
-          entering={FadeInUp.delay(500).duration(500)}
-          style={styles.recentSection}
-        >
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Recent Activity</Text>
-            {recentGames.length > 0 && (
-              <Button
-                title="View All"
-                variant="text"
-                size="small"
-                onPress={() => navigation.navigate('HistoryTab')}
-              />
-            )}
+        {ongoingGames.length === 0 && (
+          <View style={styles.section}>
+            <EmptyState
+              icon="golf"
+              title="Tee it up"
+              description="Start a new game to begin tracking scores, stats, and bets."
+              actionLabel="New game"
+              onAction={() => navigation.navigate("GameSetup")}
+            />
           </View>
+        )}
 
-          {recentGames.length === 0 ? (
-            <Card glass style={styles.emptyCard}>
-              <EmptyState
-                icon="golf"
-                title="No recent games"
-                description="Start a new game to see your activity here"
-              />
-            </Card>
-          ) : (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.recentGamesScroll}
-            >
-              {recentGames.map((game, index) => (
-                <Animated.View
-                  key={game.id}
-                  entering={FadeInRight.delay(100 * index).duration(400)}
-                >
-                  <Card
-                    glass
-                    goldBorder
-                    onPress={() => navigation.navigate('GameSummary', { gameId: game.id })}
-                    style={styles.recentGameCard}
-                  >
-                    <Text style={styles.recentGameDate}>
-                      {new Date(game.createdAt).toLocaleDateString()}
-                    </Text>
-                    <Text style={styles.recentGamePlayers}>
-                      {game.playerIds?.length || 0} Players
-                    </Text>
-                  </Card>
-                </Animated.View>
-              ))}
-            </ScrollView>
-          )}
-        </Animated.View>
-
-        {/* Footer spacing */}
         <View style={styles.footerSpacer} />
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-const createStyles = (colors: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background.primary,
-  },
-  headerGradient: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 250,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xxl + spacing.lg,
-    paddingBottom: spacing.xxl,
-  },
-  headerSection: {
-    marginBottom: spacing.md,
-    marginTop: spacing.md,
-  },
-  greeting: {
-    fontFamily: fontFamilies.body,
-    fontSize: typography.bodyMedium.fontSize,
-    color: colors.text.secondary,
-    marginBottom: spacing.xs,
-  },
-  welcomeText: {
-    fontFamily: fontFamilies.display,
-    fontSize: 36,
-    color: colors.text.primary,
-    letterSpacing: 1,
-  },
-  goldLine: {
-    height: 2,
-    backgroundColor: colors.accent.gold,
-    marginBottom: spacing.xl,
-    borderRadius: 1,
-  },
-  ctaSection: {
-    marginBottom: spacing.lg,
-  },
-  newGameCard: {
-    padding: spacing.lg,
-  },
-  newGameContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  newGameLeft: {
-    flex: 1,
-  },
-  newGameLabel: {
-    fontFamily: fontFamilies.body,
-    fontSize: typography.bodySmall.fontSize,
-    color: colors.text.inverse,
-    opacity: 0.8,
-    letterSpacing: 2,
-  },
-  newGameTitle: {
-    fontFamily: fontFamilies.display,
-    fontSize: 32,
-    color: colors.text.inverse,
-    letterSpacing: 1,
-  },
-  newGameSubtitle: {
-    fontFamily: fontFamilies.body,
-    fontSize: typography.bodySmall.fontSize,
-    color: colors.text.inverse,
-    opacity: 0.8,
-    marginTop: spacing.xs,
-  },
-  newGameIcon: {
-    marginLeft: spacing.md,
-    opacity: 0.9,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    marginBottom: spacing.xl,
-  },
-  statCard: {
-    flex: 1,
-    padding: spacing.lg,
-    alignItems: 'center',
-  },
-  statNumber: {
-    fontFamily: fontFamilies.display,
-    fontSize: 36,
-    color: colors.accent.gold,
-  },
-  statLabel: {
-    fontFamily: fontFamilies.bodySemiBold,
-    fontSize: typography.statLabel.fontSize,
-    color: colors.text.secondary,
-    letterSpacing: 1,
-    marginTop: spacing.xs,
-  },
-  ongoingGamesSection: {
-    marginBottom: spacing.xl,
-  },
-  ongoingGameCard: {
-    padding: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  ongoingGameContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  ongoingGameLeft: {
-    flex: 1,
-  },
-  ongoingGameHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    marginBottom: spacing.xs,
-  },
-  ongoingGameTitle: {
-    fontFamily: fontFamilies.bodySemiBold,
-    fontSize: typography.bodyLarge.fontSize,
-    color: colors.text.primary,
-  },
-  ongoingGameDate: {
-    fontFamily: fontFamilies.body,
-    fontSize: typography.bodySmall.fontSize,
-    color: colors.text.secondary,
-    marginBottom: spacing.xs,
-  },
-  ongoingGamePlayers: {
-    fontFamily: fontFamilies.body,
-    fontSize: typography.bodySmall.fontSize,
-    color: colors.text.tertiary,
-  },
-  ongoingGameActions: {
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  deleteGameButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.surfaces.level3,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  resumeButton: {
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  resumeText: {
-    fontFamily: fontFamilies.bodySemiBold,
-    fontSize: 11,
-    color: colors.accent.gold,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  quickActionsSection: {
-    marginBottom: spacing.xl,
-  },
-  sectionTitle: {
-    fontFamily: fontFamilies.bodySemiBold,
-    fontSize: typography.h4.fontSize,
-    color: colors.text.primary,
-    marginBottom: spacing.md,
-  },
-  sectionSubtitle: {
-    fontFamily: fontFamilies.body,
-    fontSize: typography.bodySmall.fontSize,
-    color: colors.text.tertiary,
-  },
-  quickActionsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.md,
-  },
-  quickActionCard: {
-    width: (SCREEN_WIDTH - spacing.lg * 2 - spacing.md) / 2 - spacing.md / 2,
-    padding: spacing.lg,
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  quickActionText: {
-    fontFamily: fontFamilies.bodyMedium,
-    fontSize: typography.bodySmall.fontSize,
-    color: colors.text.primary,
-    textAlign: 'center',
-  },
-  recentSection: {
-    marginBottom: spacing.lg,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.md,
-  },
-  emptyCard: {
-    padding: spacing.xl,
-  },
-  recentGamesScroll: {
-    gap: spacing.md,
-  },
-  recentGameCard: {
-    width: 160,
-    padding: spacing.md,
-  },
-  recentGameDate: {
-    fontFamily: fontFamilies.bodySemiBold,
-    fontSize: typography.bodyMedium.fontSize,
-    color: colors.text.primary,
-    marginBottom: spacing.xs,
-  },
-  recentGamePlayers: {
-    fontFamily: fontFamilies.body,
-    fontSize: typography.bodySmall.fontSize,
-    color: colors.text.secondary,
-  },
-  footerSpacer: {
-    height: spacing.xl,
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background.primary,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: spacing.lg,
+      paddingTop: spacing.xxxl,
+      paddingBottom: spacing.xxxl,
+    },
+    headerSection: {
+      marginBottom: spacing.xl,
+    },
+    greeting: {
+      ...typography.bodyMedium,
+      fontFamily: fontFamilies.body,
+      color: colors.text.tertiary,
+      marginBottom: 4,
+    },
+    nameText: {
+      ...typography.display3,
+      fontFamily: fontFamilies.display,
+      color: colors.text.primary,
+      marginBottom: spacing.md,
+    },
+    goldRule: {
+      height: 1.5,
+      width: 44,
+      backgroundColor: colors.accent.gold,
+      borderRadius: 1,
+    },
+    actionsRow: {
+      flexDirection: "row",
+      gap: spacing.md,
+      marginBottom: spacing.xl,
+    },
+    primaryAction: {
+      flex: 1,
+      padding: 0,
+      minHeight: 130,
+    },
+    secondaryAction: {
+      flex: 1,
+      padding: 0,
+      minHeight: 130,
+    },
+    actionInner: {
+      padding: spacing.lg,
+      justifyContent: "space-between",
+      flex: 1,
+    },
+    primaryActionLabel: {
+      ...typography.h3,
+      fontFamily: fontFamilies.display,
+      color: colors.text.inverse,
+      marginTop: spacing.sm,
+    },
+    primaryActionSub: {
+      ...typography.bodySmall,
+      fontFamily: fontFamilies.body,
+      color: colors.text.inverse,
+      opacity: 0.85,
+      marginTop: 2,
+    },
+    secondaryActionLabel: {
+      ...typography.h3,
+      fontFamily: fontFamilies.display,
+      color: colors.text.primary,
+      marginTop: spacing.sm,
+    },
+    secondaryActionSub: {
+      ...typography.bodySmall,
+      fontFamily: fontFamilies.body,
+      color: colors.text.tertiary,
+      marginTop: 2,
+    },
+    statsSection: {
+      marginBottom: spacing.xl,
+    },
+    sectionEyebrow: {
+      ...typography.overline,
+      color: colors.text.tertiary,
+      marginBottom: spacing.sm,
+    },
+    statsRow: {
+      flexDirection: "row",
+      gap: spacing.sm,
+    },
+    statItem: {
+      flex: 1,
+      minWidth: 0,
+    },
+    section: {
+      marginBottom: spacing.xl,
+    },
+    sectionHeader: {
+      flexDirection: "row",
+      alignItems: "baseline",
+      justifyContent: "space-between",
+      marginBottom: spacing.xs,
+    },
+    sectionTitle: {
+      ...typography.h4,
+      fontFamily: fontFamilies.display,
+      color: colors.text.primary,
+    },
+    sectionMeta: {
+      ...typography.bodySmall,
+      color: colors.text.tertiary,
+    },
+    sectionRule: {
+      marginVertical: spacing.sm,
+    },
+    ongoingCard: {
+      marginBottom: spacing.sm,
+    },
+    ongoingContent: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    ongoingLeft: {
+      flex: 1,
+    },
+    ongoingTitle: {
+      ...typography.h4,
+      fontFamily: fontFamilies.display,
+      color: colors.text.primary,
+      marginBottom: 2,
+    },
+    ongoingMeta: {
+      ...typography.bodySmall,
+      color: colors.text.tertiary,
+    },
+    ongoingActions: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+    },
+    deleteButton: {
+      width: 32,
+      height: 32,
+      borderRadius: borderRadius.full,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    quickGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: spacing.sm,
+    },
+    quickCard: {
+      flexBasis: "48%",
+      flexGrow: 1,
+      paddingVertical: spacing.lg,
+      alignItems: "center",
+      gap: spacing.sm,
+    },
+    quickLabel: {
+      ...typography.labelSmall,
+      color: colors.text.primary,
+      letterSpacing: 0.5,
+    },
+    footerSpacer: {
+      height: spacing.xxl,
+    },
+  });
 
 export default HomeScreen;
