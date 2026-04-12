@@ -728,10 +728,12 @@ export const ScoringScreen = () => {
                   <View
                     style={[
                       styles.scoreSection,
+                      styles.scoreTray,
                       isCompactLayout && styles.scoreSectionCompact,
                     ]}
                   >
                     <TouchableOpacity
+                      activeOpacity={0.5}
                       style={[
                         styles.counterButton,
                         isCompactLayout && styles.counterButtonCompact,
@@ -766,6 +768,7 @@ export const ScoringScreen = () => {
                     </View>
 
                     <TouchableOpacity
+                      activeOpacity={0.5}
                       style={[
                         styles.counterButton,
                         isCompactLayout && styles.counterButtonCompact,
