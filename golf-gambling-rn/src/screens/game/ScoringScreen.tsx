@@ -1043,10 +1043,10 @@ const createStyles = (colors: any) =>
       gap: spacing.sm,
     },
     holeNumber: {
-      fontFamily: fontFamilies.display,
-      fontSize: 22,
+      fontFamily: fontFamilies.bodySemiBold,
+      fontSize: 20,
       color: colors.text.primary,
-      letterSpacing: -0.5,
+      letterSpacing: -0.2,
     },
     parBadge: {
       paddingHorizontal: spacing.sm,
