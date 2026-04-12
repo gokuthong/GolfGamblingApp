@@ -19,7 +19,7 @@ import { useThemedColors } from "../../contexts/ThemeContext";
 
 interface CardProps {
   children: React.ReactNode;
-  style?: ViewStyle | ViewStyle[];
+  style?: StyleProp<ViewStyle>;
   elevation?: 0 | 1 | 2 | 3 | 4;
   padding?: number;
   onPress?: () => void;
