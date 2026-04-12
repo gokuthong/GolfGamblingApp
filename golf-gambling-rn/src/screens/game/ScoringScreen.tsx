@@ -1253,6 +1253,15 @@ const createStyles = (colors: any) =>
       gap: spacing.md,
       flex: 1,
     },
+    // Recessed pill tray scoping the +/- buttons inside the card
+    scoreTray: {
+      backgroundColor: "rgba(0, 0, 0, 0.03)",
+      borderRadius: borderRadius.full,
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      paddingVertical: spacing.xs,
+      paddingHorizontal: spacing.sm,
+    },
     counterButton: {
       width: 46,
       height: 46,
@@ -1262,6 +1271,12 @@ const createStyles = (colors: any) =>
       justifyContent: "center",
       borderWidth: 1,
       borderColor: colors.border.goldSubtle,
+      // Button-level shadow for tactile feel
+      shadowColor: colors.shadowColors.default,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.12,
+      shadowRadius: 4,
+      elevation: 3,
     },
     strokesDisplay: {
       alignItems: "center",
