@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -7,19 +7,16 @@ import {
   RefreshControl,
   TouchableOpacity,
   Platform,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { crossPlatformAlert } from '../../utils/crossPlatformAlert';
-import { Button, Card, EmptyState } from '../../components/common';
-import { dataService } from '../../services/DataService';
-import { typography, spacing, fontFamilies } from '../../theme';
-import { useThemedColors } from '../../contexts/ThemeContext';
-import { useNavigation } from '@react-navigation/native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { crossPlatformAlert } from "../../utils/crossPlatformAlert";
+import { Card, EmptyState } from "../../components/common";
+import { dataService } from "../../services/DataService";
+import { typography, spacing, fontFamilies, borderRadius } from "../../theme";
+import { useThemedColors } from "../../contexts/ThemeContext";
 
 export const AdminPanelScreen = () => {
   const colors = useThemedColors();
-  const navigation = useNavigation();
   const [pendingUsers, setPendingUsers] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -33,8 +30,8 @@ export const AdminPanelScreen = () => {
       const users = await dataService.getPendingUsers();
       setPendingUsers(users);
     } catch (error) {
-      console.error('Failed to load pending users:', error);
-      crossPlatformAlert('Error', 'Failed to load pending users');
+      console.error("Failed to load pending users:", error);
+      crossPlatformAlert("Error", "Failed to load pending users");
     } finally {
       setLoading(false);
     }
@@ -47,144 +44,140 @@ export const AdminPanelScreen = () => {
   }, []);
 
   const handleApprove = async (userId: string, displayName: string) => {
-    crossPlatformAlert(
-      'Approve User',
-      `Approve ${displayName}'s account?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Approve',
-          style: 'default',
-          onPress: async () => {
-            try {
-              await dataService.approvePendingUser(userId);
-              crossPlatformAlert('Success', `${displayName}'s account has been approved`);
-              await loadPendingUsers();
-            } catch (error) {
-              console.error('Failed to approve user:', error);
-              crossPlatformAlert('Error', 'Failed to approve user');
-            }
-          },
+    crossPlatformAlert("Approve user", `Approve ${displayName}'s account?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Approve",
+        style: "default",
+        onPress: async () => {
+          try {
+            await dataService.approvePendingUser(userId);
+            await loadPendingUsers();
+          } catch (error) {
+            crossPlatformAlert("Error", "Failed to approve user");
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleReject = async (userId: string, displayName: string) => {
     crossPlatformAlert(
-      'Reject User',
+      "Reject user",
       `Are you sure you want to reject ${displayName}'s account? This cannot be undone.`,
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: "Cancel", style: "cancel" },
         {
-          text: 'Reject',
-          style: 'destructive',
+          text: "Reject",
+          style: "destructive",
           onPress: async () => {
             try {
               await dataService.rejectPendingUser(userId);
-              crossPlatformAlert('Success', `${displayName}'s account has been rejected`);
               await loadPendingUsers();
             } catch (error) {
-              console.error('Failed to reject user:', error);
-              crossPlatformAlert('Error', 'Failed to reject user');
+              crossPlatformAlert("Error", "Failed to reject user");
             }
           },
         },
-      ]
+      ],
     );
   };
 
   const formatDate = (date: Date): string => {
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
-  const styles = createStyles(colors);
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.centered} edges={['top', 'left', 'right']}>
-        <Text style={styles.loadingText}>Loading pending approvals...</Text>
+      <SafeAreaView style={styles.centered} edges={["top", "left", "right"]}>
+        <Text style={styles.loadingText}>Loading pending approvals…</Text>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+    <SafeAreaView style={styles.container} edges={["left", "right", "bottom"]}>
       <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={styles.content}
-      refreshControl={
-        Platform.OS !== 'web' ? (
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={colors.accent.gold}
-          />
-        ) : undefined
-      }
-    >
-      <View style={styles.header}>
-        <Text style={styles.title}>Pending User Approvals</Text>
-        <Text style={styles.subtitle}>
-          {pendingUsers.length === 0
-            ? 'No pending requests'
-            : `${pendingUsers.length} user${pendingUsers.length === 1 ? '' : 's'} waiting for approval`}
-        </Text>
-      </View>
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          Platform.OS !== "web" ? (
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.accent.gold}
+            />
+          ) : undefined
+        }
+      >
+        <View style={styles.hero}>
+          <Text style={styles.eyebrow}>Admin</Text>
+          <Text style={styles.heroTitle}>User approvals</Text>
+          <View style={styles.goldRule} />
+          <Text style={styles.heroMeta}>
+            {pendingUsers.length === 0
+              ? "No pending requests"
+              : `${pendingUsers.length} user${pendingUsers.length === 1 ? "" : "s"} waiting for approval`}
+          </Text>
+        </View>
 
-      {pendingUsers.length === 0 ? (
-        <EmptyState
-          icon="checkmark-circle"
-          title="All Caught Up"
-          message="There are no pending user approvals at this time."
-        />
-      ) : (
-        <View style={styles.userList}>
-          {pendingUsers.map((user, index) => (
-            <Animated.View
-              key={user.id}
-              entering={FadeInDown.delay(index * 100).duration(400)}
-            >
-              <Card style={styles.userCard}>
+        {pendingUsers.length === 0 ? (
+          <Card style={styles.emptyCard}>
+            <EmptyState
+              icon="check-circle-outline"
+              title="All caught up"
+              description="There are no pending user approvals at this time."
+            />
+          </Card>
+        ) : (
+          <View style={styles.userList}>
+            {pendingUsers.map((user) => (
+              <Card key={user.id} style={styles.userCard}>
                 <View style={styles.userInfo}>
                   <View style={styles.userHeader}>
                     <Text style={styles.displayName}>{user.displayName}</Text>
-                    <View style={styles.userNumberBadge}>
-                      <Text style={styles.userNumberText}>#{user.userNumber}</Text>
-                    </View>
+                    <Text style={styles.userNumberText}>
+                      #{user.userNumber}
+                    </Text>
                   </View>
 
                   <Text style={styles.email}>{user.email}</Text>
 
-                  <Text style={styles.signupDate}>
-                    Signed up {formatDate(user.createdAt)}
-                  </Text>
+                  <View style={styles.signupRow}>
+                    <View style={styles.signupDot} />
+                    <Text style={styles.signupDate}>
+                      Signed up {formatDate(user.createdAt)}
+                    </Text>
+                  </View>
                 </View>
 
                 <View style={styles.actions}>
-                  <Button
-                    title="Approve"
-                    onPress={() => handleApprove(user.id, user.displayName)}
+                  <TouchableOpacity
                     style={styles.approveButton}
-                  />
-                  <Button
-                    title="Reject"
-                    onPress={() => handleReject(user.id, user.displayName)}
-                    variant="outline"
+                    onPress={() => handleApprove(user.id, user.displayName)}
+                  >
+                    <Text style={styles.approveButtonText}>Approve</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
                     style={styles.rejectButton}
-                  />
+                    onPress={() => handleReject(user.id, user.displayName)}
+                  >
+                    <Text style={styles.rejectButtonText}>Reject</Text>
+                  </TouchableOpacity>
                 </View>
               </Card>
-            </Animated.View>
-          ))}
-        </View>
-      )}
+            ))}
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -200,28 +193,42 @@ const createStyles = (colors: any) =>
       flex: 1,
     },
     content: {
-      padding: spacing.lg,
-      paddingBottom: spacing.xl * 2,
+      paddingHorizontal: spacing.xl,
+      paddingTop: spacing.xxxl,
+      paddingBottom: spacing.xxl,
     },
     centered: {
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: "center",
+      alignItems: "center",
       backgroundColor: colors.background.primary,
     },
     loadingText: {
-      ...typography.bodyLarge,
+      ...typography.bodyMedium,
       color: colors.text.secondary,
     },
-    header: {
+    hero: {
       marginBottom: spacing.xl,
     },
-    title: {
-      ...typography.h1,
-      color: colors.text.primary,
-      marginBottom: spacing.xs,
+    eyebrow: {
+      ...typography.label,
+      color: colors.text.tertiary,
+      textTransform: "uppercase",
+      marginBottom: spacing.sm,
     },
-    subtitle: {
+    heroTitle: {
+      ...typography.displayMedium,
+      color: colors.text.primary,
+      marginBottom: spacing.md,
+    },
+    goldRule: {
+      height: 1.5,
+      width: 48,
+      backgroundColor: colors.accent.gold,
+      borderRadius: 1,
+      marginBottom: spacing.md,
+    },
+    heroMeta: {
       ...typography.bodyLarge,
       color: colors.text.secondary,
     },
@@ -230,56 +237,88 @@ const createStyles = (colors: any) =>
     },
     userCard: {
       padding: spacing.lg,
-      backgroundColor: colors.background.card,
-      borderRadius: 12,
-      borderWidth: 1,
-      borderColor: colors.border.light,
     },
     userInfo: {
       marginBottom: spacing.md,
     },
     userHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
       marginBottom: spacing.xs,
+      gap: spacing.sm,
     },
     displayName: {
-      ...typography.h3,
+      fontFamily: fontFamilies.display,
+      fontSize: 20,
       color: colors.text.primary,
+      letterSpacing: -0.4,
       flex: 1,
     },
-    userNumberBadge: {
-      backgroundColor: colors.accent.gold,
-      paddingHorizontal: spacing.sm,
-      paddingVertical: 4,
-      borderRadius: 8,
-    },
     userNumberText: {
-      ...typography.bodySmall,
-      color: colors.text.inverse,
       fontFamily: fontFamilies.mono,
-      fontWeight: 'bold',
+      fontSize: typography.bodySmall.fontSize,
+      color: colors.accent.gold,
+      letterSpacing: 0.3,
     },
     email: {
       ...typography.bodyMedium,
       color: colors.text.secondary,
-      marginBottom: spacing.xs,
+      marginBottom: spacing.sm,
+    },
+    signupRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.xs,
+    },
+    signupDot: {
+      width: 5,
+      height: 5,
+      borderRadius: 3,
+      backgroundColor: colors.accent.gold,
     },
     signupDate: {
-      ...typography.bodySmall,
+      ...typography.label,
       color: colors.text.tertiary,
+      textTransform: "uppercase",
     },
     actions: {
-      flexDirection: 'row',
-      gap: spacing.md,
+      flexDirection: "row",
+      gap: spacing.sm,
+      borderTopWidth: 1,
+      borderTopColor: colors.border.light,
+      paddingTop: spacing.md,
     },
     approveButton: {
       flex: 1,
-      marginBottom: 0,
+      paddingVertical: spacing.md,
+      borderRadius: borderRadius.full,
+      backgroundColor: colors.accent.gold,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    approveButtonText: {
+      fontFamily: fontFamilies.bodySemiBold,
+      fontSize: typography.button.fontSize,
+      color: colors.text.inverse,
+      letterSpacing: 0.3,
     },
     rejectButton: {
       flex: 1,
-      marginBottom: 0,
+      paddingVertical: spacing.md,
+      borderRadius: borderRadius.full,
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    rejectButtonText: {
+      fontFamily: fontFamilies.bodySemiBold,
+      fontSize: typography.button.fontSize,
+      color: colors.text.secondary,
+      letterSpacing: 0.3,
+    },
+    emptyCard: {
+      padding: spacing.xl,
     },
   });
