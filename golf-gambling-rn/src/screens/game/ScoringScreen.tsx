@@ -1256,19 +1256,17 @@ const createStyles = (colors: any) =>
       lineHeight: 46,
       letterSpacing: -0.5,
     },
-    // Multiplier buttons (now on top, smaller than score buttons)
+    // Multiplier buttons — full-width prominent top row
     multiplierRow: {
       flexDirection: "row",
-      gap: spacing.xs - 2,
+      gap: spacing.xs,
       alignItems: "center",
-      justifyContent: "center",
+      justifyContent: "space-between",
       marginBottom: spacing.sm,
-      paddingHorizontal: spacing.xl,
     },
     multiplierRowCompact: {
-      gap: spacing.xs - 4,
+      gap: spacing.xs,
       marginBottom: spacing.sm,
-      paddingHorizontal: spacing.lg,
     },
     multiplierButton: {
       flex: 1,
@@ -1276,14 +1274,14 @@ const createStyles = (colors: any) =>
       alignItems: "center",
       justifyContent: "center",
       gap: 2,
-      paddingVertical: spacing.xs - 2,
+      paddingVertical: spacing.sm,
       borderRadius: borderRadius.full,
       borderWidth: 1,
       borderColor: colors.border.light,
-      backgroundColor: "transparent",
+      backgroundColor: colors.background.card,
     },
     multiplierButtonCompact: {
-      paddingVertical: spacing.xs - 5,
+      paddingVertical: 6,
     },
     multiplierButtonActive: {
       backgroundColor: colors.accent.gold,
@@ -1291,13 +1289,16 @@ const createStyles = (colors: any) =>
     },
     multiplierText: {
       fontFamily: fontFamilies.bodySemiBold,
-      fontSize: 11,
+      fontSize: 15,
       color: colors.text.secondary,
-      letterSpacing: 0.8,
+      letterSpacing: 0.5,
       textTransform: "uppercase",
     },
     multiplierTextCompact: {
-      fontSize: 10,
+      fontSize: 14,
+    },
+    multiplierTextActive: {
+      color: colors.text.inverse,
     },
     multiplierTextActive: {
       color: colors.text.inverse,
