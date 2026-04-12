@@ -106,7 +106,7 @@ export const Card: React.FC<CardProps> = ({
 
   if (loading) {
     return (
-      <View style={[cardStyles, style as ViewStyle]}>
+      <View style={[cardStyles, style]}>
         <Skeleton height={100} />
       </View>
     );
