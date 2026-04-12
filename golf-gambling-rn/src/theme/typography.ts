@@ -66,6 +66,12 @@ export const typography = {
   },
 
   // Body — DM Sans
+  body: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: fontFamilies.body,
+    fontWeight: "400" as const,
+  },
   bodyLarge: {
     fontSize: 16,
     lineHeight: 24,
