@@ -1128,34 +1128,25 @@ const createStyles = (colors: any) =>
     playerCardLosing: {
       borderColor: colors.border.light,
     },
-    playerHeader: {
-      position: "relative",
+    // Name cell on the left of the score row
+    nameCell: {
+      flexDirection: "column",
+      alignItems: "flex-start",
       justifyContent: "center",
-      alignItems: "center",
-      marginBottom: spacing.sm,
-      minHeight: 28,
-    },
-    playerHeaderCompact: {
-      marginBottom: spacing.sm,
-      minHeight: 22,
-    },
-    playerInfo: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      maxWidth: "70%",
+      gap: 4,
+      flexShrink: 1,
+      minWidth: 80,
+      maxWidth: 120,
     },
     playerName: {
       fontFamily: fontFamilies.bodySemiBold,
-      fontSize: 17,
+      fontSize: 20,
       color: colors.text.primary,
-      marginRight: spacing.xs,
-      letterSpacing: -0.1,
-      textAlign: "center",
+      letterSpacing: -0.2,
     },
     playerNameCompact: {
-      fontSize: 15,
-      letterSpacing: -0.1,
+      fontSize: 18,
+      letterSpacing: -0.2,
     },
     playerNumber: {
       fontFamily: fontFamilies.mono,
