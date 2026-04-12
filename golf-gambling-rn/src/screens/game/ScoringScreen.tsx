@@ -1190,7 +1190,7 @@ const createStyles = (colors: any) =>
     handicapDotGives: {
       backgroundColor: colors.scoring.negative,
     },
-    // Score and points row (below multipliers)
+    // Score row — name (left), counter (center), points (right)
     scoreAndPointsRow: {
       flexDirection: "row",
       alignItems: "center",
@@ -1200,13 +1200,12 @@ const createStyles = (colors: any) =>
     scoreAndPointsRowCompact: {
       gap: spacing.xs,
     },
-    // Score section (now larger and more prominent)
+    // Score section — recessed pill tray, natural width
     scoreSection: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      gap: spacing.md,
-      flex: 1,
+      gap: spacing.sm,
     },
     // Recessed pill tray scoping the +/- buttons inside the card
     scoreTray: {
