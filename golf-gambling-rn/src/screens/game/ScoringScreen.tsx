@@ -1148,15 +1148,6 @@ const createStyles = (colors: any) =>
       fontSize: 18,
       letterSpacing: -0.2,
     },
-    playerNumber: {
-      fontFamily: fontFamilies.mono,
-      fontSize: 11,
-      color: colors.text.tertiary,
-      marginRight: spacing.xs,
-    },
-    playerNumberCompact: {
-      fontSize: 9,
-    },
     handicapButton: {
       flexDirection: "row",
       alignItems: "center",
