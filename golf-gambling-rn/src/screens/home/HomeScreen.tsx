@@ -475,7 +475,7 @@ const createStyles = (colors: any) =>
       gap: spacing.sm,
     },
     quickLabel: {
-      ...typography.labelSmall,
+      ...typography.labelLarge,
       color: colors.text.primary,
       letterSpacing: 0.5,
     },
