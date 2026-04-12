@@ -94,7 +94,11 @@ export const CoursesScreen = () => {
             style={styles.deleteButton}
             onPress={() => handleDeleteCourse(course)}
           >
-            <Icon name="delete-outline" size={14} color={colors.scoring.negative} />
+            <Icon
+              name="delete-outline"
+              size={14}
+              color={colors.scoring.negative}
+            />
             <Text style={styles.deleteButtonText}>Delete</Text>
           </TouchableOpacity>
         </View>

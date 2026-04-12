@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   StyleSheet,
   ViewStyle,
@@ -8,33 +8,33 @@ import {
   Pressable,
   ActivityIndicator,
   Platform,
-} from 'react-native';
-import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
+} from "react-native";
+import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   Easing,
-} from 'react-native-reanimated';
-import { Icon } from './Icon';
-import { typography, spacing, borderRadius } from '../../theme';
-import { useThemedColors } from '../../contexts/ThemeContext';
+} from "react-native-reanimated";
+import { Icon } from "./Icon";
+import { typography, spacing, borderRadius } from "../../theme";
+import { useThemedColors } from "../../contexts/ThemeContext";
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'text' | 'gold';
+type ButtonVariant = "primary" | "secondary" | "outline" | "text" | "gold";
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
   variant?: ButtonVariant;
-  size?: 'small' | 'medium' | 'large';
+  size?: "small" | "medium" | "large";
   disabled?: boolean;
   loading?: boolean;
   fullWidth?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
   icon?: string;
-  iconPosition?: 'left' | 'right';
+  iconPosition?: "left" | "right";
   gradient?: boolean;
   hapticFeedback?: boolean;
   accessibilityLabel?: string;
@@ -47,15 +47,15 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 export const Button: React.FC<ButtonProps> = ({
   title,
   onPress,
-  variant = 'primary',
-  size = 'medium',
+  variant = "primary",
+  size = "medium",
   disabled = false,
   loading = false,
   fullWidth = false,
   style,
   textStyle,
   icon,
-  iconPosition = 'left',
+  iconPosition = "left",
   gradient = false,
   hapticFeedback = true,
   accessibilityLabel,
@@ -70,35 +70,56 @@ export const Button: React.FC<ButtonProps> = ({
   }));
 
   const handlePressIn = () => {
-    translateY.value = withTiming(2, { duration: 120, easing: Easing.out(Easing.quad) });
+    translateY.value = withTiming(2, {
+      duration: 120,
+      easing: Easing.out(Easing.quad),
+    });
     shadowOpacity.value = withTiming(0.04, { duration: 120 });
   };
 
   const handlePressOut = () => {
-    translateY.value = withTiming(0, { duration: 180, easing: Easing.out(Easing.quad) });
+    translateY.value = withTiming(0, {
+      duration: 180,
+      easing: Easing.out(Easing.quad),
+    });
     shadowOpacity.value = withTiming(0.08, { duration: 180 });
   };
 
   const handlePress = () => {
-    if (hapticFeedback && !disabled && !loading && Platform.OS !== 'web') {
+    if (hapticFeedback && !disabled && !loading && Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     onPress();
   };
 
-  const isPrimary = variant === 'primary' || variant === 'gold' || gradient;
-  const isSecondary = variant === 'secondary';
-  const isOutline = variant === 'outline';
-  const isText = variant === 'text';
+  const isPrimary = variant === "primary" || variant === "gold" || gradient;
+  const isSecondary = variant === "secondary";
+  const isOutline = variant === "outline";
+  const isText = variant === "text";
 
   const sizeConfig = (() => {
     switch (size) {
-      case 'small':
-        return { height: 40, px: spacing.md, iconSize: 16, radius: borderRadius.full };
-      case 'large':
-        return { height: 56, px: spacing.xl, iconSize: 22, radius: borderRadius.full };
+      case "small":
+        return {
+          height: 40,
+          px: spacing.md,
+          iconSize: 16,
+          radius: borderRadius.full,
+        };
+      case "large":
+        return {
+          height: 56,
+          px: spacing.xl,
+          iconSize: 22,
+          radius: borderRadius.full,
+        };
       default:
-        return { height: 48, px: spacing.lg, iconSize: 20, radius: borderRadius.full };
+        return {
+          height: 48,
+          px: spacing.lg,
+          iconSize: 20,
+          radius: borderRadius.full,
+        };
     }
   })();
 
@@ -112,9 +133,9 @@ export const Button: React.FC<ButtonProps> = ({
   })();
 
   const backgroundColor = (() => {
-    if (isPrimary) return 'transparent'; // gradient handles it
+    if (isPrimary) return "transparent"; // gradient handles it
     if (isSecondary) return colors.background.card;
-    return 'transparent';
+    return "transparent";
   })();
 
   const borderStyle: ViewStyle = isOutline
@@ -124,20 +145,30 @@ export const Button: React.FC<ButtonProps> = ({
       : {};
 
   const content = (
-    <View style={[styles.content, iconPosition === 'right' && styles.contentReverse]}>
+    <View
+      style={[
+        styles.content,
+        iconPosition === "right" && styles.contentReverse,
+      ]}
+    >
       {loading ? (
         <ActivityIndicator size="small" color={textColor} />
       ) : (
         <>
-          {icon && <Icon name={icon} size={sizeConfig.iconSize} color={textColor} />}
+          {icon && (
+            <Icon name={icon} size={sizeConfig.iconSize} color={textColor} />
+          )}
           <Text
             numberOfLines={1}
             style={[
               styles.label,
               { color: textColor },
-              size === 'small' && styles.smallLabel,
-              size === 'large' && styles.largeLabel,
-              isText && { color: colors.accent.gold, textDecorationLine: 'underline' },
+              size === "small" && styles.smallLabel,
+              size === "large" && styles.largeLabel,
+              isText && {
+                color: colors.accent.gold,
+                textDecorationLine: "underline",
+              },
               textStyle,
             ]}
           >
@@ -166,7 +197,7 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={disabled || loading}
       accessibilityLabel={accessibilityLabel || title}
       accessibilityRole="button"
-      android_ripple={{ color: 'rgba(255,255,255,0.18)', borderless: false }}
+      android_ripple={{ color: "rgba(255,255,255,0.18)", borderless: false }}
       style={[
         animatedStyle,
         styles.baseButton,
@@ -193,24 +224,24 @@ export const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   baseButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
     elevation: 3,
   },
   content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 10,
   },
   contentReverse: {
-    flexDirection: 'row-reverse',
+    flexDirection: "row-reverse",
   },
   label: {
     fontFamily: typography.button.fontFamily,
     fontSize: typography.button.fontSize,
-    fontWeight: '600',
+    fontWeight: "600",
     letterSpacing: 0.2,
     flexShrink: 1,
   },
@@ -219,10 +250,10 @@ const styles = StyleSheet.create({
   },
   largeLabel: {
     fontSize: 17,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   fullWidth: {
-    width: '100%',
+    width: "100%",
   },
   disabled: {
     opacity: 0.45,

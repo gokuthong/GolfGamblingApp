@@ -7,12 +7,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import {
-  typography,
-  spacing,
-  borderRadius,
-  animations,
-} from "../../theme";
+import { typography, spacing, borderRadius, animations } from "../../theme";
 import { useThemedColors } from "../../contexts/ThemeContext";
 
 export interface ProgressBarProps {
@@ -92,9 +87,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
             </Text>
           )}
           {showPercentage && (
-            <Text
-              style={[styles.percentage, { color: colors.text.primary }]}
-            >
+            <Text style={[styles.percentage, { color: colors.text.primary }]}>
               {Math.round(progress)}%
             </Text>
           )}

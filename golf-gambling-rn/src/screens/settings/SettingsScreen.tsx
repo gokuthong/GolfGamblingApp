@@ -618,9 +618,7 @@ export const SettingsScreen = () => {
                           )}
                         </>
                       ) : (
-                        <Text style={styles.loadingStats}>
-                          Loading stats…
-                        </Text>
+                        <Text style={styles.loadingStats}>Loading stats…</Text>
                       )}
                     </View>
                   )}
@@ -740,7 +738,9 @@ export const SettingsScreen = () => {
 
         <View style={styles.footer}>
           <View style={styles.footerRule} />
-          <Text style={styles.footerText}>Made for the wager on the green.</Text>
+          <Text style={styles.footerText}>
+            Made for the wager on the green.
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>

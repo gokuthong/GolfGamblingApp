@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import {
   View,
   Text,
@@ -10,7 +16,14 @@ import {
   Platform,
 } from "react-native";
 import { crossPlatformAlert } from "../../utils/crossPlatformAlert";
-import { Button, Card, Checkbox, Icon, Badge, EmptyState } from "../../components/common";
+import {
+  Button,
+  Card,
+  Checkbox,
+  Icon,
+  Badge,
+  EmptyState,
+} from "../../components/common";
 import { dataService } from "../../services/DataService";
 import { localStorageService } from "../../services/storage/LocalStorageService";
 import { Player, Course } from "../../types";
@@ -26,7 +39,9 @@ export const GameSetupScreen = () => {
   const [registeredPlayers, setRegisteredPlayers] = useState<Player[]>([]);
   const [guestPlayers, setGuestPlayers] = useState<Player[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
-  const [selectedPlayerIds, setSelectedPlayerIds] = useState<Set<string>>(new Set());
+  const [selectedPlayerIds, setSelectedPlayerIds] = useState<Set<string>>(
+    new Set(),
+  );
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [newGuestName, setNewGuestName] = useState("");
@@ -100,7 +115,10 @@ export const GameSetupScreen = () => {
       setNewGuestName("");
     } catch (error: any) {
       console.error("Failed to create guest:", error);
-      crossPlatformAlert("Error", `Failed to create guest: ${error.message || error}`);
+      crossPlatformAlert(
+        "Error",
+        `Failed to create guest: ${error.message || error}`,
+      );
     }
   };
 
@@ -119,7 +137,9 @@ export const GameSetupScreen = () => {
 
     setLoading(true);
     try {
-      const selectedCourse = selectedCourseId ? courses.find((c) => c.id === selectedCourseId) : null;
+      const selectedCourse = selectedCourseId
+        ? courses.find((c) => c.id === selectedCourseId)
+        : null;
       const courseName = selectedCourse?.name;
 
       const gameId = await dataService.createGame(
@@ -130,7 +150,10 @@ export const GameSetupScreen = () => {
       );
 
       if (selectedCourseId) {
-        await dataService.initializeHolesForGameFromCourse(gameId, selectedCourseId);
+        await dataService.initializeHolesForGameFromCourse(
+          gameId,
+          selectedCourseId,
+        );
       } else {
         await dataService.initializeHolesForGame(gameId);
       }
@@ -138,7 +161,10 @@ export const GameSetupScreen = () => {
       navigation.navigate("Scoring", { gameId });
     } catch (error: any) {
       console.error("Failed to create game:", error);
-      crossPlatformAlert("Error", `Failed to create game: ${error.message || error}`);
+      crossPlatformAlert(
+        "Error",
+        `Failed to create game: ${error.message || error}`,
+      );
     } finally {
       setLoading(false);
     }
@@ -214,7 +240,10 @@ export const GameSetupScreen = () => {
             </TouchableOpacity>
 
             {courses.map((course) => {
-              const totalPar = course.holes.reduce((sum, hole) => sum + hole.par, 0);
+              const totalPar = course.holes.reduce(
+                (sum, hole) => sum + hole.par,
+                0,
+              );
               const isSelected = selectedCourseId === course.id;
               return (
                 <TouchableOpacity
@@ -242,7 +271,11 @@ export const GameSetupScreen = () => {
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionEyebrow}>Players</Text>
             {selectedCount > 0 && (
-              <Badge label={`${selectedCount}`} variant="primary" size="small" />
+              <Badge
+                label={`${selectedCount}`}
+                variant="primary"
+                size="small"
+              />
             )}
           </View>
 
@@ -263,7 +296,9 @@ export const GameSetupScreen = () => {
                 icon={searchQuery ? "account-search" : "account-off"}
                 title={searchQuery ? "No players found" : "No players yet"}
                 description={
-                  searchQuery ? "Try a different search" : "Register players to get started"
+                  searchQuery
+                    ? "Try a different search"
+                    : "Register players to get started"
                 }
               />
             </Card>
@@ -299,7 +334,11 @@ export const GameSetupScreen = () => {
                       </Text>
                     )}
                     {isSelected && (
-                      <Icon name="check" size={14} color={colors.text.inverse} />
+                      <Icon
+                        name="check"
+                        size={14}
+                        color={colors.text.inverse}
+                      />
                     )}
                   </TouchableOpacity>
                 );
@@ -323,7 +362,12 @@ export const GameSetupScreen = () => {
               returnKeyType="done"
               onSubmitEditing={addGuestPlayer}
             />
-            <Button title="Add" onPress={addGuestPlayer} variant="gold" size="small" />
+            <Button
+              title="Add"
+              onPress={addGuestPlayer}
+              variant="gold"
+              size="small"
+            />
           </View>
 
           {guestPlayers.length > 0 && (
@@ -342,7 +386,10 @@ export const GameSetupScreen = () => {
                       style={styles.guestCheckArea}
                       onPress={() => togglePlayer(guest.id)}
                     >
-                      <Checkbox checked={isSelected} onPress={() => togglePlayer(guest.id)} />
+                      <Checkbox
+                        checked={isSelected}
+                        onPress={() => togglePlayer(guest.id)}
+                      />
                       <Text style={styles.guestName}>{guest.name}</Text>
                       <Badge label="Guest" variant="neutral" size="small" />
                     </TouchableOpacity>
@@ -350,7 +397,11 @@ export const GameSetupScreen = () => {
                       onPress={() => removeGuest(guest.id)}
                       style={styles.removeButton}
                     >
-                      <Icon name="close" size={16} color={colors.text.secondary} />
+                      <Icon
+                        name="close"
+                        size={16}
+                        color={colors.text.secondary}
+                      />
                     </TouchableOpacity>
                   </View>
                 );
@@ -364,7 +415,9 @@ export const GameSetupScreen = () => {
 
       <View style={styles.footer}>
         <Button
-          title={selectedCount >= 2 ? `Start game (${selectedCount})` : "Start game"}
+          title={
+            selectedCount >= 2 ? `Start game (${selectedCount})` : "Start game"
+          }
           onPress={startGame}
           loading={loading}
           disabled={selectedCount < 2}

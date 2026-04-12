@@ -37,7 +37,10 @@ export const RegisterScreen = () => {
     password: string,
   ): { valid: boolean; message?: string } => {
     if (password.length < 8)
-      return { valid: false, message: "Password must be at least 8 characters" };
+      return {
+        valid: false,
+        message: "Password must be at least 8 characters",
+      };
     if (!/[A-Z]/.test(password))
       return {
         valid: false,
@@ -165,7 +168,8 @@ export const RegisterScreen = () => {
     color: string;
     width: number;
   } => {
-    if (!password) return { strength: "", color: colors.text.tertiary, width: 0 };
+    if (!password)
+      return { strength: "", color: colors.text.tertiary, width: 0 };
     let score = 0;
     if (password.length >= 8) score++;
     if (/[A-Z]/.test(password)) score++;
@@ -247,7 +251,10 @@ export const RegisterScreen = () => {
                   />
                 </View>
                 <Text
-                  style={[styles.strengthText, { color: passwordStrength.color }]}
+                  style={[
+                    styles.strengthText,
+                    { color: passwordStrength.color },
+                  ]}
                 >
                   {passwordStrength.strength}
                 </Text>

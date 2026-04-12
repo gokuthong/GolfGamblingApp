@@ -44,7 +44,10 @@ export const PremiumBackground: React.FC<PremiumBackgroundProps> = ({
   if (preset === "home" || preset === "luxury") {
     return (
       <View
-        style={[styles.container, { backgroundColor: colors.background.primary }]}
+        style={[
+          styles.container,
+          { backgroundColor: colors.background.primary },
+        ]}
         pointerEvents="none"
       >
         <Animated.View style={[styles.topRight, pulsingStyle]}>
@@ -70,7 +73,10 @@ export const PremiumBackground: React.FC<PremiumBackgroundProps> = ({
   if (preset === "auth") {
     return (
       <View
-        style={[styles.container, { backgroundColor: colors.background.primary }]}
+        style={[
+          styles.container,
+          { backgroundColor: colors.background.primary },
+        ]}
         pointerEvents="none"
       >
         <Animated.View style={[styles.authGlow, pulsingStyle]}>
@@ -88,7 +94,10 @@ export const PremiumBackground: React.FC<PremiumBackgroundProps> = ({
   if (preset === "game") {
     return (
       <View
-        style={[styles.container, { backgroundColor: colors.background.primary }]}
+        style={[
+          styles.container,
+          { backgroundColor: colors.background.primary },
+        ]}
         pointerEvents="none"
       >
         <Animated.View style={[styles.topRight, pulsingStyle]}>

@@ -62,10 +62,7 @@ const HomeStack = () => (
     <Stack.Screen name="GameSetup" component={GameSetupScreen} />
     <Stack.Screen name="HandicapSetup" component={HandicapSetupScreen} />
     <Stack.Screen name="Scoring" component={ScoringScreen} />
-    <Stack.Screen
-      name="OverallStandings"
-      component={OverallStandingsScreen}
-    />
+    <Stack.Screen name="OverallStandings" component={OverallStandingsScreen} />
     <Stack.Screen name="GameSummary" component={GameSummaryScreen} />
     <Stack.Screen name="Register" component={RegisterScreen} />
     <Stack.Screen name="Login" component={LoginScreen} />
@@ -142,11 +139,7 @@ export const AppNavigator = () => {
         options={{
           title: "Courses",
           tabBarIcon: (props) => (
-            <TabIcon
-              {...props}
-              filled="golf"
-              outlined="golf-tee"
-            />
+            <TabIcon {...props} filled="golf" outlined="golf-tee" />
           ),
         }}
       />

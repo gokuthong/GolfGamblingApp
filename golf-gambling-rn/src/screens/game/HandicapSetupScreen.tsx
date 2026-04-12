@@ -98,7 +98,10 @@ export const HandicapSetupScreen = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+      >
         <View style={styles.hero}>
           <Text style={styles.eyebrow}>Pre-match</Text>
           <Text style={styles.heroTitle}>Handicap setup</Text>
@@ -123,7 +126,7 @@ export const HandicapSetupScreen = () => {
               <View style={styles.pairHeader}>
                 <Text style={styles.pairTitle}>
                   {player1.name}
-                  <Text style={styles.pairVs}>  vs  </Text>
+                  <Text style={styles.pairVs}> vs </Text>
                   {player2.name}
                 </Text>
               </View>
@@ -143,13 +146,19 @@ export const HandicapSetupScreen = () => {
                       }}
                       disabled={!player1Receives || strokeCount === 0}
                     >
-                      <Icon name="minus" size={16} color={colors.text.primary} />
+                      <Icon
+                        name="minus"
+                        size={16}
+                        color={colors.text.primary}
+                      />
                     </TouchableOpacity>
 
                     <Text
                       style={[
                         styles.counterValue,
-                        player1Receives && strokeCount > 0 && styles.counterValueActive,
+                        player1Receives &&
+                          strokeCount > 0 &&
+                          styles.counterValueActive,
                       ]}
                     >
                       {player1Receives ? strokeCount : 0}
@@ -186,13 +195,19 @@ export const HandicapSetupScreen = () => {
                       }}
                       disabled={!player2Receives || strokeCount === 0}
                     >
-                      <Icon name="minus" size={16} color={colors.text.primary} />
+                      <Icon
+                        name="minus"
+                        size={16}
+                        color={colors.text.primary}
+                      />
                     </TouchableOpacity>
 
                     <Text
                       style={[
                         styles.counterValue,
-                        player2Receives && strokeCount > 0 && styles.counterValueActive,
+                        player2Receives &&
+                          strokeCount > 0 &&
+                          styles.counterValueActive,
                       ]}
                     >
                       {player2Receives ? strokeCount : 0}

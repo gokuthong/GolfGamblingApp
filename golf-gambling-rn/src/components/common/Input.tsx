@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
-import { TextInput as PaperTextInput, HelperText } from 'react-native-paper';
-import { typography, spacing, borderRadius } from '../../theme';
-import { useThemedColors } from '../../contexts/ThemeContext';
+import React from "react";
+import { View, StyleSheet, ViewStyle } from "react-native";
+import { TextInput as PaperTextInput, HelperText } from "react-native-paper";
+import { typography, spacing, borderRadius } from "../../theme";
+import { useThemedColors } from "../../contexts/ThemeContext";
 
 interface InputProps {
   label?: string;
@@ -12,9 +12,9 @@ interface InputProps {
   containerStyle?: ViewStyle;
   placeholder?: string;
   secureTextEntry?: boolean;
-  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
-  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
-  autoComplete?: 'email' | 'password' | 'off' | 'name';
+  keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  autoComplete?: "email" | "password" | "off" | "name";
   editable?: boolean;
   multiline?: boolean;
   numberOfLines?: number;
@@ -33,9 +33,9 @@ export const Input: React.FC<InputProps> = ({
   containerStyle,
   placeholder,
   secureTextEntry,
-  keyboardType = 'default',
-  autoCapitalize = 'none',
-  autoComplete = 'off',
+  keyboardType = "default",
+  autoCapitalize = "none",
+  autoComplete = "off",
   editable = true,
   multiline = false,
   numberOfLines = 1,
@@ -64,14 +64,23 @@ export const Input: React.FC<InputProps> = ({
         maxLength={maxLength}
         error={!!error}
         accessibilityLabel={accessibilityLabel || label}
-        left={leftIcon ? <PaperTextInput.Icon icon={leftIcon} color={colors.text.secondary} /> : undefined}
-        right={rightIcon ? (
-          <PaperTextInput.Icon
-            icon={rightIcon}
-            color={colors.text.secondary}
-            onPress={onRightIconPress}
-          />
-        ) : undefined}
+        left={
+          leftIcon ? (
+            <PaperTextInput.Icon
+              icon={leftIcon}
+              color={colors.text.secondary}
+            />
+          ) : undefined
+        }
+        right={
+          rightIcon ? (
+            <PaperTextInput.Icon
+              icon={rightIcon}
+              color={colors.text.secondary}
+              onPress={onRightIconPress}
+            />
+          ) : undefined
+        }
         style={[styles.input, { backgroundColor: colors.background.card }]}
         contentStyle={styles.inputContent}
         outlineStyle={styles.outline}
@@ -93,7 +102,11 @@ export const Input: React.FC<InputProps> = ({
         }}
       />
       {error && (
-        <HelperText type="error" visible={!!error} style={[styles.errorText, { color: colors.status.error }]}>
+        <HelperText
+          type="error"
+          visible={!!error}
+          style={[styles.errorText, { color: colors.status.error }]}
+        >
           {error}
         </HelperText>
       )}

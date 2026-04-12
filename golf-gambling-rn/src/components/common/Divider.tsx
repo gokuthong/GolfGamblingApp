@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
-import { spacing } from '../../theme';
-import { useThemedColors } from '../../contexts/ThemeContext';
+import React from "react";
+import { View, StyleSheet, ViewStyle } from "react-native";
+import { spacing } from "../../theme";
+import { useThemedColors } from "../../contexts/ThemeContext";
 
 interface DividerProps {
   gold?: boolean;
@@ -10,7 +10,12 @@ interface DividerProps {
   vertical?: boolean;
 }
 
-export const Divider: React.FC<DividerProps> = ({ gold = false, thin = false, style, vertical = false }) => {
+export const Divider: React.FC<DividerProps> = ({
+  gold = false,
+  thin = false,
+  style,
+  vertical = false,
+}) => {
   const colors = useThemedColors();
   const color = gold ? colors.accent.gold : colors.border.light;
   const thickness = thin ? StyleSheet.hairlineWidth : gold ? 1.5 : 1;
@@ -19,8 +24,12 @@ export const Divider: React.FC<DividerProps> = ({ gold = false, thin = false, st
     <View
       style={[
         vertical
-          ? { width: thickness, alignSelf: 'stretch' }
-          : { height: thickness, alignSelf: 'stretch', marginVertical: spacing.md },
+          ? { width: thickness, alignSelf: "stretch" }
+          : {
+              height: thickness,
+              alignSelf: "stretch",
+              marginVertical: spacing.md,
+            },
         { backgroundColor: color },
         style,
       ]}

@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, ViewStyle, StyleProp } from 'react-native';
-import { Icon } from './Icon';
-import { Button } from './Button';
-import { typography, spacing } from '../../theme';
-import { useThemedColors } from '../../contexts/ThemeContext';
+import React from "react";
+import { View, Text, StyleSheet, ViewStyle, StyleProp } from "react-native";
+import { Icon } from "./Icon";
+import { Button } from "./Button";
+import { typography, spacing } from "../../theme";
+import { useThemedColors } from "../../contexts/ThemeContext";
 
 export interface EmptyStateProps {
   icon?: string;
@@ -15,7 +15,7 @@ export interface EmptyStateProps {
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
-  icon = 'inbox-outline',
+  icon = "inbox-outline",
   title,
   description,
   actionLabel,
@@ -26,13 +26,22 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   return (
     <View style={[styles.container, style]}>
       {icon && (
-        <View style={[styles.iconContainer, { backgroundColor: colors.surfaces.level2 }]}>
+        <View
+          style={[
+            styles.iconContainer,
+            { backgroundColor: colors.surfaces.level2 },
+          ]}
+        >
           <Icon name={icon} size={32} color={colors.text.tertiary} />
         </View>
       )}
-      <Text style={[styles.title, { color: colors.text.primary }]}>{title}</Text>
+      <Text style={[styles.title, { color: colors.text.primary }]}>
+        {title}
+      </Text>
       {description && (
-        <Text style={[styles.description, { color: colors.text.secondary }]}>{description}</Text>
+        <Text style={[styles.description, { color: colors.text.secondary }]}>
+          {description}
+        </Text>
       )}
       {actionLabel && onAction && (
         <View style={styles.actionContainer}>
@@ -45,25 +54,25 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
+    alignItems: "center",
     padding: spacing.xl,
   },
   iconContainer: {
     width: 72,
     height: 72,
     borderRadius: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: spacing.lg,
   },
   title: {
     ...typography.h3,
     marginBottom: spacing.xs,
-    textAlign: 'center',
+    textAlign: "center",
   },
   description: {
     ...typography.bodyMedium,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: spacing.lg,
     maxWidth: 320,
   },

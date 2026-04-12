@@ -67,7 +67,10 @@ const ConfettiParticle = ({
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }, { rotate: `${rotate.value}deg` }],
+    transform: [
+      { translateY: translateY.value },
+      { rotate: `${rotate.value}deg` },
+    ],
     opacity: opacity.value,
     left: startX,
   }));
@@ -119,7 +122,9 @@ export const GameSummaryScreen = () => {
       for (const h of localHoles) holeMap.set(h.id, h);
       for (const h of fsHoles) holeMap.set(h.id, h);
       setHoles(
-        Array.from(holeMap.values()).sort((a, b) => a.holeNumber - b.holeNumber),
+        Array.from(holeMap.values()).sort(
+          (a, b) => a.holeNumber - b.holeNumber,
+        ),
       );
 
       const scoreMap = new Map<string, Score>();
@@ -515,7 +520,9 @@ export const GameSummaryScreen = () => {
               />
             </ZoomableView>
           </View>
-          <Text style={styles.zoomHint}>Pinch to zoom · double-tap to reset</Text>
+          <Text style={styles.zoomHint}>
+            Pinch to zoom · double-tap to reset
+          </Text>
         </View>
 
         {/* Hole-by-hole points */}

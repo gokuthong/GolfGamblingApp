@@ -206,10 +206,17 @@ export const CreateCourseScreen = () => {
                       <TouchableOpacity
                         style={styles.parButton}
                         onPress={() =>
-                          updateHolePar(hole.holeNumber, Math.max(3, hole.par - 1))
+                          updateHolePar(
+                            hole.holeNumber,
+                            Math.max(3, hole.par - 1),
+                          )
                         }
                       >
-                        <Icon name="minus" size={14} color={colors.text.primary} />
+                        <Icon
+                          name="minus"
+                          size={14}
+                          color={colors.text.primary}
+                        />
                       </TouchableOpacity>
 
                       <Text style={styles.parValue}>Par {hole.par}</Text>
@@ -217,10 +224,17 @@ export const CreateCourseScreen = () => {
                       <TouchableOpacity
                         style={styles.parButton}
                         onPress={() =>
-                          updateHolePar(hole.holeNumber, Math.min(6, hole.par + 1))
+                          updateHolePar(
+                            hole.holeNumber,
+                            Math.min(6, hole.par + 1),
+                          )
                         }
                       >
-                        <Icon name="plus" size={14} color={colors.text.primary} />
+                        <Icon
+                          name="plus"
+                          size={14}
+                          color={colors.text.primary}
+                        />
                       </TouchableOpacity>
                     </View>
 
@@ -228,7 +242,9 @@ export const CreateCourseScreen = () => {
                       style={styles.indexSelector}
                       onPress={() =>
                         setExpandedHole(
-                          expandedHole === hole.holeNumber ? null : hole.holeNumber,
+                          expandedHole === hole.holeNumber
+                            ? null
+                            : hole.holeNumber,
                         )
                       }
                     >
@@ -256,32 +272,33 @@ export const CreateCourseScreen = () => {
                         Select index difficulty
                       </Text>
                       <View style={styles.indexGrid}>
-                        {Array.from({ length: holes.length }, (_, i) => i + 1).map(
-                          (idx) => (
-                            <TouchableOpacity
-                              key={idx}
+                        {Array.from(
+                          { length: holes.length },
+                          (_, i) => i + 1,
+                        ).map((idx) => (
+                          <TouchableOpacity
+                            key={idx}
+                            style={[
+                              styles.indexOption,
+                              (hole.index || hole.holeNumber) === idx &&
+                                styles.indexOptionSelected,
+                            ]}
+                            onPress={() => {
+                              updateHoleIndex(hole.holeNumber, idx);
+                              setExpandedHole(null);
+                            }}
+                          >
+                            <Text
                               style={[
-                                styles.indexOption,
+                                styles.indexOptionText,
                                 (hole.index || hole.holeNumber) === idx &&
-                                  styles.indexOptionSelected,
+                                  styles.indexOptionTextSelected,
                               ]}
-                              onPress={() => {
-                                updateHoleIndex(hole.holeNumber, idx);
-                                setExpandedHole(null);
-                              }}
                             >
-                              <Text
-                                style={[
-                                  styles.indexOptionText,
-                                  (hole.index || hole.holeNumber) === idx &&
-                                    styles.indexOptionTextSelected,
-                                ]}
-                              >
-                                {idx}
-                              </Text>
-                            </TouchableOpacity>
-                          ),
-                        )}
+                              {idx}
+                            </Text>
+                          </TouchableOpacity>
+                        ))}
                       </View>
                     </View>
                   )}
