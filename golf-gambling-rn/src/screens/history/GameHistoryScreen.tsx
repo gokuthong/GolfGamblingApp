@@ -129,7 +129,14 @@ export const GameHistoryScreen = () => {
           }
         });
 
-        return { game, players, winner, finalPoints, totalStrokes };
+        const result: GameWithDetails = {
+          game,
+          players,
+          winner,
+          finalPoints,
+          totalStrokes,
+        };
+        return result;
       });
 
       const results = await Promise.all(detailsPromises);
