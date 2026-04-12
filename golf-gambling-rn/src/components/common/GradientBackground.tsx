@@ -94,10 +94,7 @@ export const GradientBackground: React.FC<GradientBackgroundProps> = ({
         };
       default:
         return {
-          colors: [
-            colors.background.secondary,
-            colors.background.primary,
-          ],
+          colors: [colors.background.secondary, colors.background.primary],
           start: { x: 0, y: 0 },
           end: { x: 0, y: 1 },
         };
@@ -112,7 +109,9 @@ export const GradientBackground: React.FC<GradientBackgroundProps> = ({
         colors={config.colors}
         start={config.start}
         end={config.end}
-        locations={config.locations}
+        locations={
+          config.locations as unknown as readonly [number, number, ...number[]]
+        }
         style={StyleSheet.absoluteFill}
       />
     </Animated.View>
@@ -192,7 +191,12 @@ interface DarkScreenProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   showGlow?: boolean;
-  glowPosition?: { top?: number; left?: number; right?: number; bottom?: number };
+  glowPosition?: {
+    top?: number;
+    left?: number;
+    right?: number;
+    bottom?: number;
+  };
 }
 
 export const DarkScreen: React.FC<DarkScreenProps> = ({
