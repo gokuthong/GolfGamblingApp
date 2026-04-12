@@ -1,64 +1,70 @@
-// Font families - loaded via expo-google-fonts
+// Typography — Fraunces (display serif, no italics) + DM Sans (body) + IBM Plex Mono (numbers)
+// Readable, editorial, Masters-heritage feel. Tight tracking on headings, mixed case.
+
 export const fontFamilies = {
-  display: 'BebasNeue_400Regular',
+  display: 'Fraunces_600SemiBold',
+  displayLight: 'Fraunces_400Regular',
   body: 'DMSans_400Regular',
   bodyMedium: 'DMSans_500Medium',
   bodySemiBold: 'DMSans_600SemiBold',
   bodyBold: 'DMSans_700Bold',
-  mono: 'JetBrainsMono_400Regular',
-  monoMedium: 'JetBrainsMono_500Medium',
-  monoBold: 'JetBrainsMono_700Bold',
+  mono: 'IBMPlexMono_400Regular',
+  monoMedium: 'IBMPlexMono_500Medium',
+  monoBold: 'IBMPlexMono_700Bold',
 };
 
 export const typography = {
-  // Display headings - Bebas Neue for impact
+  // Display — Fraunces serif, readable weights only
   display: {
-    fontSize: 64,
-    lineHeight: 72,
+    fontSize: 48,
+    lineHeight: 54,
     fontFamily: fontFamilies.display,
-    letterSpacing: 1,
+    letterSpacing: -1.4,  // ≈ -0.03em
   },
   displayLarge: {
-    fontSize: 48,
-    lineHeight: 56,
+    fontSize: 40,
+    lineHeight: 46,
     fontFamily: fontFamilies.display,
-    letterSpacing: 0.5,
+    letterSpacing: -1.2,
   },
   displayMedium: {
-    fontSize: 36,
-    lineHeight: 44,
+    fontSize: 32,
+    lineHeight: 38,
     fontFamily: fontFamilies.display,
-    letterSpacing: 0.5,
+    letterSpacing: -0.9,
   },
 
-  // Standard headings - DM Sans Bold
+  // Standard headings — Fraunces semibold
   h1: {
     fontSize: 32,
-    lineHeight: 40,
-    fontFamily: fontFamilies.bodyBold,
-    fontWeight: '700' as const,
-    letterSpacing: -0.5,
+    lineHeight: 38,
+    fontFamily: fontFamilies.display,
+    fontWeight: '600' as const,
+    letterSpacing: -0.9,
   },
   h2: {
     fontSize: 24,
-    lineHeight: 32,
-    fontFamily: fontFamilies.bodySemiBold,
+    lineHeight: 30,
+    fontFamily: fontFamilies.display,
     fontWeight: '600' as const,
+    letterSpacing: -0.6,
   },
   h3: {
     fontSize: 20,
-    lineHeight: 28,
-    fontFamily: fontFamilies.bodySemiBold,
+    lineHeight: 26,
+    fontFamily: fontFamilies.display,
     fontWeight: '600' as const,
+    letterSpacing: -0.4,
   },
   h4: {
     fontSize: 18,
     lineHeight: 24,
     fontFamily: fontFamilies.bodySemiBold,
     fontWeight: '600' as const,
+    letterSpacing: -0.2,
   },
 
-  // Body text - DM Sans
+  // Body — DM Sans
   bodyLarge: {
     fontSize: 16,
     lineHeight: 24,
@@ -78,23 +84,23 @@ export const typography = {
     fontWeight: '400' as const,
   },
 
-  // Labels - DM Sans Medium
+  // Labels / micro-caps — DM Sans medium, uppercase, wider tracking
   label: {
-    fontSize: 12,
+    fontSize: 11,
+    lineHeight: 14,
+    fontFamily: fontFamilies.bodyMedium,
+    fontWeight: '500' as const,
+    letterSpacing: 1.2,
+  },
+  labelLarge: {
+    fontSize: 13,
     lineHeight: 16,
     fontFamily: fontFamilies.bodyMedium,
     fontWeight: '500' as const,
-    letterSpacing: 0.5,
-  },
-  labelLarge: {
-    fontSize: 14,
-    lineHeight: 18,
-    fontFamily: fontFamilies.bodyMedium,
-    fontWeight: '500' as const,
-    letterSpacing: 0.3,
+    letterSpacing: 0.8,
   },
 
-  // Scores and stats - JetBrains Mono for tabular alignment
+  // Scoring/stats — IBM Plex Mono
   scoreValue: {
     fontSize: 18,
     lineHeight: 24,
@@ -103,50 +109,54 @@ export const typography = {
   },
   scoreLarge: {
     fontSize: 36,
-    lineHeight: 44,
+    lineHeight: 42,
     fontFamily: fontFamilies.monoBold,
     fontWeight: '700' as const,
   },
   scoreHuge: {
-    fontSize: 64,
-    lineHeight: 72,
-    fontFamily: fontFamilies.display,
-    letterSpacing: 2,
+    fontSize: 56,
+    lineHeight: 62,
+    fontFamily: fontFamilies.monoBold,
+    fontWeight: '700' as const,
+    letterSpacing: -0.8,
   },
 
-  // Sports-style stat displays
+  // Stat displays — Fraunces for hero numbers (when non-tabular)
   statDisplay: {
-    fontSize: 48,
-    lineHeight: 56,
+    fontSize: 40,
+    lineHeight: 46,
     fontFamily: fontFamilies.display,
-    letterSpacing: 1,
+    fontWeight: '600' as const,
+    letterSpacing: -1.0,
   },
   statLabel: {
     fontSize: 10,
     lineHeight: 12,
     fontFamily: fontFamilies.bodySemiBold,
-    fontWeight: '700' as const,
-    letterSpacing: 1.2,
+    fontWeight: '600' as const,
+    letterSpacing: 1.4,
   },
   tableNumber: {
     fontSize: 14,
     lineHeight: 18,
-    fontFamily: fontFamilies.mono,
-    fontWeight: '600' as const,
+    fontFamily: fontFamilies.monoMedium,
+    fontWeight: '500' as const,
   },
 
-  // Button text
+  // Buttons
   button: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontFamily: fontFamilies.bodySemiBold,
-    fontWeight: '600' as const,
-  },
-  buttonSmall: {
-    fontSize: 14,
+    fontSize: 15,
     lineHeight: 20,
     fontFamily: fontFamilies.bodySemiBold,
     fontWeight: '600' as const,
+    letterSpacing: 0.2,
+  },
+  buttonSmall: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: fontFamilies.bodySemiBold,
+    fontWeight: '600' as const,
+    letterSpacing: 0.2,
   },
 };
 
