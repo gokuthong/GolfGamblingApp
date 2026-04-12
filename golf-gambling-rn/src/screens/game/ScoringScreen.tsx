@@ -1107,16 +1107,17 @@ const createStyles = (colors: any) =>
       padding: spacing.sm,
       // Faint gold-washed tint (subtle, brand-aligned)
       backgroundColor: "rgba(212, 175, 55, 0.05)",
-      borderWidth: 1,
-      borderColor: colors.border.light,
-      // 6px player-color accent bar on left (color set inline per-player)
-      borderLeftWidth: 6,
-      // Stronger 3D shadow for elevation
+      // Thicker, more distinguishable border
+      borderWidth: 2,
+      borderColor: colors.border.medium,
+      // 8px player-color accent bar on left (color set inline per-player)
+      borderLeftWidth: 8,
+      // Stronger 3D shadow for clear elevation
       shadowColor: colors.shadowColors.default,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.14,
-      shadowRadius: 12,
-      elevation: 6,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.22,
+      shadowRadius: 18,
+      elevation: 10,
     },
     playerCardWinning: {
       borderColor: colors.border.goldSubtle,
