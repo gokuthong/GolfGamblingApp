@@ -1120,40 +1120,53 @@ const createStyles = (colors: any) =>
       // Wrapper to ensure stable layout during re-renders
       flexShrink: 0,
       marginBottom: spacing.lg,
-      // Ensure wrapper is always visible and properly laid out
       opacity: 1,
       minHeight: 1,
     },
     playerCardWrapperCompact: {
-      marginBottom: spacing.md,
+      marginBottom: 14,
+      flex: 1,
     },
     playerCard: {
       padding: spacing.sm,
+      // Faint gold-washed tint (subtle, brand-aligned)
+      backgroundColor: "rgba(212, 175, 55, 0.05)",
       borderWidth: 1,
       borderColor: colors.border.light,
-      borderLeftWidth: 3,
-      borderLeftColor: colors.border.light,
+      // 6px player-color accent bar on left (color set inline per-player)
+      borderLeftWidth: 6,
+      // Stronger 3D shadow for elevation
+      shadowColor: colors.shadowColors.default,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.14,
+      shadowRadius: 12,
+      elevation: 6,
     },
     playerCardWinning: {
       borderColor: colors.border.goldSubtle,
-      borderLeftColor: colors.accent.gold,
+      // Preserve playerColor on left; enhance gold glow on other sides
+      shadowColor: colors.accent.gold,
+      shadowOpacity: 0.22,
     },
     playerCardLosing: {
       borderColor: colors.border.light,
-      borderLeftColor: colors.scoring.negative,
     },
     playerHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
+      position: "relative",
+      justifyContent: "center",
       alignItems: "center",
       marginBottom: spacing.sm,
+      minHeight: 28,
     },
     playerHeaderCompact: {
-      marginBottom: spacing.xs - 2,
+      marginBottom: spacing.sm,
+      minHeight: 22,
     },
     playerInfo: {
       flexDirection: "row",
       alignItems: "center",
+      justifyContent: "center",
+      maxWidth: "70%",
     },
     playerName: {
       fontFamily: fontFamilies.bodySemiBold,
@@ -1161,6 +1174,7 @@ const createStyles = (colors: any) =>
       color: colors.text.primary,
       marginRight: spacing.xs,
       letterSpacing: -0.1,
+      textAlign: "center",
     },
     playerNameCompact: {
       fontSize: 15,
@@ -1185,6 +1199,11 @@ const createStyles = (colors: any) =>
       borderRadius: borderRadius.full,
       borderWidth: 1,
       borderColor: colors.border.light,
+    },
+    handicapButtonAbs: {
+      position: "absolute",
+      right: 0,
+      top: 0,
     },
     handicapButtonCompact: {
       paddingVertical: 2,
