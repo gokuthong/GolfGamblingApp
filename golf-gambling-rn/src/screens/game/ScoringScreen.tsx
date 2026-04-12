@@ -1135,8 +1135,8 @@ const createStyles = (colors: any) =>
       justifyContent: "center",
       gap: 4,
       flexShrink: 1,
-      minWidth: 80,
-      maxWidth: 120,
+      minWidth: 110,
+      maxWidth: 180,
     },
     playerName: {
       fontFamily: fontFamilies.bodySemiBold,
