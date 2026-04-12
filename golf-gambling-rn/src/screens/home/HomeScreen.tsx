@@ -395,7 +395,8 @@ const createStyles = (colors: any) =>
       marginBottom: spacing.xl,
     },
     sectionEyebrow: {
-      ...typography.overline,
+      ...typography.label,
+      textTransform: "uppercase",
       color: colors.text.tertiary,
       marginBottom: spacing.sm,
     },
