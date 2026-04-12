@@ -415,11 +415,8 @@ export const ScoringScreen = () => {
 
   return (
     <View style={[styles.container, currentHole.confirmed && { backgroundColor: colors.confirmedHoleBg }]}>
-      {/* Compact Header with hole info */}
-      <LinearGradient
-        colors={colors.gradients.header}
-        style={[styles.header, { paddingTop: insets.top + spacing.sm }]}
-      >
+      {/* Editorial header with hole info */}
+      <View style={[styles.header, { paddingTop: insets.top + spacing.sm }]}>
         <TouchableOpacity
           style={styles.standingsButton}
           onPress={() => navigation.navigate('OverallStandings', { gameId })}
@@ -442,7 +439,7 @@ export const ScoringScreen = () => {
         <View style={styles.headerProgress}>
           <Text style={styles.headerProgressText}>{currentHoleIndex + 1}/{holes.length}</Text>
         </View>
-      </LinearGradient>
+      </View>
 
       {/* Player Cards */}
       <ScrollView
