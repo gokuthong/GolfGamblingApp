@@ -1309,8 +1309,9 @@ const createStyles = (colors: any) =>
     pointsLabel: {
       fontFamily: fontFamilies.bodySemiBold,
       fontSize: 9,
-      color: colors.text.secondary,
-      letterSpacing: 0.5,
+      color: colors.text.tertiary,
+      letterSpacing: 1.2,
+      textTransform: "uppercase",
     },
     pointsLabelCompact: {
       fontSize: 8,
