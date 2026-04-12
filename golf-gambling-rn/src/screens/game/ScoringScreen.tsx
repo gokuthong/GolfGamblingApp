@@ -1303,7 +1303,7 @@ const createStyles = (colors: any) =>
     },
     multiplierRowCompact: {
       gap: spacing.xs - 4,
-      marginBottom: spacing.xs - 2,
+      marginBottom: spacing.sm,
       paddingHorizontal: spacing.lg,
     },
     multiplierButton: {
