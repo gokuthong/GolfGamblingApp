@@ -537,7 +537,7 @@ export const ScoringScreen = () => {
               ]}
             >
               <Card goldBorder={playerPoints > 0} style={cardStyle}>
-                {/* Player Header */}
+                {/* Player Header — name centered, handicap pill top-right */}
                 <View
                   style={[
                     styles.playerHeader,
@@ -549,7 +549,9 @@ export const ScoringScreen = () => {
                       style={[
                         styles.playerName,
                         isCompactLayout && styles.playerNameCompact,
+                        { color: playerColor },
                       ]}
+                      numberOfLines={1}
                     >
                       {player.name}
                     </Text>
@@ -570,6 +572,7 @@ export const ScoringScreen = () => {
                   <TouchableOpacity
                     style={[
                       styles.handicapButton,
+                      styles.handicapButtonAbs,
                       isCompactLayout && styles.handicapButtonCompact,
                     ]}
                     onPress={() => openHandicapModal(player)}
