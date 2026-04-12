@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -7,22 +7,26 @@ import {
   TouchableOpacity,
   Dimensions,
   Platform,
-} from 'react-native';
-import { crossPlatformAlert } from '../../utils/crossPlatformAlert';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import * as Haptics from 'expo-haptics';
-import { Button, Card, Badge, Icon } from '../../components/common';
-import { HandicapModal } from '../../components/game/HandicapModal';
-import { dataService } from '../../services/DataService';
-import { Hole, Score, Player, Game } from '../../types';
-import { typography, spacing, fontFamilies, borderRadius } from '../../theme';
-import { useThemedColors } from '../../contexts/ThemeContext';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import { ScoreCalculator } from '../../utils/scoreCalculator';
-import { setHandicapForHole, getTotalHandicapForMatchup, getHandicapForHole } from '../../utils/handicapUtils';
+} from "react-native";
+import { crossPlatformAlert } from "../../utils/crossPlatformAlert";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
+import * as Haptics from "expo-haptics";
+import { Button, Card, Badge, Icon } from "../../components/common";
+import { HandicapModal } from "../../components/game/HandicapModal";
+import { dataService } from "../../services/DataService";
+import { Hole, Score, Player, Game } from "../../types";
+import { typography, spacing, fontFamilies, borderRadius } from "../../theme";
+import { useThemedColors } from "../../contexts/ThemeContext";
+import { useRoute, useNavigation } from "@react-navigation/native";
+import { ScoreCalculator } from "../../utils/scoreCalculator";
+import {
+  setHandicapForHole,
+  getTotalHandicapForMatchup,
+  getHandicapForHole,
+} from "../../utils/handicapUtils";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export const ScoringScreen = () => {
   const route = useRoute<any>();
@@ -69,7 +73,7 @@ export const ScoringScreen = () => {
         }
         setLoading(false);
       } catch (error) {
-        console.error('Failed to load game data:', error);
+        console.error("Failed to load game data:", error);
         setLoading(false);
       }
     };
@@ -86,12 +90,13 @@ export const ScoringScreen = () => {
     if (pendingUpdatesRef.current.has(updateKey)) return;
 
     const existingScore = scores.find(
-      s => s.holeId === currentHole.id && s.playerId === playerId
+      (s) => s.holeId === currentHole.id && s.playerId === playerId,
     );
 
     try {
       pendingUpdatesRef.current.add(updateKey);
-      if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      if (Platform.OS !== "web")
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       await dataService.upsertScore({
         holeId: currentHole.id,
         playerId,
@@ -112,7 +117,7 @@ export const ScoringScreen = () => {
         setHasChanges(true);
       }
     } catch (error) {
-      crossPlatformAlert('Error', 'Failed to update score');
+      crossPlatformAlert("Error", "Failed to update score");
     } finally {
       pendingUpdatesRef.current.delete(updateKey);
     }
@@ -125,7 +130,7 @@ export const ScoringScreen = () => {
     if (pendingUpdatesRef.current.has(updateKey)) return;
 
     const existingScore = scores.find(
-      s => s.holeId === currentHole.id && s.playerId === playerId
+      (s) => s.holeId === currentHole.id && s.playerId === playerId,
     );
 
     const currentMultiplier = existingScore?.multiplier || 1;
@@ -135,7 +140,8 @@ export const ScoringScreen = () => {
 
     try {
       pendingUpdatesRef.current.add(updateKey);
-      if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      if (Platform.OS !== "web")
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       await dataService.upsertScore({
         holeId: currentHole.id,
         playerId,
@@ -156,56 +162,55 @@ export const ScoringScreen = () => {
         setHasChanges(true);
       }
     } catch (error) {
-      crossPlatformAlert('Error', 'Failed to set multiplier');
+      crossPlatformAlert("Error", "Failed to set multiplier");
     } finally {
       pendingUpdatesRef.current.delete(updateKey);
     }
   };
 
   const handleSaveChanges = () => {
-    crossPlatformAlert(
-      'Save Changes',
-      'Your changes have been saved.',
-      [
-        {
-          text: 'OK',
-          onPress: () => navigation.navigate('HistoryTab', { screen: 'GameHistory' }),
-        },
-      ]
-    );
+    crossPlatformAlert("Save Changes", "Your changes have been saved.", [
+      {
+        text: "OK",
+        onPress: () =>
+          navigation.navigate("HistoryTab", { screen: "GameHistory" }),
+      },
+    ]);
   };
 
   const handleDiscardChanges = () => {
     if (!hasChanges) {
-      navigation.navigate('HistoryTab', { screen: 'GameHistory' });
+      navigation.navigate("HistoryTab", { screen: "GameHistory" });
       return;
     }
 
     crossPlatformAlert(
-      'Discard Changes',
-      'Are you sure you want to discard all changes?',
+      "Discard Changes",
+      "Are you sure you want to discard all changes?",
       [
         {
-          text: 'Cancel',
-          style: 'cancel',
+          text: "Cancel",
+          style: "cancel",
         },
         {
-          text: 'Discard',
-          style: 'destructive',
+          text: "Discard",
+          style: "destructive",
           onPress: async () => {
             // Restore original scores
             for (const originalScore of originalScores) {
               await dataService.upsertScore(originalScore);
             }
-            navigation.navigate('HistoryTab', { screen: 'GameHistory' });
+            navigation.navigate("HistoryTab", { screen: "GameHistory" });
           },
         },
-      ]
+      ],
     );
   };
 
   const getPlayerScore = (playerId: string): number => {
-    const score = scores.find((s) => s.holeId === currentHole?.id && s.playerId === playerId);
+    const score = scores.find(
+      (s) => s.holeId === currentHole?.id && s.playerId === playerId,
+    );
     // Default to par if no score exists yet
     if (score === undefined) {
       return currentHole?.par || 4;
@@ -240,49 +245,83 @@ export const ScoringScreen = () => {
     setSelectedPlayer(null);
   };
 
-  const updateHandicap = async (holeNumber: number, fromPlayerId: string, toPlayerId: string, strokes: number) => {
+  const updateHandicap = async (
+    holeNumber: number,
+    fromPlayerId: string,
+    toPlayerId: string,
+    strokes: number,
+  ) => {
     if (!game) return;
 
-    const newHandicaps = setHandicapForHole(game.handicaps || {}, holeNumber, fromPlayerId, toPlayerId, strokes);
+    const newHandicaps = setHandicapForHole(
+      game.handicaps || {},
+      holeNumber,
+      fromPlayerId,
+      toPlayerId,
+      strokes,
+    );
 
     try {
       await dataService.updateGame(gameId, { handicaps: newHandicaps });
       setGame({ ...game, handicaps: newHandicaps });
     } catch (error) {
-      crossPlatformAlert('Error', 'Failed to update handicap');
+      crossPlatformAlert("Error", "Failed to update handicap");
     }
   };
 
-  const batchUpdateHandicaps = async (updates: Array<{ holeNumber: number; fromPlayerId: string; toPlayerId: string; strokes: number }>) => {
+  const batchUpdateHandicaps = async (
+    updates: Array<{
+      holeNumber: number;
+      fromPlayerId: string;
+      toPlayerId: string;
+      strokes: number;
+    }>,
+  ) => {
     if (!game || updates.length === 0) return;
 
     let newHandicaps = game.handicaps || {};
     for (const u of updates) {
-      newHandicaps = setHandicapForHole(newHandicaps, u.holeNumber, u.fromPlayerId, u.toPlayerId, u.strokes);
+      newHandicaps = setHandicapForHole(
+        newHandicaps,
+        u.holeNumber,
+        u.fromPlayerId,
+        u.toPlayerId,
+        u.strokes,
+      );
     }
 
     try {
       await dataService.updateGame(gameId, { handicaps: newHandicaps });
       setGame({ ...game, handicaps: newHandicaps });
     } catch (error) {
-      crossPlatformAlert('Error', 'Failed to update handicaps');
+      crossPlatformAlert("Error", "Failed to update handicaps");
     }
   };
 
   const getHandicapSummary = (playerId: string): string => {
-    if (!game?.handicaps || !currentHole) return 'Select handicaps';
+    if (!game?.handicaps || !currentHole) return "Select handicaps";
 
-    const opponents = players.filter(p => p.id !== playerId);
+    const opponents = players.filter((p) => p.id !== playerId);
 
     // Calculate strokes this player GIVES on THIS HOLE (from playerId to opponents)
     const totalGivenOnHole = opponents.reduce((sum, opp) => {
-      const strokes = getHandicapForHole(game.handicaps, currentHole.holeNumber, playerId, opp.id);
+      const strokes = getHandicapForHole(
+        game.handicaps,
+        currentHole.holeNumber,
+        playerId,
+        opp.id,
+      );
       return sum + strokes;
     }, 0);
 
     // Calculate strokes this player RECEIVES on THIS HOLE (from opponents to playerId)
     const totalReceivedOnHole = opponents.reduce((sum, opp) => {
-      const strokes = getHandicapForHole(game.handicaps, currentHole.holeNumber, opp.id, playerId);
+      const strokes = getHandicapForHole(
+        game.handicaps,
+        currentHole.holeNumber,
+        opp.id,
+        playerId,
+      );
       return sum + strokes;
     }, 0);
 
@@ -291,7 +330,7 @@ export const ScoringScreen = () => {
     } else if (totalReceivedOnHole > 0) {
       return `Receiving ${totalReceivedOnHole}`;
     }
-    return 'Even';
+    return "Even";
   };
 
   const goToNextHoleOnly = () => {
@@ -310,7 +349,7 @@ export const ScoringScreen = () => {
       const updatedHoles = await dataService.getHolesForGame(gameId);
       setHoles(updatedHoles);
     } catch (error) {
-      console.error('Error confirming hole:', error);
+      console.error("Error confirming hole:", error);
     }
   };
 
@@ -331,11 +370,11 @@ export const ScoringScreen = () => {
       isBurn: boolean;
     }> = [];
 
-    holes.forEach(hole => {
-      players.forEach(player => {
+    holes.forEach((hole) => {
+      players.forEach((player) => {
         // Check if a score exists for this player on this hole
         const existingScore = scores.find(
-          s => s.holeId === hole.id && s.playerId === player.id
+          (s) => s.holeId === hole.id && s.playerId === player.id,
         );
 
         if (!existingScore) {
@@ -359,8 +398,8 @@ export const ScoringScreen = () => {
       const updatedHoles = await dataService.getHolesForGame(gameId);
 
       // Only create missing scores for confirmed holes
-      const confirmedMissingScores = missingScores.filter(ms => {
-        const hole = updatedHoles.find(h => h.id === ms.holeId);
+      const confirmedMissingScores = missingScores.filter((ms) => {
+        const hole = updatedHoles.find((h) => h.id === ms.holeId);
         return hole?.confirmed === true;
       });
 
@@ -370,10 +409,10 @@ export const ScoringScreen = () => {
         dataService.completeGame(gameId),
       ]);
 
-      navigation.navigate('GameSummary', { gameId });
+      navigation.navigate("GameSummary", { gameId });
     } catch (error) {
-      console.error('Error finishing game:', error);
-      crossPlatformAlert('Error', 'Failed to finish game');
+      console.error("Error finishing game:", error);
+      crossPlatformAlert("Error", "Failed to finish game");
       setFinishingGame(false);
     }
   };
@@ -397,12 +436,14 @@ export const ScoringScreen = () => {
     );
   }
 
-  const scoresForCurrentHole = scores.filter(s => s.holeId === currentHole.id);
+  const scoresForCurrentHole = scores.filter(
+    (s) => s.holeId === currentHole.id,
+  );
   const holePoints = ScoreCalculator.calculateHolePoints(
     currentHole,
     scoresForCurrentHole,
     players,
-    game?.handicaps
+    game?.handicaps,
   );
 
   // Compute cumulative standings from confirmed holes only
@@ -410,16 +451,21 @@ export const ScoringScreen = () => {
     holes,
     getScoresByHoleId(),
     players,
-    game?.handicaps
+    game?.handicaps,
   );
 
   return (
-    <View style={[styles.container, currentHole.confirmed && { backgroundColor: colors.confirmedHoleBg }]}>
+    <View
+      style={[
+        styles.container,
+        currentHole.confirmed && { backgroundColor: colors.confirmedHoleBg },
+      ]}
+    >
       {/* Editorial header with hole info */}
       <View style={[styles.header, { paddingTop: insets.top + spacing.sm }]}>
         <TouchableOpacity
           style={styles.standingsButton}
-          onPress={() => navigation.navigate('OverallStandings', { gameId })}
+          onPress={() => navigation.navigate("OverallStandings", { gameId })}
         >
           <Icon name="podium" size={18} color={colors.accent.gold} />
         </TouchableOpacity>
@@ -437,7 +483,9 @@ export const ScoringScreen = () => {
         </View>
 
         <View style={styles.headerProgress}>
-          <Text style={styles.headerProgressText}>{currentHoleIndex + 1}/{holes.length}</Text>
+          <Text style={styles.headerProgressText}>
+            {currentHoleIndex + 1}/{holes.length}
+          </Text>
         </View>
       </View>
 
@@ -446,14 +494,16 @@ export const ScoringScreen = () => {
         style={styles.playersScroll}
         contentContainerStyle={[
           styles.playersContent,
-          isCompactLayout && styles.playersContentCompact
+          isCompactLayout && styles.playersContentCompact,
         ]}
         showsVerticalScrollIndicator={false}
         scrollEnabled={!isCompactLayout || isEditingFinished}
       >
         {players.map((player) => {
           const strokes = getPlayerScore(player.id);
-          const playerScore = scores.find(s => s.holeId === currentHole?.id && s.playerId === player.id);
+          const playerScore = scores.find(
+            (s) => s.holeId === currentHole?.id && s.playerId === player.id,
+          );
           const playerMultiplier = playerScore?.multiplier || 1;
           const playerPoints = holePoints[player.id] || 0;
 
@@ -464,30 +514,39 @@ export const ScoringScreen = () => {
           if (playerPoints < 0) cardStyle.push(styles.playerCardLosing);
 
           return (
-            <View key={player.id} style={[
-              styles.playerCardWrapper,
-              isCompactLayout && styles.playerCardWrapperCompact
-            ]}>
-              <Card
-                glass
-                goldBorder={playerPoints > 0}
-                style={cardStyle}
-              >
+            <View
+              key={player.id}
+              style={[
+                styles.playerCardWrapper,
+                isCompactLayout && styles.playerCardWrapperCompact,
+              ]}
+            >
+              <Card glass goldBorder={playerPoints > 0} style={cardStyle}>
                 {/* Player Header */}
-                <View style={[
-                  styles.playerHeader,
-                  isCompactLayout && styles.playerHeaderCompact
-                ]}>
+                <View
+                  style={[
+                    styles.playerHeader,
+                    isCompactLayout && styles.playerHeaderCompact,
+                  ]}
+                >
                   <View style={styles.playerInfo}>
-                    <Text style={[
-                      styles.playerName,
-                      isCompactLayout && styles.playerNameCompact
-                    ]}>{player.name}</Text>
+                    <Text
+                      style={[
+                        styles.playerName,
+                        isCompactLayout && styles.playerNameCompact,
+                      ]}
+                    >
+                      {player.name}
+                    </Text>
                     {player.userNumber && (
-                      <Text style={[
-                        styles.playerNumber,
-                        isCompactLayout && styles.playerNumberCompact
-                      ]}>#{player.userNumber}</Text>
+                      <Text
+                        style={[
+                          styles.playerNumber,
+                          isCompactLayout && styles.playerNumberCompact,
+                        ]}
+                      >
+                        #{player.userNumber}
+                      </Text>
                     )}
                     {player.isGuest && !isCompactLayout && (
                       <Badge label="Guest" variant="neutral" size="small" />
@@ -496,7 +555,7 @@ export const ScoringScreen = () => {
                   <TouchableOpacity
                     style={[
                       styles.handicapButton,
-                      isCompactLayout && styles.handicapButtonCompact
+                      isCompactLayout && styles.handicapButtonCompact,
                     ]}
                     onPress={() => openHandicapModal(player)}
                   >
@@ -506,10 +565,20 @@ export const ScoringScreen = () => {
                       let receivesStrokes = false;
 
                       if (game?.handicaps && currentHole) {
-                        players.forEach(opponent => {
+                        players.forEach((opponent) => {
                           if (opponent.id !== player.id) {
-                            const strokesGiven = getHandicapForHole(game.handicaps, currentHole.holeNumber, player.id, opponent.id);
-                            const strokesReceived = getHandicapForHole(game.handicaps, currentHole.holeNumber, opponent.id, player.id);
+                            const strokesGiven = getHandicapForHole(
+                              game.handicaps,
+                              currentHole.holeNumber,
+                              player.id,
+                              opponent.id,
+                            );
+                            const strokesReceived = getHandicapForHole(
+                              game.handicaps,
+                              currentHole.holeNumber,
+                              opponent.id,
+                              player.id,
+                            );
                             if (strokesGiven > 0) givesStrokes = true;
                             if (strokesReceived > 0) receivesStrokes = true;
                           }
@@ -519,18 +588,28 @@ export const ScoringScreen = () => {
                       return (
                         <>
                           {(givesStrokes || receivesStrokes) && (
-                            <View style={[
-                              styles.handicapDot,
-                              isCompactLayout && styles.handicapDotCompact,
-                              receivesStrokes && styles.handicapDotReceives,
-                              givesStrokes && styles.handicapDotGives,
-                            ]} />
+                            <View
+                              style={[
+                                styles.handicapDot,
+                                isCompactLayout && styles.handicapDotCompact,
+                                receivesStrokes && styles.handicapDotReceives,
+                                givesStrokes && styles.handicapDotGives,
+                              ]}
+                            />
                           )}
-                          <Text style={[
-                            styles.handicapText,
-                            isCompactLayout && styles.handicapTextCompact
-                          ]}>{getHandicapSummary(player.id)}</Text>
-                          <Icon name="chevron-right" size={isCompactLayout ? 10 : 14} color={colors.text.secondary} />
+                          <Text
+                            style={[
+                              styles.handicapText,
+                              isCompactLayout && styles.handicapTextCompact,
+                            ]}
+                          >
+                            {getHandicapSummary(player.id)}
+                          </Text>
+                          <Icon
+                            name="chevron-right"
+                            size={isCompactLayout ? 10 : 14}
+                            color={colors.text.secondary}
+                          />
                         </>
                       );
                     })()}
@@ -538,10 +617,12 @@ export const ScoringScreen = () => {
                 </View>
 
                 {/* Multiplier Buttons - Compact (moved to top) */}
-                <View style={[
-                  styles.multiplierRow,
-                  isCompactLayout && styles.multiplierRowCompact
-                ]}>
+                <View
+                  style={[
+                    styles.multiplierRow,
+                    isCompactLayout && styles.multiplierRowCompact,
+                  ]}
+                >
                   <TouchableOpacity
                     style={[
                       styles.multiplierButton,
@@ -550,11 +631,13 @@ export const ScoringScreen = () => {
                     ].filter(Boolean)}
                     onPress={() => setPlayerMultiplier(player.id, 2)}
                   >
-                    <Text style={[
-                      styles.multiplierText,
-                      isCompactLayout && styles.multiplierTextCompact,
-                      playerMultiplier === 2 && styles.multiplierTextActive
-                    ].filter(Boolean)}>
+                    <Text
+                      style={[
+                        styles.multiplierText,
+                        isCompactLayout && styles.multiplierTextCompact,
+                        playerMultiplier === 2 && styles.multiplierTextActive,
+                      ].filter(Boolean)}
+                    >
                       x2
                     </Text>
                   </TouchableOpacity>
@@ -567,11 +650,13 @@ export const ScoringScreen = () => {
                     ].filter(Boolean)}
                     onPress={() => setPlayerMultiplier(player.id, 3)}
                   >
-                    <Text style={[
-                      styles.multiplierText,
-                      isCompactLayout && styles.multiplierTextCompact,
-                      playerMultiplier === 3 && styles.multiplierTextActive
-                    ].filter(Boolean)}>
+                    <Text
+                      style={[
+                        styles.multiplierText,
+                        isCompactLayout && styles.multiplierTextCompact,
+                        playerMultiplier === 3 && styles.multiplierTextActive,
+                      ].filter(Boolean)}
+                    >
                       x3
                     </Text>
                   </TouchableOpacity>
@@ -584,11 +669,13 @@ export const ScoringScreen = () => {
                     ].filter(Boolean)}
                     onPress={() => setPlayerMultiplier(player.id, 4)}
                   >
-                    <Text style={[
-                      styles.multiplierText,
-                      isCompactLayout && styles.multiplierTextCompact,
-                      playerMultiplier === 4 && styles.multiplierTextActive
-                    ].filter(Boolean)}>
+                    <Text
+                      style={[
+                        styles.multiplierText,
+                        isCompactLayout && styles.multiplierTextCompact,
+                        playerMultiplier === 4 && styles.multiplierTextActive,
+                      ].filter(Boolean)}
+                    >
                       x4
                     </Text>
                   </TouchableOpacity>
@@ -601,75 +688,108 @@ export const ScoringScreen = () => {
                     ].filter(Boolean)}
                     onPress={() => setPlayerMultiplier(player.id, 6)}
                   >
-                    <Text style={[
-                      styles.multiplierText,
-                      isCompactLayout && styles.multiplierTextCompact,
-                      playerMultiplier === 6 && styles.multiplierTextActive
-                    ].filter(Boolean)}>
+                    <Text
+                      style={[
+                        styles.multiplierText,
+                        isCompactLayout && styles.multiplierTextCompact,
+                        playerMultiplier === 6 && styles.multiplierTextActive,
+                      ].filter(Boolean)}
+                    >
                       x6
                     </Text>
                   </TouchableOpacity>
                 </View>
 
                 {/* Score Counter and Points - Moved below multipliers */}
-                <View style={[
-                  styles.scoreAndPointsRow,
-                  isCompactLayout && styles.scoreAndPointsRowCompact
-                ]}>
-                  <View style={[
-                    styles.scoreSection,
-                    isCompactLayout && styles.scoreSectionCompact
-                  ]}>
+                <View
+                  style={[
+                    styles.scoreAndPointsRow,
+                    isCompactLayout && styles.scoreAndPointsRowCompact,
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.scoreSection,
+                      isCompactLayout && styles.scoreSectionCompact,
+                    ]}
+                  >
                     <TouchableOpacity
                       style={[
                         styles.counterButton,
-                        isCompactLayout && styles.counterButtonCompact
+                        isCompactLayout && styles.counterButtonCompact,
                       ]}
-                      onPress={() => updateScore(player.id, Math.max(0, strokes - 1))}
+                      onPress={() =>
+                        updateScore(player.id, Math.max(0, strokes - 1))
+                      }
                     >
-                      <Icon name="minus" size={isCompactLayout ? 16 : 24} color={colors.text.primary} />
+                      <Icon
+                        name="minus"
+                        size={isCompactLayout ? 16 : 24}
+                        color={colors.text.primary}
+                      />
                     </TouchableOpacity>
 
-                    <View style={[
-                      styles.strokesDisplay,
-                      isCompactLayout && styles.strokesDisplayCompact
-                    ]}>
-                      <Text style={[
-                        styles.strokesValue,
-                        isCompactLayout && styles.strokesValueCompact,
-                        strokes > currentHole.par && styles.strokesOverPar,
-                        strokes < currentHole.par && styles.strokesUnderPar
-                      ]}>{strokes}</Text>
+                    <View
+                      style={[
+                        styles.strokesDisplay,
+                        isCompactLayout && styles.strokesDisplayCompact,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.strokesValue,
+                          isCompactLayout && styles.strokesValueCompact,
+                          strokes > currentHole.par && styles.strokesOverPar,
+                          strokes < currentHole.par && styles.strokesUnderPar,
+                        ]}
+                      >
+                        {strokes}
+                      </Text>
                     </View>
 
                     <TouchableOpacity
                       style={[
                         styles.counterButton,
-                        isCompactLayout && styles.counterButtonCompact
+                        isCompactLayout && styles.counterButtonCompact,
                       ]}
-                      onPress={() => updateScore(player.id, Math.min(15, strokes + 1))}
+                      onPress={() =>
+                        updateScore(player.id, Math.min(15, strokes + 1))
+                      }
                     >
-                      <Icon name="plus" size={isCompactLayout ? 16 : 24} color={colors.text.primary} />
+                      <Icon
+                        name="plus"
+                        size={isCompactLayout ? 16 : 24}
+                        color={colors.text.primary}
+                      />
                     </TouchableOpacity>
                   </View>
 
                   {/* Points Display */}
-                  <View style={[
-                    styles.pointsContainer,
-                    isCompactLayout && styles.pointsContainerCompact
-                  ]}>
-                    <Text style={[
-                      styles.pointsValue,
-                      isCompactLayout && styles.pointsValueCompact,
-                      playerPoints > 0 ? styles.pointsPositive : null,
-                      playerPoints < 0 ? styles.pointsNegative : null,
-                    ].filter(Boolean)}>
-                      {playerPoints > 0 ? '+' : ''}{playerPoints.toFixed(1)}
+                  <View
+                    style={[
+                      styles.pointsContainer,
+                      isCompactLayout && styles.pointsContainerCompact,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.pointsValue,
+                        isCompactLayout && styles.pointsValueCompact,
+                        playerPoints > 0 ? styles.pointsPositive : null,
+                        playerPoints < 0 ? styles.pointsNegative : null,
+                      ].filter(Boolean)}
+                    >
+                      {playerPoints > 0 ? "+" : ""}
+                      {playerPoints.toFixed(1)}
                     </Text>
-                    <Text style={[
-                      styles.pointsLabel,
-                      isCompactLayout && styles.pointsLabelCompact
-                    ]}>PTS</Text>
+                    <Text
+                      style={[
+                        styles.pointsLabel,
+                        isCompactLayout && styles.pointsLabelCompact,
+                      ]}
+                    >
+                      PTS
+                    </Text>
                   </View>
                 </View>
               </Card>
@@ -678,30 +798,45 @@ export const ScoringScreen = () => {
         })}
 
         {/* Hole Summary - Point Gain/Loss */}
-        <Card glass style={[
-          styles.holeSummaryCard,
-          isCompactLayout && styles.holeSummaryCardCompact
-        ]}>
-          <Text style={[
-            styles.holeSummaryTitle,
-            isCompactLayout && styles.holeSummaryTitleCompact
-          ]}>Hole {currentHole.holeNumber} Summary</Text>
+        <Card
+          glass
+          style={[
+            styles.holeSummaryCard,
+            isCompactLayout && styles.holeSummaryCardCompact,
+          ]}
+        >
+          <Text
+            style={[
+              styles.holeSummaryTitle,
+              isCompactLayout && styles.holeSummaryTitleCompact,
+            ]}
+          >
+            Hole {currentHole.holeNumber} Summary
+          </Text>
           <View style={styles.holeSummaryRow}>
             {players.map((player) => {
               const playerPoints = holePoints[player.id] || 0;
               return (
                 <View key={player.id} style={styles.holeSummaryItem}>
-                  <Text style={[
-                    styles.holeSummaryName,
-                    isCompactLayout && styles.holeSummaryNameCompact
-                  ]} numberOfLines={1}>{player.name}</Text>
-                  <Text style={[
-                    styles.holeSummaryPoints,
-                    isCompactLayout && styles.holeSummaryPointsCompact,
-                    playerPoints > 0 ? styles.pointsPositive : null,
-                    playerPoints < 0 ? styles.pointsNegative : null,
-                  ].filter(Boolean)}>
-                    {playerPoints > 0 ? '+' : ''}{playerPoints.toFixed(1)}
+                  <Text
+                    style={[
+                      styles.holeSummaryName,
+                      isCompactLayout && styles.holeSummaryNameCompact,
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {player.name}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.holeSummaryPoints,
+                      isCompactLayout && styles.holeSummaryPointsCompact,
+                      playerPoints > 0 ? styles.pointsPositive : null,
+                      playerPoints < 0 ? styles.pointsNegative : null,
+                    ].filter(Boolean)}
+                  >
+                    {playerPoints > 0 ? "+" : ""}
+                    {playerPoints.toFixed(1)}
                   </Text>
                 </View>
               );
@@ -710,30 +845,45 @@ export const ScoringScreen = () => {
         </Card>
 
         {/* Current Standings - cumulative points from confirmed holes */}
-        <Card glass style={[
-          styles.holeSummaryCard,
-          isCompactLayout && styles.holeSummaryCardCompact
-        ]}>
-          <Text style={[
-            styles.holeSummaryTitle,
-            isCompactLayout && styles.holeSummaryTitleCompact
-          ]}>Current Standings</Text>
+        <Card
+          glass
+          style={[
+            styles.holeSummaryCard,
+            isCompactLayout && styles.holeSummaryCardCompact,
+          ]}
+        >
+          <Text
+            style={[
+              styles.holeSummaryTitle,
+              isCompactLayout && styles.holeSummaryTitleCompact,
+            ]}
+          >
+            Current Standings
+          </Text>
           <View style={styles.holeSummaryRow}>
             {players.map((player) => {
               const cumPts = cumulativePoints[player.id] || 0;
               return (
                 <View key={player.id} style={styles.holeSummaryItem}>
-                  <Text style={[
-                    styles.holeSummaryName,
-                    isCompactLayout && styles.holeSummaryNameCompact
-                  ]} numberOfLines={1}>{player.name}</Text>
-                  <Text style={[
-                    styles.holeSummaryPoints,
-                    isCompactLayout && styles.holeSummaryPointsCompact,
-                    cumPts > 0 ? styles.pointsPositive : null,
-                    cumPts < 0 ? styles.pointsNegative : null,
-                  ].filter(Boolean)}>
-                    {cumPts > 0 ? '+' : ''}{cumPts.toFixed(1)}
+                  <Text
+                    style={[
+                      styles.holeSummaryName,
+                      isCompactLayout && styles.holeSummaryNameCompact,
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {player.name}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.holeSummaryPoints,
+                      isCompactLayout && styles.holeSummaryPointsCompact,
+                      cumPts > 0 ? styles.pointsPositive : null,
+                      cumPts < 0 ? styles.pointsNegative : null,
+                    ].filter(Boolean)}
+                  >
+                    {cumPts > 0 ? "+" : ""}
+                    {cumPts.toFixed(1)}
                   </Text>
                 </View>
               );
@@ -835,7 +985,7 @@ export const ScoringScreen = () => {
         <HandicapModal
           visible={handicapModalVisible}
           player={selectedPlayer}
-          opponents={players.filter(p => p.id !== selectedPlayer.id)}
+          opponents={players.filter((p) => p.id !== selectedPlayer.id)}
           handicaps={game?.handicaps || {}}
           totalHoles={holes.length}
           holes={holes}
@@ -848,432 +998,441 @@ export const ScoringScreen = () => {
   );
 };
 
-const createStyles = (colors: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background.primary,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.background.primary,
-  },
-  loadingText: {
-    fontFamily: fontFamilies.body,
-    fontSize: typography.bodyLarge.fontSize,
-    color: colors.text.secondary,
-  },
-  // Compact header
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.sm,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.xs,
-  },
-  standingsButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.glass.medium,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.border.goldSubtle,
-  },
-  holeInfoCenter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  holeNumber: {
-    fontFamily: fontFamilies.display,
-    fontSize: 18,
-    color: colors.accent.gold,
-  },
-  parBadge: {
-    backgroundColor: colors.primary[500],
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: borderRadius.full,
-  },
-  parText: {
-    fontFamily: fontFamilies.bodySemiBold,
-    fontSize: 12,
-    color: colors.text.primary,
-    letterSpacing: 0.5,
-  },
-  indexBadge: {
-    backgroundColor: colors.surfaces.level3,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: borderRadius.full,
-    borderWidth: 1,
-    borderColor: colors.border.goldSubtle,
-  },
-  indexText: {
-    fontFamily: fontFamilies.mono,
-    fontSize: 10,
-    color: colors.accent.gold,
-    letterSpacing: 0.5,
-  },
-  headerProgress: {
-    minWidth: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerProgressText: {
-    fontFamily: fontFamilies.mono,
-    fontSize: 11,
-    color: colors.text.secondary,
-  },
-  // Compact player cards
-  playersScroll: {
-    flex: 1,
-  },
-  playersContent: {
-    padding: spacing.sm,
-  },
-  playerCardWrapper: {
-    // Wrapper to ensure stable layout during re-renders
-    flexShrink: 0,
-    marginBottom: spacing.lg,
-    // Ensure wrapper is always visible and properly laid out
-    opacity: 1,
-    minHeight: 1,
-  },
-  playerCardWrapperCompact: {
-    marginBottom: spacing.md,
-  },
-  playerCard: {
-    padding: spacing.sm,
-    // Enhanced border system - clearer and more defined
-    borderWidth: 3,
-    borderColor: colors.border.dark || colors.border.medium,
-    borderLeftWidth: 5,
-    borderLeftColor: colors.border.dark || colors.border.medium,
-  },
-  playerCardWinning: {
-    borderColor: colors.border.goldSubtle,
-    borderLeftColor: colors.scoring.positive,
-    shadowColor: colors.scoring.positive,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  playerCardLosing: {
-    borderColor: colors.border.light,
-    borderLeftColor: colors.scoring.negative,
-    shadowColor: colors.scoring.negative,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  playerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  playerHeaderCompact: {
-    marginBottom: spacing.xs - 2,
-  },
-  playerInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  playerName: {
-    fontFamily: fontFamilies.bodySemiBold,
-    fontSize: 22,
-    color: colors.text.primary,
-    marginRight: spacing.xs,
-  },
-  playerNameCompact: {
-    fontSize: 18,
-  },
-  playerNumber: {
-    fontFamily: fontFamilies.mono,
-    fontSize: 11,
-    color: colors.accent.gold,
-    marginRight: spacing.xs,
-  },
-  playerNumberCompact: {
-    fontSize: 9,
-  },
-  handicapButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    paddingVertical: 4,
-    paddingHorizontal: spacing.xs,
-    backgroundColor: colors.glass.light,
-    borderRadius: borderRadius.sm,
-  },
-  handicapButtonCompact: {
-    paddingVertical: 2,
-    paddingHorizontal: spacing.xs - 2,
-    gap: spacing.xs - 2,
-  },
-  handicapText: {
-    fontFamily: fontFamilies.mono,
-    fontSize: 11,
-    color: colors.accent.gold,
-  },
-  handicapTextCompact: {
-    fontSize: 9,
-  },
-  handicapDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: spacing.xs,
-  },
-  handicapDotCompact: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  handicapDotReceives: {
-    backgroundColor: colors.scoring.positive,
-  },
-  handicapDotGives: {
-    backgroundColor: colors.scoring.negative,
-  },
-  // Score and points row (below multipliers)
-  scoreAndPointsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
-  },
-  scoreAndPointsRowCompact: {
-    gap: spacing.xs,
-  },
-  // Score section (now larger and more prominent)
-  scoreSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.md,
-    flex: 1,
-  },
-  counterButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: colors.surfaces.level3,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: colors.border.medium,
-  },
-  strokesDisplay: {
-    alignItems: 'center',
-    minWidth: 60,
-  },
-  strokesDisplayCompact: {
-    minWidth: 45,
-  },
-  strokesValue: {
-    fontFamily: fontFamilies.display,
-    fontSize: 48,
-    color: colors.text.primary,
-    lineHeight: 52,
-  },
-  // Multiplier buttons (now on top, smaller than score buttons)
-  multiplierRow: {
-    flexDirection: 'row',
-    gap: spacing.xs - 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.sm,
-    paddingHorizontal: spacing.xl,
-  },
-  multiplierRowCompact: {
-    gap: spacing.xs - 4,
-    marginBottom: spacing.xs - 2,
-    paddingHorizontal: spacing.lg,
-  },
-  multiplierButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 2,
-    paddingVertical: spacing.xs - 2,
-    borderRadius: borderRadius.sm,
-    borderWidth: 1.5,
-    borderColor: colors.primary[400],
-    backgroundColor: 'transparent',
-  },
-  multiplierButtonCompact: {
-    paddingVertical: spacing.xs - 5,
-  },
-  multiplierButtonActive: {
-    backgroundColor: colors.primary[500],
-    borderColor: colors.primary[600],
-    shadowColor: colors.primary[500],
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  multiplierText: {
-    fontFamily: fontFamilies.bodySemiBold,
-    fontSize: 11,
-    color: colors.text.primary,
-    letterSpacing: 0.5,
-  },
-  multiplierTextCompact: {
-    fontSize: 10,
-  },
-  multiplierTextActive: {
-    color: colors.text.inverse,
-  },
-  pointsContainer: {
-    alignItems: 'center',
-    minWidth: 60,
-    paddingHorizontal: spacing.xs,
-  },
-  pointsContainerCompact: {
-    minWidth: 50,
-    paddingHorizontal: spacing.xs - 2,
-  },
-  pointsValue: {
-    fontFamily: fontFamilies.monoBold,
-    fontSize: 20,
-    color: colors.text.primary,
-  },
-  pointsValueCompact: {
-    fontSize: 16,
-  },
-  pointsPositive: {
-    color: colors.scoring.positive,
-  },
-  pointsNegative: {
-    color: colors.scoring.negative,
-  },
-  pointsLabel: {
-    fontFamily: fontFamilies.bodySemiBold,
-    fontSize: 9,
-    color: colors.text.secondary,
-    letterSpacing: 0.5,
-  },
-  pointsLabelCompact: {
-    fontSize: 8,
-  },
-  // Compact navigation
-  navigation: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    padding: spacing.sm,
-    backgroundColor: colors.background.secondary,
-    borderTopWidth: 1,
-    borderTopColor: colors.border.light,
-  },
-  navButtonSmall: {
-    flex: 0.8,
-    minWidth: 0,
-  },
-  navButtonMed: {
-    flex: 1.1,
-    minWidth: 0,
-  },
-  navButtonWide: {
-    flex: 1.3,
-    minWidth: 0,
-  },
-  // Edit actions (when editing finished game)
-  editActions: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    padding: spacing.sm,
-    backgroundColor: colors.background.secondary,
-    borderTopWidth: 1,
-    borderTopColor: colors.border.light,
-  },
-  editActionButton: {
-    flex: 1,
-  },
-  // Hole summary card
-  holeSummaryCard: {
-    padding: spacing.sm,
-    marginTop: spacing.xs,
-  },
-  holeSummaryTitle: {
-    fontFamily: fontFamilies.bodySemiBold,
-    fontSize: 12,
-    color: colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  holeSummaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  holeSummaryItem: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  holeSummaryName: {
-    fontFamily: fontFamilies.body,
-    fontSize: 11,
-    color: colors.text.secondary,
-    marginBottom: spacing.xs,
-    maxWidth: 60,
-  },
-  holeSummaryPoints: {
-    fontFamily: fontFamilies.monoBold,
-    fontSize: 16,
-    color: colors.text.primary,
-  },
-  // Compact layout styles for 4 players
-  playersContentCompact: {
-    padding: spacing.xs - 2,
-    paddingBottom: spacing.xs,
-    flexGrow: 1,
-  },
-  playerCardCompact: {
-    padding: spacing.xs - 2,
-  },
-  scoreSectionCompact: {
-    gap: spacing.sm,
-  },
-  counterButtonCompact: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-  },
-  strokesValueCompact: {
-    fontSize: 32,
-    lineHeight: 36,
-  },
-  strokesOverPar: {
-    color: '#D32F2F',
-  },
-  strokesUnderPar: {
-    color: '#2E7D32',
-  },
-  holeSummaryCardCompact: {
-    padding: spacing.xs - 2,
-    marginTop: spacing.xs - 2,
-  },
-  holeSummaryTitleCompact: {
-    fontSize: 10,
-    marginBottom: spacing.xs,
-  },
-  holeSummaryNameCompact: {
-    fontSize: 9,
-    marginBottom: 1,
-  },
-  holeSummaryPointsCompact: {
-    fontSize: 12,
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background.primary,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: colors.background.primary,
+    },
+    loadingText: {
+      fontFamily: fontFamilies.body,
+      fontSize: typography.bodyLarge.fontSize,
+      color: colors.text.secondary,
+    },
+    // Editorial header
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: spacing.md,
+      paddingTop: spacing.sm,
+      paddingBottom: spacing.sm,
+      backgroundColor: colors.background.primary,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border.light,
+    },
+    standingsButton: {
+      width: 38,
+      height: 38,
+      borderRadius: 19,
+      backgroundColor: colors.background.card,
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: 1,
+      borderColor: colors.border.goldSubtle,
+    },
+    holeInfoCenter: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+    },
+    holeNumber: {
+      fontFamily: fontFamilies.display,
+      fontSize: 22,
+      color: colors.text.primary,
+      letterSpacing: -0.5,
+    },
+    parBadge: {
+      paddingHorizontal: spacing.sm,
+      paddingVertical: 3,
+      borderRadius: borderRadius.full,
+      borderWidth: 1,
+      borderColor: colors.border.goldSubtle,
+      backgroundColor: "transparent",
+    },
+    parText: {
+      fontFamily: fontFamilies.bodySemiBold,
+      fontSize: 11,
+      color: colors.accent.gold,
+      letterSpacing: 0.8,
+      textTransform: "uppercase",
+    },
+    indexBadge: {
+      paddingHorizontal: spacing.sm,
+      paddingVertical: 3,
+      borderRadius: borderRadius.full,
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      backgroundColor: "transparent",
+    },
+    indexText: {
+      fontFamily: fontFamilies.mono,
+      fontSize: 10,
+      color: colors.text.tertiary,
+      letterSpacing: 0.5,
+    },
+    headerProgress: {
+      minWidth: 44,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    headerProgressText: {
+      fontFamily: fontFamilies.monoMedium,
+      fontSize: 12,
+      color: colors.text.secondary,
+      letterSpacing: 0.5,
+    },
+    // Compact player cards
+    playersScroll: {
+      flex: 1,
+    },
+    playersContent: {
+      padding: spacing.sm,
+    },
+    playerCardWrapper: {
+      // Wrapper to ensure stable layout during re-renders
+      flexShrink: 0,
+      marginBottom: spacing.lg,
+      // Ensure wrapper is always visible and properly laid out
+      opacity: 1,
+      minHeight: 1,
+    },
+    playerCardWrapperCompact: {
+      marginBottom: spacing.md,
+    },
+    playerCard: {
+      padding: spacing.sm,
+      // Enhanced border system - clearer and more defined
+      borderWidth: 3,
+      borderColor: colors.border.dark || colors.border.medium,
+      borderLeftWidth: 5,
+      borderLeftColor: colors.border.dark || colors.border.medium,
+    },
+    playerCardWinning: {
+      borderColor: colors.border.goldSubtle,
+      borderLeftColor: colors.scoring.positive,
+      shadowColor: colors.scoring.positive,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 4,
+    },
+    playerCardLosing: {
+      borderColor: colors.border.light,
+      borderLeftColor: colors.scoring.negative,
+      shadowColor: colors.scoring.negative,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.2,
+      shadowRadius: 6,
+      elevation: 2,
+    },
+    playerHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: spacing.sm,
+    },
+    playerHeaderCompact: {
+      marginBottom: spacing.xs - 2,
+    },
+    playerInfo: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    playerName: {
+      fontFamily: fontFamilies.bodySemiBold,
+      fontSize: 22,
+      color: colors.text.primary,
+      marginRight: spacing.xs,
+    },
+    playerNameCompact: {
+      fontSize: 18,
+    },
+    playerNumber: {
+      fontFamily: fontFamilies.mono,
+      fontSize: 11,
+      color: colors.accent.gold,
+      marginRight: spacing.xs,
+    },
+    playerNumberCompact: {
+      fontSize: 9,
+    },
+    handicapButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.xs,
+      paddingVertical: 4,
+      paddingHorizontal: spacing.xs,
+      backgroundColor: colors.glass.light,
+      borderRadius: borderRadius.sm,
+    },
+    handicapButtonCompact: {
+      paddingVertical: 2,
+      paddingHorizontal: spacing.xs - 2,
+      gap: spacing.xs - 2,
+    },
+    handicapText: {
+      fontFamily: fontFamilies.mono,
+      fontSize: 11,
+      color: colors.accent.gold,
+    },
+    handicapTextCompact: {
+      fontSize: 9,
+    },
+    handicapDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      marginRight: spacing.xs,
+    },
+    handicapDotCompact: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+    },
+    handicapDotReceives: {
+      backgroundColor: colors.scoring.positive,
+    },
+    handicapDotGives: {
+      backgroundColor: colors.scoring.negative,
+    },
+    // Score and points row (below multipliers)
+    scoreAndPointsRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: spacing.sm,
+    },
+    scoreAndPointsRowCompact: {
+      gap: spacing.xs,
+    },
+    // Score section (now larger and more prominent)
+    scoreSection: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: spacing.md,
+      flex: 1,
+    },
+    counterButton: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      backgroundColor: colors.surfaces.level3,
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: 2,
+      borderColor: colors.border.medium,
+    },
+    strokesDisplay: {
+      alignItems: "center",
+      minWidth: 60,
+    },
+    strokesDisplayCompact: {
+      minWidth: 45,
+    },
+    strokesValue: {
+      fontFamily: fontFamilies.display,
+      fontSize: 48,
+      color: colors.text.primary,
+      lineHeight: 52,
+    },
+    // Multiplier buttons (now on top, smaller than score buttons)
+    multiplierRow: {
+      flexDirection: "row",
+      gap: spacing.xs - 2,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: spacing.sm,
+      paddingHorizontal: spacing.xl,
+    },
+    multiplierRowCompact: {
+      gap: spacing.xs - 4,
+      marginBottom: spacing.xs - 2,
+      paddingHorizontal: spacing.lg,
+    },
+    multiplierButton: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 2,
+      paddingVertical: spacing.xs - 2,
+      borderRadius: borderRadius.sm,
+      borderWidth: 1.5,
+      borderColor: colors.primary[400],
+      backgroundColor: "transparent",
+    },
+    multiplierButtonCompact: {
+      paddingVertical: spacing.xs - 5,
+    },
+    multiplierButtonActive: {
+      backgroundColor: colors.primary[500],
+      borderColor: colors.primary[600],
+      shadowColor: colors.primary[500],
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.5,
+      shadowRadius: 6,
+      elevation: 3,
+    },
+    multiplierText: {
+      fontFamily: fontFamilies.bodySemiBold,
+      fontSize: 11,
+      color: colors.text.primary,
+      letterSpacing: 0.5,
+    },
+    multiplierTextCompact: {
+      fontSize: 10,
+    },
+    multiplierTextActive: {
+      color: colors.text.inverse,
+    },
+    pointsContainer: {
+      alignItems: "center",
+      minWidth: 60,
+      paddingHorizontal: spacing.xs,
+    },
+    pointsContainerCompact: {
+      minWidth: 50,
+      paddingHorizontal: spacing.xs - 2,
+    },
+    pointsValue: {
+      fontFamily: fontFamilies.monoBold,
+      fontSize: 20,
+      color: colors.text.primary,
+    },
+    pointsValueCompact: {
+      fontSize: 16,
+    },
+    pointsPositive: {
+      color: colors.scoring.positive,
+    },
+    pointsNegative: {
+      color: colors.scoring.negative,
+    },
+    pointsLabel: {
+      fontFamily: fontFamilies.bodySemiBold,
+      fontSize: 9,
+      color: colors.text.secondary,
+      letterSpacing: 0.5,
+    },
+    pointsLabelCompact: {
+      fontSize: 8,
+    },
+    // Compact navigation
+    navigation: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.xs,
+      padding: spacing.sm,
+      backgroundColor: colors.background.secondary,
+      borderTopWidth: 1,
+      borderTopColor: colors.border.light,
+    },
+    navButtonSmall: {
+      flex: 0.8,
+      minWidth: 0,
+    },
+    navButtonMed: {
+      flex: 1.1,
+      minWidth: 0,
+    },
+    navButtonWide: {
+      flex: 1.3,
+      minWidth: 0,
+    },
+    // Edit actions (when editing finished game)
+    editActions: {
+      flexDirection: "row",
+      gap: spacing.sm,
+      padding: spacing.sm,
+      backgroundColor: colors.background.secondary,
+      borderTopWidth: 1,
+      borderTopColor: colors.border.light,
+    },
+    editActionButton: {
+      flex: 1,
+    },
+    // Hole summary card
+    holeSummaryCard: {
+      padding: spacing.sm,
+      marginTop: spacing.xs,
+    },
+    holeSummaryTitle: {
+      fontFamily: fontFamilies.bodySemiBold,
+      fontSize: 12,
+      color: colors.text.secondary,
+      textAlign: "center",
+      marginBottom: spacing.sm,
+    },
+    holeSummaryRow: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+    },
+    holeSummaryItem: {
+      alignItems: "center",
+      flex: 1,
+    },
+    holeSummaryName: {
+      fontFamily: fontFamilies.body,
+      fontSize: 11,
+      color: colors.text.secondary,
+      marginBottom: spacing.xs,
+      maxWidth: 60,
+    },
+    holeSummaryPoints: {
+      fontFamily: fontFamilies.monoBold,
+      fontSize: 16,
+      color: colors.text.primary,
+    },
+    // Compact layout styles for 4 players
+    playersContentCompact: {
+      padding: spacing.xs - 2,
+      paddingBottom: spacing.xs,
+      flexGrow: 1,
+    },
+    playerCardCompact: {
+      padding: spacing.xs - 2,
+    },
+    scoreSectionCompact: {
+      gap: spacing.sm,
+    },
+    counterButtonCompact: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+    },
+    strokesValueCompact: {
+      fontSize: 32,
+      lineHeight: 36,
+    },
+    strokesOverPar: {
+      color: "#D32F2F",
+    },
+    strokesUnderPar: {
+      color: "#2E7D32",
+    },
+    holeSummaryCardCompact: {
+      padding: spacing.xs - 2,
+      marginTop: spacing.xs - 2,
+    },
+    holeSummaryTitleCompact: {
+      fontSize: 10,
+      marginBottom: spacing.xs,
+    },
+    holeSummaryNameCompact: {
+      fontSize: 9,
+      marginBottom: 1,
+    },
+    holeSummaryPointsCompact: {
+      fontSize: 12,
+    },
+  });
 
 export default ScoringScreen;
