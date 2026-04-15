@@ -7,7 +7,7 @@ import {
   IconButton,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlined";
 import { crossPlatformAlert } from "../utils/alert";
 import { dataService } from "../services/DataService";
 import { typography, fontFamilies, spacing, borderRadius } from "../theme";
@@ -244,7 +244,13 @@ export const AdminPanelPage = () => {
           </Box>
         ) : (
           /* User list */
-          <Box sx={{ display: "flex", flexDirection: "column", gap: `${spacing.md}px` }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: `${spacing.md}px`,
+            }}
+          >
             {pendingUsers.map((pendingUser) => (
               <Box
                 key={pendingUser.id}
@@ -342,10 +348,7 @@ export const AdminPanelPage = () => {
                     fullWidth
                     variant="contained"
                     onClick={() =>
-                      handleApprove(
-                        pendingUser.id,
-                        pendingUser.displayName,
-                      )
+                      handleApprove(pendingUser.id, pendingUser.displayName)
                     }
                     sx={{
                       py: `${spacing.md}px`,
@@ -367,10 +370,7 @@ export const AdminPanelPage = () => {
                     fullWidth
                     variant="outlined"
                     onClick={() =>
-                      handleReject(
-                        pendingUser.id,
-                        pendingUser.displayName,
-                      )
+                      handleReject(pendingUser.id, pendingUser.displayName)
                     }
                     sx={{
                       py: `${spacing.md}px`,
