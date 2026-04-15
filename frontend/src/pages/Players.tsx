@@ -131,14 +131,16 @@ export const PlayersPage = () => {
           setShowAddModal(false);
           setNewPlayerName("");
         }}
-        PaperProps={{
-          sx: {
-            bgcolor: colors.background.elevated,
-            borderRadius: `${borderRadius.xl}px`,
-            border: `1px solid ${colors.border.light}`,
-            maxWidth: 400,
-            width: "100%",
-            p: `${spacing.xl}px`,
+        slotProps={{
+          paper: {
+            sx: {
+              bgcolor: colors.background.elevated,
+              borderRadius: `${borderRadius.xl}px`,
+              border: `1px solid ${colors.border.light}`,
+              maxWidth: 400,
+              width: "100%",
+              p: `${spacing.xl}px`,
+            },
           },
         }}
       >
