@@ -43,10 +43,6 @@
 - `npm run cap:run` — runs on connected Android device/emulator
 - `npm run cap:sync` — syncs web assets to Android project
 
-## Development (LEGACY)
-- `cd golf-gambling-rn && npm run web` — starts Expo web dev server
-- `npm run build:apk` — EAS cloud build (Android preview)
-- Tests: `npx tsx <path-to-test-file>`
 
 ## Data Layer (Dual-Write Pattern)
 - **Always use `dataService`** for all data operations — it routes to Firestore (authenticated) or AsyncStorage (guest/offline).
