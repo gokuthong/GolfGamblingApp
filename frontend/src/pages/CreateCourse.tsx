@@ -1,20 +1,26 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
-import CircularProgress from '@mui/material/CircularProgress';
-import RemoveIcon from '@mui/icons-material/Remove';
-import AddIcon from '@mui/icons-material/Add';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import { useThemedColors } from '../contexts/ThemeContext';
-import { useStore } from '../store';
-import { dataService } from '../services/DataService';
-import { crossPlatformAlert } from '../utils/alert';
-import { CourseHole } from '../types';
-import { typography, fontFamilies, spacing, borderRadius, shadows } from '../theme';
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import IconButton from "@mui/material/IconButton";
+import CircularProgress from "@mui/material/CircularProgress";
+import RemoveIcon from "@mui/icons-material/Remove";
+import AddIcon from "@mui/icons-material/Add";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import { useThemedColors } from "../contexts/ThemeContext";
+import { useStore } from "../store";
+import { dataService } from "../services/DataService";
+import { crossPlatformAlert } from "../utils/alert";
+import type { CourseHole } from "../types";
+import {
+  typography,
+  fontFamilies,
+  spacing,
+  borderRadius,
+  shadows,
+} from "../theme";
 
 export const CreateCoursePage = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -23,8 +29,8 @@ export const CreateCoursePage = () => {
   const user = useStore((state) => state.user);
   const isEditing = !!courseId;
 
-  const [courseName, setCourseName] = useState('');
-  const [numberOfHoles, setNumberOfHoles] = useState('18');
+  const [courseName, setCourseName] = useState("");
+  const [numberOfHoles, setNumberOfHoles] = useState("18");
   const [holes, setHoles] = useState<CourseHole[]>([]);
   const [loading, setLoading] = useState(false);
   const [expandedHole, setExpandedHole] = useState<number | null>(null);
@@ -47,7 +53,7 @@ export const CreateCoursePage = () => {
         setHoles(course.holes);
       }
     } catch (error) {
-      crossPlatformAlert('Error', 'Failed to load course');
+      crossPlatformAlert("Error", "Failed to load course");
     }
   };
 
@@ -85,11 +91,11 @@ export const CreateCoursePage = () => {
 
   const handleSave = async () => {
     if (!courseName.trim()) {
-      crossPlatformAlert('Error', 'Please enter a course name');
+      crossPlatformAlert("Error", "Please enter a course name");
       return;
     }
     if (holes.length === 0) {
-      crossPlatformAlert('Error', 'Please add at least one hole');
+      crossPlatformAlert("Error", "Please add at least one hole");
       return;
     }
 
@@ -98,19 +104,19 @@ export const CreateCoursePage = () => {
     try {
       if (isEditing) {
         await dataService.updateCourse(courseId!, { name: courseName, holes });
-        crossPlatformAlert('Success', 'Course updated successfully', [
-          { text: 'OK', onPress: () => navigate(-1 as any) },
+        crossPlatformAlert("Success", "Course updated successfully", [
+          { text: "OK", onPress: () => navigate(-1 as any) },
         ]);
       } else {
         await dataService.createCourse(courseName, holes, (user as any)?.uid);
-        crossPlatformAlert('Success', 'Course created successfully', [
-          { text: 'OK', onPress: () => navigate(-1 as any) },
+        crossPlatformAlert("Success", "Course created successfully", [
+          { text: "OK", onPress: () => navigate(-1 as any) },
         ]);
       }
     } catch (error: any) {
-      console.error('Error saving course:', error);
+      console.error("Error saving course:", error);
       crossPlatformAlert(
-        'Error',
+        "Error",
         `Failed to save course: ${error.message || error}`,
       );
     } finally {
@@ -123,13 +129,13 @@ export const CreateCoursePage = () => {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
         bgcolor: colors.background.primary,
       }}
     >
-      <Box sx={{ flex: 1, overflow: 'auto' }}>
+      <Box sx={{ flex: 1, overflow: "auto" }}>
         <Box
           sx={{
             px: `${spacing.xl}px`,
@@ -143,11 +149,11 @@ export const CreateCoursePage = () => {
               sx={{
                 ...typography.label,
                 color: colors.text.tertiary,
-                textTransform: 'uppercase',
+                textTransform: "uppercase",
                 mb: `${spacing.sm}px`,
               }}
             >
-              {isEditing ? 'Editing' : 'New layout'}
+              {isEditing ? "Editing" : "New layout"}
             </Typography>
             <Typography
               sx={{
@@ -156,14 +162,14 @@ export const CreateCoursePage = () => {
                 mb: `${spacing.md}px`,
               }}
             >
-              {isEditing ? 'Edit course' : 'Create course'}
+              {isEditing ? "Edit course" : "Create course"}
             </Typography>
             <Box
               sx={{
                 height: 1.5,
                 width: 48,
                 bgcolor: colors.accent.gold,
-                borderRadius: '1px',
+                borderRadius: "1px",
                 mb: `${spacing.md}px`,
               }}
             />
@@ -174,8 +180,8 @@ export const CreateCoursePage = () => {
               }}
             >
               {isEditing
-                ? 'Modify details, par, and stroke index.'
-                : 'Set up a new golf course from scratch.'}
+                ? "Modify details, par, and stroke index."
+                : "Set up a new golf course from scratch."}
             </Typography>
           </Box>
 
@@ -185,7 +191,7 @@ export const CreateCoursePage = () => {
               sx={{
                 ...typography.label,
                 color: colors.text.tertiary,
-                textTransform: 'uppercase',
+                textTransform: "uppercase",
                 mb: `${spacing.sm}px`,
               }}
             >
@@ -204,7 +210,7 @@ export const CreateCoursePage = () => {
                 sx={{
                   ...typography.label,
                   color: colors.text.tertiary,
-                  textTransform: 'uppercase',
+                  textTransform: "uppercase",
                   mb: `${spacing.xs}px`,
                   mt: `${spacing.md}px`,
                 }}
@@ -218,25 +224,25 @@ export const CreateCoursePage = () => {
                 placeholder="e.g., Pebble Beach"
                 variant="outlined"
                 sx={{
-                  '& .MuiOutlinedInput-root': {
+                  "& .MuiOutlinedInput-root": {
                     fontFamily: fontFamilies.body,
                     fontSize: typography.bodyMedium.fontSize,
                     color: colors.text.primary,
                     bgcolor: colors.background.primary,
                     borderRadius: `${borderRadius.md}px`,
-                    '& fieldset': {
+                    "& fieldset": {
                       borderColor: colors.border.light,
                     },
-                    '&:hover fieldset': {
+                    "&:hover fieldset": {
                       borderColor: colors.border.medium,
                     },
-                    '&.Mui-focused fieldset': {
+                    "&.Mui-focused fieldset": {
                       borderColor: colors.accent.gold,
                     },
                   },
-                  '& .MuiOutlinedInput-input': {
+                  "& .MuiOutlinedInput-input": {
                     p: `${spacing.md}px`,
-                    '&::placeholder': {
+                    "&::placeholder": {
                       color: colors.text.tertiary,
                       opacity: 1,
                     },
@@ -250,7 +256,7 @@ export const CreateCoursePage = () => {
                     sx={{
                       ...typography.label,
                       color: colors.text.tertiary,
-                      textTransform: 'uppercase',
+                      textTransform: "uppercase",
                       mb: `${spacing.xs}px`,
                       mt: `${spacing.md}px`,
                     }}
@@ -265,25 +271,25 @@ export const CreateCoursePage = () => {
                     type="number"
                     variant="outlined"
                     sx={{
-                      '& .MuiOutlinedInput-root': {
+                      "& .MuiOutlinedInput-root": {
                         fontFamily: fontFamilies.body,
                         fontSize: typography.bodyMedium.fontSize,
                         color: colors.text.primary,
                         bgcolor: colors.background.primary,
                         borderRadius: `${borderRadius.md}px`,
-                        '& fieldset': {
+                        "& fieldset": {
                           borderColor: colors.border.light,
                         },
-                        '&:hover fieldset': {
+                        "&:hover fieldset": {
                           borderColor: colors.border.medium,
                         },
-                        '&.Mui-focused fieldset': {
+                        "&.Mui-focused fieldset": {
                           borderColor: colors.accent.gold,
                         },
                       },
-                      '& .MuiOutlinedInput-input': {
+                      "& .MuiOutlinedInput-input": {
                         p: `${spacing.md}px`,
-                        '&::placeholder': {
+                        "&::placeholder": {
                           color: colors.text.tertiary,
                           opacity: 1,
                         },
@@ -296,9 +302,9 @@ export const CreateCoursePage = () => {
               {/* Total par display */}
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                   mt: `${spacing.lg}px`,
                   pt: `${spacing.md}px`,
                   borderTop: `1px solid ${colors.border.light}`,
@@ -309,8 +315,8 @@ export const CreateCoursePage = () => {
                     sx={{
                       ...typography.label,
                       color: colors.text.tertiary,
-                      textTransform: 'uppercase',
-                      mb: '2px',
+                      textTransform: "uppercase",
+                      mb: "2px",
                     }}
                   >
                     Total par
@@ -328,7 +334,7 @@ export const CreateCoursePage = () => {
                   sx={{
                     fontFamily: fontFamilies.display,
                     fontSize: 40,
-                    lineHeight: '44px',
+                    lineHeight: "44px",
                     color: colors.accent.gold,
                     letterSpacing: -1.2,
                   }}
@@ -345,7 +351,7 @@ export const CreateCoursePage = () => {
               sx={{
                 ...typography.label,
                 color: colors.text.tertiary,
-                textTransform: 'uppercase',
+                textTransform: "uppercase",
                 mb: `${spacing.sm}px`,
               }}
             >
@@ -363,8 +369,8 @@ export const CreateCoursePage = () => {
               {/* Holes grid */}
               <Box
                 sx={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
+                  display: "flex",
+                  flexWrap: "wrap",
                   gap: `${spacing.sm}px`,
                 }}
               >
@@ -372,7 +378,7 @@ export const CreateCoursePage = () => {
                   <Box
                     key={hole.holeNumber}
                     sx={{
-                      width: 'calc(50% - 4px)',
+                      width: "calc(50% - 4px)",
                     }}
                   >
                     <Box
@@ -386,9 +392,9 @@ export const CreateCoursePage = () => {
                       {/* Hole header */}
                       <Box
                         sx={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                           mb: `${spacing.sm}px`,
                         }}
                       >
@@ -404,7 +410,7 @@ export const CreateCoursePage = () => {
                         <Box
                           sx={{
                             px: `${spacing.sm}px`,
-                            py: '2px',
+                            py: "2px",
                             borderRadius: `${borderRadius.full}px`,
                             border: `1px solid ${colors.border.goldSubtle}`,
                           }}
@@ -425,16 +431,19 @@ export const CreateCoursePage = () => {
                       {/* Par controls */}
                       <Box
                         sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
                           mb: `${spacing.sm}px`,
                         }}
                       >
                         <IconButton
                           size="small"
                           onClick={() =>
-                            updateHolePar(hole.holeNumber, Math.max(3, hole.par - 1))
+                            updateHolePar(
+                              hole.holeNumber,
+                              Math.max(3, hole.par - 1),
+                            )
                           }
                           sx={{
                             width: 30,
@@ -442,7 +451,7 @@ export const CreateCoursePage = () => {
                             border: `1px solid ${colors.border.goldSubtle}`,
                             bgcolor: colors.background.card,
                             color: colors.text.primary,
-                            '&:hover': {
+                            "&:hover": {
                               bgcolor: colors.surfaces.level2,
                             },
                           }}
@@ -463,7 +472,10 @@ export const CreateCoursePage = () => {
                         <IconButton
                           size="small"
                           onClick={() =>
-                            updateHolePar(hole.holeNumber, Math.min(6, hole.par + 1))
+                            updateHolePar(
+                              hole.holeNumber,
+                              Math.min(6, hole.par + 1),
+                            )
                           }
                           sx={{
                             width: 30,
@@ -471,7 +483,7 @@ export const CreateCoursePage = () => {
                             border: `1px solid ${colors.border.goldSubtle}`,
                             bgcolor: colors.background.card,
                             color: colors.text.primary,
-                            '&:hover': {
+                            "&:hover": {
                               bgcolor: colors.surfaces.level2,
                             },
                           }}
@@ -484,44 +496,56 @@ export const CreateCoursePage = () => {
                       <Box
                         onClick={() =>
                           setExpandedHole(
-                            expandedHole === hole.holeNumber ? null : hole.holeNumber,
+                            expandedHole === hole.holeNumber
+                              ? null
+                              : hole.holeNumber,
                           )
                         }
                         sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
                           mt: `${spacing.xs}px`,
                           pt: `${spacing.sm}px`,
                           borderTop: `1px solid ${colors.border.light}`,
-                          cursor: 'pointer',
+                          cursor: "pointer",
                         }}
                       >
                         <Typography
                           sx={{
                             ...typography.label,
                             color: colors.text.tertiary,
-                            textTransform: 'uppercase',
+                            textTransform: "uppercase",
                           }}
                         >
                           Index
                         </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: `${spacing.xs}px` }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: `${spacing.xs}px`,
+                          }}
+                        >
                           <Typography
                             sx={{
                               fontFamily: fontFamilies.monoMedium,
                               fontSize: 13,
                               color: colors.accent.gold,
                               minWidth: 18,
-                              textAlign: 'center',
+                              textAlign: "center",
                             }}
                           >
                             {hole.index || hole.holeNumber}
                           </Typography>
                           {expandedHole === hole.holeNumber ? (
-                            <ExpandLessIcon sx={{ fontSize: 14, color: colors.accent.gold }} />
+                            <ExpandLessIcon
+                              sx={{ fontSize: 14, color: colors.accent.gold }}
+                            />
                           ) : (
-                            <ExpandMoreIcon sx={{ fontSize: 14, color: colors.accent.gold }} />
+                            <ExpandMoreIcon
+                              sx={{ fontSize: 14, color: colors.accent.gold }}
+                            />
                           )}
                         </Box>
                       </Box>
@@ -543,21 +567,25 @@ export const CreateCoursePage = () => {
                             ...typography.label,
                             color: colors.text.tertiary,
                             mb: `${spacing.sm}px`,
-                            textAlign: 'center',
-                            textTransform: 'uppercase',
+                            textAlign: "center",
+                            textTransform: "uppercase",
                           }}
                         >
                           Select index difficulty
                         </Typography>
                         <Box
                           sx={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
+                            display: "flex",
+                            flexWrap: "wrap",
                             gap: `${spacing.xs}px`,
                           }}
                         >
-                          {Array.from({ length: holes.length }, (_, i) => i + 1).map((idx) => {
-                            const isSelected = (hole.index || hole.holeNumber) === idx;
+                          {Array.from(
+                            { length: holes.length },
+                            (_, i) => i + 1,
+                          ).map((idx) => {
+                            const isSelected =
+                              (hole.index || hole.holeNumber) === idx;
                             return (
                               <Box
                                 key={idx}
@@ -572,13 +600,15 @@ export const CreateCoursePage = () => {
                                   py: `${spacing.xs}px`,
                                   borderRadius: `${borderRadius.full}px`,
                                   border: `1px solid ${isSelected ? colors.accent.gold : colors.border.light}`,
-                                  bgcolor: isSelected ? colors.accent.gold : 'transparent',
-                                  display: 'flex',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                  cursor: 'pointer',
-                                  transition: 'all 150ms ease',
-                                  '&:hover': {
+                                  bgcolor: isSelected
+                                    ? colors.accent.gold
+                                    : "transparent",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  cursor: "pointer",
+                                  transition: "all 150ms ease",
+                                  "&:hover": {
                                     borderColor: colors.accent.gold,
                                   },
                                 }}
@@ -587,8 +617,10 @@ export const CreateCoursePage = () => {
                                   sx={{
                                     fontFamily: fontFamilies.monoMedium,
                                     fontSize: 12,
-                                    color: isSelected ? colors.text.inverse : colors.text.secondary,
-                                    textAlign: 'center',
+                                    color: isSelected
+                                      ? colors.text.inverse
+                                      : colors.text.secondary,
+                                    textAlign: "center",
                                   }}
                                 >
                                   {idx}
@@ -615,25 +647,27 @@ export const CreateCoursePage = () => {
                   sx={{
                     ...typography.label,
                     color: colors.text.tertiary,
-                    textTransform: 'uppercase',
+                    textTransform: "uppercase",
                     mb: `${spacing.sm}px`,
                   }}
                 >
                   Quick set all
                 </Typography>
-                <Box sx={{ display: 'flex', gap: `${spacing.sm}px` }}>
+                <Box sx={{ display: "flex", gap: `${spacing.sm}px` }}>
                   {[3, 4, 5].map((par) => (
                     <Box
                       key={par}
-                      onClick={() => setHoles(holes.map((h) => ({ ...h, par })))}
+                      onClick={() =>
+                        setHoles(holes.map((h) => ({ ...h, par })))
+                      }
                       sx={{
                         px: `${spacing.md}px`,
                         py: `${spacing.sm}px`,
                         borderRadius: `${borderRadius.full}px`,
                         border: `1px solid ${colors.border.goldSubtle}`,
-                        cursor: 'pointer',
-                        transition: 'all 150ms ease',
-                        '&:hover': {
+                        cursor: "pointer",
+                        transition: "all 150ms ease",
+                        "&:hover": {
                           bgcolor: `${colors.accent.gold}11`,
                         },
                       }}
@@ -670,16 +704,16 @@ export const CreateCoursePage = () => {
         <Box
           onClick={loading ? undefined : handleSave}
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             gap: `${spacing.sm}px`,
             py: `${spacing.md}px`,
             bgcolor: loading ? colors.text.disabled : colors.accent.gold,
             borderRadius: `${borderRadius.full}px`,
-            cursor: loading ? 'not-allowed' : 'pointer',
-            transition: 'background-color 200ms ease',
-            '&:hover': {
+            cursor: loading ? "not-allowed" : "pointer",
+            transition: "background-color 200ms ease",
+            "&:hover": {
               bgcolor: loading ? colors.text.disabled : colors.accent.goldDark,
             },
           }}
@@ -695,7 +729,7 @@ export const CreateCoursePage = () => {
               letterSpacing: 0.2,
             }}
           >
-            {isEditing ? 'Update course' : 'Create course'}
+            {isEditing ? "Update course" : "Create course"}
           </Typography>
         </Box>
       </Box>
