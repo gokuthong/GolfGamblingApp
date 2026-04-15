@@ -691,11 +691,13 @@ export const GameHistoryPage = () => {
           </ListItemIcon>
           <ListItemText
             primary="Delete"
-            primaryTypographyProps={{
-              sx: {
-                fontFamily: fontFamilies.body,
-                fontSize: typography.bodyMedium.fontSize,
-                color: colors.scoring.negative,
+            slotProps={{
+              primary: {
+                sx: {
+                  fontFamily: fontFamilies.body,
+                  fontSize: typography.bodyMedium.fontSize,
+                  color: colors.scoring.negative,
+                },
               },
             }}
           />
