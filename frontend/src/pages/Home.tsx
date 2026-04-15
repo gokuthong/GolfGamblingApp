@@ -102,13 +102,15 @@ export const HomePage = () => {
       <Dialog
         open={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        PaperProps={{
-          sx: {
-            bgcolor: colors.background.elevated,
-            borderRadius: `${borderRadius.xl}px`,
-            border: `1px solid ${colors.border.light}`,
-            maxWidth: 400,
-            width: "100%",
+        slotProps={{
+          paper: {
+            sx: {
+              bgcolor: colors.background.elevated,
+              borderRadius: `${borderRadius.xl}px`,
+              border: `1px solid ${colors.border.light}`,
+              maxWidth: 400,
+              width: "100%",
+            },
           },
         }}
       >
