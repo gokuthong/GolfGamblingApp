@@ -622,12 +622,14 @@ export const GameHistoryPage = () => {
         anchorEl={menuAnchorEl}
         open={Boolean(menuAnchorEl) && Boolean(menuGameId)}
         onClose={handleMenuClose}
-        PaperProps={{
-          sx: {
-            bgcolor: colors.background.card,
-            borderRadius: `${borderRadius.md}px`,
-            minWidth: 180,
-            border: `1px solid ${colors.border.light}`,
+        slotProps={{
+          paper: {
+            sx: {
+              bgcolor: colors.background.card,
+              borderRadius: `${borderRadius.md}px`,
+              minWidth: 180,
+              border: `1px solid ${colors.border.light}`,
+            },
           },
         }}
       >
