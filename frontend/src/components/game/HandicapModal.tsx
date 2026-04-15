@@ -127,7 +127,12 @@ export const HandicapModal: React.FC<HandicapModalProps> = ({
         onBatchUpdateHandicaps(updates);
       } else {
         updates.forEach((u) =>
-          onUpdateHandicap(u.holeNumber, u.fromPlayerId, u.toPlayerId, u.strokes),
+          onUpdateHandicap(
+            u.holeNumber,
+            u.fromPlayerId,
+            u.toPlayerId,
+            u.strokes,
+          ),
         );
       }
     }
@@ -141,12 +146,14 @@ export const HandicapModal: React.FC<HandicapModalProps> = ({
       onClose={onClose}
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: {
-          bgcolor: colors.background.card,
-          borderRadius: `${borderRadius.lg}px`,
-          maxHeight: "85vh",
-          boxShadow: shadows.large,
+      slotProps={{
+        paper: {
+          sx: {
+            bgcolor: colors.background.card,
+            borderRadius: `${borderRadius.lg}px`,
+            maxHeight: "85vh",
+            boxShadow: shadows.large,
+          },
         },
       }}
     >
@@ -248,7 +255,9 @@ export const HandicapModal: React.FC<HandicapModalProps> = ({
                 sx={{
                   fontFamily: fontFamilies.body,
                   fontSize: typography.bodySmall.fontSize,
-                  color: isSelected ? colors.accent.gold : colors.text.secondary,
+                  color: isSelected
+                    ? colors.accent.gold
+                    : colors.text.secondary,
                 }}
               >
                 {totalStrokes} {totalStrokes === 1 ? "stroke" : "strokes"}
