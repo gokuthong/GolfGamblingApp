@@ -9,7 +9,6 @@ import {
   CircularProgress,
   InputAdornment,
   IconButton,
-  LinearProgress,
 } from "@mui/material";
 import {
   Email as EmailIcon,
