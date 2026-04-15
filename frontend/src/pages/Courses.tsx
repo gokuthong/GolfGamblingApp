@@ -1,17 +1,23 @@
-import { useState, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import CircularProgress from '@mui/material/CircularProgress';
-import GolfCourseIcon from '@mui/icons-material/GolfCourse';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import AddIcon from '@mui/icons-material/Add';
-import { useThemedColors } from '../contexts/ThemeContext';
-import { dataService } from '../services/DataService';
-import { crossPlatformAlert } from '../utils/alert';
-import { Course } from '../types';
-import { typography, fontFamilies, spacing, borderRadius, shadows } from '../theme';
+import { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
+import GolfCourseIcon from "@mui/icons-material/GolfCourse";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import AddIcon from "@mui/icons-material/Add";
+import { useThemedColors } from "../contexts/ThemeContext";
+import { dataService } from "../services/DataService";
+import { crossPlatformAlert } from "../utils/alert";
+import { Course } from "../types";
+import {
+  typography,
+  fontFamilies,
+  spacing,
+  borderRadius,
+  shadows,
+} from "../theme";
 
 export const CoursesPage = () => {
   const navigate = useNavigate();
@@ -31,19 +37,19 @@ export const CoursesPage = () => {
 
   const handleDeleteCourse = (course: Course) => {
     crossPlatformAlert(
-      'Delete course',
+      "Delete course",
       `Are you sure you want to delete "${course.name}"?`,
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: "Cancel", style: "cancel" },
         {
-          text: 'Delete',
-          style: 'destructive',
+          text: "Delete",
+          style: "destructive",
           onPress: async () => {
             try {
               await dataService.deleteCourse(course.id);
               await loadCourses();
             } catch (error) {
-              crossPlatformAlert('Error', 'Failed to delete course');
+              crossPlatformAlert("Error", "Failed to delete course");
             }
           },
         },
@@ -55,11 +61,11 @@ export const CoursesPage = () => {
     return (
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
           bgcolor: colors.background.primary,
         }}
       >
@@ -80,13 +86,13 @@ export const CoursesPage = () => {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
         bgcolor: colors.background.primary,
       }}
     >
-      <Box sx={{ flex: 1, overflow: 'auto' }}>
+      <Box sx={{ flex: 1, overflow: "auto" }}>
         {/* Header */}
         <Box
           sx={{
@@ -99,7 +105,7 @@ export const CoursesPage = () => {
             sx={{
               ...typography.label,
               color: colors.text.tertiary,
-              textTransform: 'uppercase',
+              textTransform: "uppercase",
               mb: `${spacing.sm}px`,
             }}
           >
@@ -119,7 +125,7 @@ export const CoursesPage = () => {
               height: 1.5,
               width: 48,
               bgcolor: colors.accent.gold,
-              borderRadius: '1px',
+              borderRadius: "1px",
               mb: `${spacing.md}px`,
             }}
           />
@@ -138,9 +144,9 @@ export const CoursesPage = () => {
           <Box
             sx={{
               flex: 1,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
               px: `${spacing.xl}px`,
               py: `${spacing.xxl}px`,
             }}
@@ -151,11 +157,11 @@ export const CoursesPage = () => {
                 borderRadius: `${borderRadius.xl}px`,
                 border: `1px solid ${colors.border.light}`,
                 p: `${spacing.xl}px`,
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textAlign: 'center',
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
                 boxShadow: shadows.small,
               }}
             >
@@ -190,7 +196,10 @@ export const CoursesPage = () => {
         ) : (
           <Box sx={{ px: `${spacing.xl}px`, pb: `${spacing.xxl}px` }}>
             {courses.map((course) => {
-              const totalPar = course.holes.reduce((sum, hole) => sum + hole.par, 0);
+              const totalPar = course.holes.reduce(
+                (sum, hole) => sum + hole.par,
+                0,
+              );
 
               return (
                 <Box
@@ -207,8 +216,8 @@ export const CoursesPage = () => {
                   {/* Course header */}
                   <Box
                     sx={{
-                      display: 'flex',
-                      alignItems: 'center',
+                      display: "flex",
+                      alignItems: "center",
                       gap: `${spacing.md}px`,
                       mb: `${spacing.md}px`,
                     }}
@@ -217,16 +226,18 @@ export const CoursesPage = () => {
                       sx={{
                         width: 44,
                         height: 44,
-                        borderRadius: '50%',
+                        borderRadius: "50%",
                         bgcolor: colors.surfaces.level2,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
                         border: `1px solid ${colors.border.goldSubtle}`,
                         flexShrink: 0,
                       }}
                     >
-                      <GolfCourseIcon sx={{ fontSize: 22, color: colors.accent.gold }} />
+                      <GolfCourseIcon
+                        sx={{ fontSize: 22, color: colors.accent.gold }}
+                      />
                     </Box>
                     <Box sx={{ flex: 1, minWidth: 0 }}>
                       <Typography
@@ -241,7 +252,13 @@ export const CoursesPage = () => {
                       >
                         {course.name}
                       </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: `${spacing.xs}px` }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: `${spacing.xs}px`,
+                        }}
+                      >
                         <Typography
                           sx={{
                             ...typography.bodySmall,
@@ -275,7 +292,7 @@ export const CoursesPage = () => {
                   {/* Actions */}
                   <Box
                     sx={{
-                      display: 'flex',
+                      display: "flex",
                       gap: `${spacing.sm}px`,
                       borderTop: `1px solid ${colors.border.light}`,
                       pt: `${spacing.md}px`,
@@ -285,21 +302,23 @@ export const CoursesPage = () => {
                       onClick={() => navigate(`/courses/edit/${course.id}`)}
                       sx={{
                         flex: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                         gap: `${spacing.xs}px`,
                         py: `${spacing.sm}px`,
                         borderRadius: `${borderRadius.full}px`,
                         border: `1px solid ${colors.border.goldSubtle}`,
-                        cursor: 'pointer',
-                        transition: 'background-color 200ms ease',
-                        '&:hover': {
+                        cursor: "pointer",
+                        transition: "background-color 200ms ease",
+                        "&:hover": {
                           bgcolor: `${colors.accent.gold}11`,
                         },
                       }}
                     >
-                      <EditIcon sx={{ fontSize: 14, color: colors.accent.gold }} />
+                      <EditIcon
+                        sx={{ fontSize: 14, color: colors.accent.gold }}
+                      />
                       <Typography
                         sx={{
                           fontFamily: fontFamilies.bodySemiBold,
@@ -316,21 +335,23 @@ export const CoursesPage = () => {
                       onClick={() => handleDeleteCourse(course)}
                       sx={{
                         flex: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                         gap: `${spacing.xs}px`,
                         py: `${spacing.sm}px`,
                         borderRadius: `${borderRadius.full}px`,
                         border: `1px solid ${colors.border.light}`,
-                        cursor: 'pointer',
-                        transition: 'background-color 200ms ease',
-                        '&:hover': {
+                        cursor: "pointer",
+                        transition: "background-color 200ms ease",
+                        "&:hover": {
                           bgcolor: `${colors.scoring.negative}11`,
                         },
                       }}
                     >
-                      <DeleteOutlineIcon sx={{ fontSize: 14, color: colors.scoring.negative }} />
+                      <DeleteOutlineIcon
+                        sx={{ fontSize: 14, color: colors.scoring.negative }}
+                      />
                       <Typography
                         sx={{
                           fontFamily: fontFamilies.bodySemiBold,
@@ -361,22 +382,22 @@ export const CoursesPage = () => {
         }}
       >
         <Box
-          onClick={() => navigate('/courses/create')}
+          onClick={() => navigate("/courses/create")}
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             gap: `${spacing.sm}px`,
             py: `${spacing.md}px`,
             bgcolor: colors.accent.gold,
             borderRadius: `${borderRadius.full}px`,
-            cursor: 'pointer',
-            transition: 'background-color 200ms ease',
-            '&:hover': {
+            cursor: "pointer",
+            transition: "background-color 200ms ease",
+            "&:hover": {
               bgcolor: colors.accent.goldDark,
             },
-            '&:active': {
-              transform: 'scale(0.98)',
+            "&:active": {
+              transform: "scale(0.98)",
             },
           }}
         >
