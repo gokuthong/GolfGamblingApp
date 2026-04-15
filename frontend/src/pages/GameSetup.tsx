@@ -616,12 +616,14 @@ export const GameSetupPage = () => {
               onKeyDown={(e) => {
                 if (e.key === "Enter") addGuestPlayer();
               }}
-              InputProps={{
-                disableUnderline: true,
-                sx: {
-                  fontFamily: fontFamilies.body,
-                  fontSize: typography.bodyMedium.fontSize,
-                  color: colors.text.primary,
+              slotProps={{
+                input: {
+                  disableUnderline: true,
+                  sx: {
+                    fontFamily: fontFamilies.body,
+                    fontSize: typography.bodyMedium.fontSize,
+                    color: colors.text.primary,
+                  },
                 },
               }}
               sx={{
