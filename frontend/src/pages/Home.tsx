@@ -1,27 +1,33 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import CircularProgress from '@mui/material/CircularProgress';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
-import GolfCourseIcon from '@mui/icons-material/GolfCourse';
-import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
-import HistoryIcon from '@mui/icons-material/History';
-import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import SportsGolfIcon from '@mui/icons-material/SportsGolf';
-import { useThemedColors } from '../contexts/ThemeContext';
-import { useAuth } from '../store';
-import { dataService } from '../services/DataService';
-import { crossPlatformAlert } from '../utils/alert';
-import { typography, fontFamilies, spacing, borderRadius, shadows } from '../theme';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
+import GolfCourseIcon from "@mui/icons-material/GolfCourse";
+import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
+import HistoryIcon from "@mui/icons-material/History";
+import PeopleOutlineIcon from "@mui/icons-material/PeopleOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import SportsGolfIcon from "@mui/icons-material/SportsGolf";
+import { useThemedColors } from "../contexts/ThemeContext";
+import { useAuth } from "../store";
+import { dataService } from "../services/DataService";
+import { crossPlatformAlert } from "../utils/alert";
+import {
+  typography,
+  fontFamilies,
+  spacing,
+  borderRadius,
+  shadows,
+} from "../theme";
 
 export const HomePage = () => {
   const navigate = useNavigate();
@@ -42,43 +48,45 @@ export const HomePage = () => {
   const loadData = async () => {
     if (!user) return;
     try {
-      const activeGames = await dataService.getActiveGamesForUser((user as any).uid);
+      const activeGames = await dataService.getActiveGamesForUser(
+        (user as any).uid,
+      );
       setOngoingGames(activeGames);
     } catch (error) {
-      console.error('Failed to load games:', error);
+      console.error("Failed to load games:", error);
     }
   };
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
   };
 
   const displayName = (() => {
-    if (!user) return 'Guest';
+    if (!user) return "Guest";
     const u = user as any;
-    if (u.role === 'guest' || u.isOffline) return 'Guest';
-    const name = u.displayName || u.email?.split('@')[0] || 'Player';
-    return name.split(' ')[0];
+    if (u.role === "guest" || u.isOffline) return "Guest";
+    const name = u.displayName || u.email?.split("@")[0] || "Player";
+    return name.split(" ")[0];
   })();
 
   const handleDeleteGame = (gameId: string) => {
     crossPlatformAlert(
-      'Delete Game',
-      'Are you sure you want to delete this ongoing game? This cannot be undone.',
+      "Delete Game",
+      "Are you sure you want to delete this ongoing game? This cannot be undone.",
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: "Cancel", style: "cancel" },
         {
-          text: 'Delete',
-          style: 'destructive',
+          text: "Delete",
+          style: "destructive",
           onPress: async () => {
             try {
               await dataService.deleteGame(gameId);
               await loadData();
             } catch (error) {
-              crossPlatformAlert('Error', 'Failed to delete game');
+              crossPlatformAlert("Error", "Failed to delete game");
             }
           },
         },
@@ -89,7 +97,7 @@ export const HomePage = () => {
   const mostRecentOngoing = ongoingGames[0];
 
   return (
-    <Box sx={{ minHeight: '100%', bgcolor: colors.background.primary }}>
+    <Box sx={{ minHeight: "100%", bgcolor: colors.background.primary }}>
       {/* Auth modal for guest users */}
       <Dialog
         open={showAuthModal}
@@ -100,7 +108,7 @@ export const HomePage = () => {
             borderRadius: `${borderRadius.xl}px`,
             border: `1px solid ${colors.border.light}`,
             maxWidth: 400,
-            width: '100%',
+            width: "100%",
           },
         }}
       >
@@ -122,14 +130,15 @@ export const HomePage = () => {
               color: colors.text.secondary,
             }}
           >
-            Create an account or sign in to save your data and sync across devices.
+            Create an account or sign in to save your data and sync across
+            devices.
           </Typography>
         </DialogContent>
         <DialogActions sx={{ p: `${spacing.lg}px`, gap: `${spacing.md}px` }}>
           <Button
             onClick={() => {
               setShowAuthModal(false);
-              navigate('/login');
+              navigate("/login");
             }}
             sx={{
               flex: 1,
@@ -138,7 +147,7 @@ export const HomePage = () => {
               color: colors.text.secondary,
               fontFamily: fontFamilies.bodySemiBold,
               fontSize: typography.button.fontSize,
-              textTransform: 'none',
+              textTransform: "none",
               py: `${spacing.sm}px`,
             }}
           >
@@ -147,7 +156,7 @@ export const HomePage = () => {
           <Button
             onClick={() => {
               setShowAuthModal(false);
-              navigate('/register');
+              navigate("/register");
             }}
             sx={{
               flex: 1,
@@ -156,9 +165,9 @@ export const HomePage = () => {
               color: colors.text.inverse,
               fontFamily: fontFamilies.bodySemiBold,
               fontSize: typography.button.fontSize,
-              textTransform: 'none',
+              textTransform: "none",
               py: `${spacing.sm}px`,
-              '&:hover': {
+              "&:hover": {
                 bgcolor: colors.accent.goldDark,
               },
             }}
@@ -182,7 +191,7 @@ export const HomePage = () => {
               ...typography.bodyMedium,
               fontFamily: fontFamilies.body,
               color: colors.text.tertiary,
-              mb: '4px',
+              mb: "4px",
             }}
           >
             {getGreeting()},
@@ -202,44 +211,52 @@ export const HomePage = () => {
               height: 1.5,
               width: 44,
               bgcolor: colors.accent.gold,
-              borderRadius: '1px',
+              borderRadius: "1px",
             }}
           />
         </Box>
 
         {/* Action cards row */}
-        <Box sx={{ display: 'flex', gap: `${spacing.md}px`, mb: `${spacing.xl}px` }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: `${spacing.md}px`,
+            mb: `${spacing.xl}px`,
+          }}
+        >
           {/* Primary action - New game */}
           <Box
-            onClick={() => navigate('/game/setup')}
+            onClick={() => navigate("/game/setup")}
             sx={{
               flex: 7,
               minHeight: 130,
               background: `linear-gradient(135deg, ${colors.accent.gold}, ${colors.accent.goldDark})`,
               borderRadius: `${borderRadius.xl}px`,
-              cursor: 'pointer',
-              overflow: 'hidden',
-              transition: 'transform 200ms ease, box-shadow 200ms ease',
+              cursor: "pointer",
+              overflow: "hidden",
+              transition: "transform 200ms ease, box-shadow 200ms ease",
               boxShadow: shadows.medium,
-              '&:hover': {
-                transform: 'translateY(-1px)',
+              "&:hover": {
+                transform: "translateY(-1px)",
                 boxShadow: shadows.large,
               },
-              '&:active': {
-                transform: 'scale(0.98)',
+              "&:active": {
+                transform: "scale(0.98)",
               },
             }}
           >
             <Box
               sx={{
                 p: `${spacing.lg}px`,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                height: '100%',
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                height: "100%",
               }}
             >
-              <GolfCourseIcon sx={{ fontSize: 28, color: colors.text.inverse }} />
+              <GolfCourseIcon
+                sx={{ fontSize: 28, color: colors.text.inverse }}
+              />
               <Box>
                 <Typography
                   sx={{
@@ -257,7 +274,7 @@ export const HomePage = () => {
                     fontFamily: fontFamilies.body,
                     color: colors.text.inverse,
                     opacity: 0.85,
-                    mt: '2px',
+                    mt: "2px",
                   }}
                 >
                   Set up and begin
@@ -271,39 +288,41 @@ export const HomePage = () => {
             onClick={() =>
               mostRecentOngoing
                 ? navigate(`/game/scoring/${mostRecentOngoing.id}`)
-                : navigate('/history')
+                : navigate("/history")
             }
             sx={{
               flex: 3,
               minHeight: 130,
               bgcolor: colors.background.card,
               borderRadius: `${borderRadius.xl}px`,
-              cursor: 'pointer',
+              cursor: "pointer",
               border: mostRecentOngoing
                 ? `1px solid ${colors.border.goldSubtle}`
                 : `1px solid ${colors.border.light}`,
               boxShadow: shadows.medium,
-              transition: 'transform 200ms ease, box-shadow 200ms ease',
-              '&:hover': {
-                transform: 'translateY(-1px)',
+              transition: "transform 200ms ease, box-shadow 200ms ease",
+              "&:hover": {
+                transform: "translateY(-1px)",
                 boxShadow: shadows.large,
               },
-              '&:active': {
-                transform: 'scale(0.98)',
+              "&:active": {
+                transform: "scale(0.98)",
               },
             }}
           >
             <Box
               sx={{
                 p: `${spacing.lg}px`,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                height: '100%',
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                height: "100%",
               }}
             >
               {mostRecentOngoing ? (
-                <PlayCircleOutlineIcon sx={{ fontSize: 28, color: colors.accent.gold }} />
+                <PlayCircleOutlineIcon
+                  sx={{ fontSize: 28, color: colors.accent.gold }}
+                />
               ) : (
                 <HistoryIcon sx={{ fontSize: 28, color: colors.accent.gold }} />
               )}
@@ -316,19 +335,19 @@ export const HomePage = () => {
                     mt: `${spacing.sm}px`,
                   }}
                 >
-                  {mostRecentOngoing ? 'Resume' : 'History'}
+                  {mostRecentOngoing ? "Resume" : "History"}
                 </Typography>
                 <Typography
                   sx={{
                     ...typography.bodySmall,
                     fontFamily: fontFamilies.body,
                     color: colors.text.tertiary,
-                    mt: '2px',
+                    mt: "2px",
                   }}
                 >
                   {mostRecentOngoing
                     ? `${ongoingGames.length} active`
-                    : 'Past games'}
+                    : "Past games"}
                 </Typography>
               </Box>
             </Box>
@@ -340,18 +359,18 @@ export const HomePage = () => {
           <Typography
             sx={{
               ...typography.label,
-              textTransform: 'uppercase',
+              textTransform: "uppercase",
               color: colors.text.tertiary,
               mb: `${spacing.sm}px`,
             }}
           >
             At a glance
           </Typography>
-          <Box sx={{ display: 'flex', gap: `${spacing.sm}px` }}>
+          <Box sx={{ display: "flex", gap: `${spacing.sm}px` }}>
             {[
-              { value: stats.gamesPlayed, label: 'Games' },
-              { value: stats.wins, label: 'Wins' },
-              { value: stats.bestScore || '\u2014', label: 'Best' },
+              { value: stats.gamesPlayed, label: "Games" },
+              { value: stats.wins, label: "Wins" },
+              { value: stats.bestScore || "\u2014", label: "Best" },
             ].map((stat) => (
               <Box
                 key={stat.label}
@@ -361,9 +380,9 @@ export const HomePage = () => {
                   borderRadius: `${borderRadius.xl}px`,
                   border: `1px solid ${colors.border.light}`,
                   p: `${spacing.lg}px`,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
                   boxShadow: shadows.small,
                 }}
               >
@@ -395,9 +414,9 @@ export const HomePage = () => {
           <Box sx={{ mb: `${spacing.xl}px` }}>
             <Box
               sx={{
-                display: 'flex',
-                alignItems: 'baseline',
-                justifyContent: 'space-between',
+                display: "flex",
+                alignItems: "baseline",
+                justifyContent: "space-between",
                 mb: `${spacing.xs}px`,
               }}
             >
@@ -438,20 +457,20 @@ export const HomePage = () => {
                   border: `1px solid ${colors.border.light}`,
                   p: `${spacing.lg}px`,
                   mb: `${spacing.sm}px`,
-                  cursor: 'pointer',
+                  cursor: "pointer",
                   boxShadow: shadows.small,
-                  transition: 'transform 200ms ease, box-shadow 200ms ease',
-                  '&:hover': {
-                    transform: 'translateY(-1px)',
+                  transition: "transform 200ms ease, box-shadow 200ms ease",
+                  "&:hover": {
+                    transform: "translateY(-1px)",
                     boxShadow: shadows.medium,
                   },
                 }}
               >
                 <Box
                   sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                   }}
                 >
                   <Box sx={{ flex: 1 }}>
@@ -460,7 +479,7 @@ export const HomePage = () => {
                         ...typography.h4,
                         fontFamily: fontFamilies.display,
                         color: colors.text.primary,
-                        mb: '2px',
+                        mb: "2px",
                       }}
                     >
                       Game #{game.id.slice(-6).toUpperCase()}
@@ -471,13 +490,19 @@ export const HomePage = () => {
                         color: colors.text.tertiary,
                       }}
                     >
-                      {game.playerIds.length} players &middot; started{' '}
+                      {game.playerIds.length} players &middot; started{" "}
                       {game.createdAt
                         ? new Date(game.createdAt).toLocaleDateString()
-                        : ''}
+                        : ""}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: `${spacing.sm}px` }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: `${spacing.sm}px`,
+                    }}
+                  >
                     <IconButton
                       size="small"
                       onClick={(e) => {
@@ -488,7 +513,7 @@ export const HomePage = () => {
                         width: 32,
                         height: 32,
                         color: colors.text.tertiary,
-                        '&:hover': {
+                        "&:hover": {
                           color: colors.scoring.negative,
                           bgcolor: `${colors.scoring.negative}11`,
                         },
@@ -496,7 +521,9 @@ export const HomePage = () => {
                     >
                       <DeleteOutlineIcon sx={{ fontSize: 18 }} />
                     </IconButton>
-                    <ChevronRightIcon sx={{ fontSize: 22, color: colors.accent.gold }} />
+                    <ChevronRightIcon
+                      sx={{ fontSize: 22, color: colors.accent.gold }}
+                    />
                   </Box>
                 </Box>
               </Box>
@@ -526,42 +553,50 @@ export const HomePage = () => {
           />
           <Box
             sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
+              display: "flex",
+              flexWrap: "wrap",
               gap: `${spacing.sm}px`,
             }}
           >
             {[
-              { icon: <HistoryIcon />, label: 'History', path: '/history' },
-              { icon: <PeopleOutlineIcon />, label: 'Players', path: '/players' },
-              { icon: <GolfCourseIcon />, label: 'Courses', path: '/courses' },
-              { icon: <SettingsOutlinedIcon />, label: 'Settings', path: '/settings' },
+              { icon: <HistoryIcon />, label: "History", path: "/history" },
+              {
+                icon: <PeopleOutlineIcon />,
+                label: "Players",
+                path: "/players",
+              },
+              { icon: <GolfCourseIcon />, label: "Courses", path: "/courses" },
+              {
+                icon: <SettingsOutlinedIcon />,
+                label: "Settings",
+                path: "/settings",
+              },
             ].map((item) => (
               <Box
                 key={item.label}
                 onClick={() => navigate(item.path)}
                 sx={{
-                  flexBasis: '48%',
+                  flexBasis: "48%",
                   flexGrow: 1,
                   bgcolor: colors.background.card,
                   borderRadius: `${borderRadius.xl}px`,
                   border: `1px solid ${colors.border.light}`,
                   py: `${spacing.lg}px`,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
                   gap: `${spacing.sm}px`,
-                  cursor: 'pointer',
+                  cursor: "pointer",
                   boxShadow: shadows.small,
-                  transition: 'transform 200ms ease, box-shadow 200ms ease',
-                  '&:hover': {
-                    transform: 'translateY(-1px)',
+                  transition: "transform 200ms ease, box-shadow 200ms ease",
+                  "&:hover": {
+                    transform: "translateY(-1px)",
                     boxShadow: shadows.medium,
                   },
-                  '&:active': {
-                    transform: 'scale(0.98)',
+                  "&:active": {
+                    transform: "scale(0.98)",
                   },
-                  '& .MuiSvgIcon-root': {
+                  "& .MuiSvgIcon-root": {
                     fontSize: 22,
                     color: colors.accent.gold,
                   },
@@ -591,10 +626,10 @@ export const HomePage = () => {
                 borderRadius: `${borderRadius.xl}px`,
                 border: `1px solid ${colors.border.light}`,
                 p: `${spacing.xl}px`,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textAlign: 'center',
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
                 boxShadow: shadows.small,
               }}
             >
@@ -627,15 +662,15 @@ export const HomePage = () => {
                 Start a new game to begin tracking scores, stats, and bets.
               </Typography>
               <Box
-                onClick={() => navigate('/game/setup')}
+                onClick={() => navigate("/game/setup")}
                 sx={{
                   px: `${spacing.xl}px`,
                   py: `${spacing.md}px`,
                   bgcolor: colors.accent.gold,
                   borderRadius: `${borderRadius.full}px`,
-                  cursor: 'pointer',
-                  transition: 'background-color 200ms ease',
-                  '&:hover': {
+                  cursor: "pointer",
+                  transition: "background-color 200ms ease",
+                  "&:hover": {
                     bgcolor: colors.accent.goldDark,
                   },
                 }}
