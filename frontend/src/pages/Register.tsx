@@ -422,33 +422,37 @@ export const RegisterPage = () => {
             fullWidth
             size="small"
             sx={{ mb: `${spacing.md}px` }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LockCheckIcon
-                    sx={{ color: colors.text.tertiary, fontSize: 20 }}
-                  />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    edge="end"
-                    size="small"
-                  >
-                    {showConfirmPassword ? (
-                      <VisibilityOff
-                        sx={{ color: colors.text.tertiary, fontSize: 20 }}
-                      />
-                    ) : (
-                      <Visibility
-                        sx={{ color: colors.text.tertiary, fontSize: 20 }}
-                      />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockCheckIcon
+                      sx={{ color: colors.text.tertiary, fontSize: 20 }}
+                    />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      edge="end"
+                      size="small"
+                    >
+                      {showConfirmPassword ? (
+                        <VisibilityOff
+                          sx={{ color: colors.text.tertiary, fontSize: 20 }}
+                        />
+                      ) : (
+                        <Visibility
+                          sx={{ color: colors.text.tertiary, fontSize: 20 }}
+                        />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
             }}
           />
 
