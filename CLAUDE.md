@@ -12,12 +12,10 @@
 - Firebase project: golfgamblingapp
 - Offline: Service worker (network-first, cache fallback)
 
-## Architecture (LEGACY — Expo/React Native)
-- Directory: `golf-gambling-rn/` — kept for reference, no longer primary
-- Framework: React Native (Expo ~53) + TypeScript
-- UI: React Native Paper (Material Design 3)
-- Navigation: React Navigation (native-stack + bottom-tabs)
-- EAS project: 63e528a0-5cde-4168-9494-b87590455411
+## OBSOLETE — `golf-gambling-rn/` directory
+- **DO NOT read, modify, or reference files in `golf-gambling-rn/`.** It is the old Expo/React Native codebase, fully replaced by `frontend/`. Kept only as a historical archive.
+- All active development happens in `frontend/`.
+- If you need to understand how a feature works, read the `frontend/` version, not the old RN version.
 
 ## Key Paths (NEW — frontend/)
 - App source: `frontend/src/`
