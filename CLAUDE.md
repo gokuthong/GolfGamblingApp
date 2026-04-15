@@ -1,33 +1,52 @@
 # GolfGamblingApp — Claude Code Instructions
 
-## Architecture
-- Framework: React Native (Expo ~53) + TypeScript
-- UI: React Native Paper (Material Design 3)
+## Architecture (NEW — Capacitor/Web)
+- Framework: React 19 + Vite 8 + TypeScript
+- UI: MUI (Material UI) v9 — Material Design 3
 - Auth: Firebase Authentication (email/password)
-- Database: Cloud Firestore (online) + AsyncStorage (offline/guest)
-- State: Zustand
-- Navigation: React Navigation (native-stack + bottom-tabs)
+- Database: Cloud Firestore (online) + localStorage (offline/guest)
+- State: Zustand 5
+- Routing: React Router v7
+- Mobile: Capacitor 8 (Android — WebView wrapping the web app)
 - Hosting: Firebase Hosting (web build)
 - Firebase project: golfgamblingapp
+- Offline: Service worker (network-first, cache fallback)
+
+## Architecture (LEGACY — Expo/React Native)
+- Directory: `golf-gambling-rn/` — kept for reference, no longer primary
+- Framework: React Native (Expo ~53) + TypeScript
+- UI: React Native Paper (Material Design 3)
+- Navigation: React Navigation (native-stack + bottom-tabs)
 - EAS project: 63e528a0-5cde-4168-9494-b87590455411
 
-## Key Paths
-- App source: `golf-gambling-rn/src/`
-- App entry: `golf-gambling-rn/App.tsx`
-- Firebase config: `golf-gambling-rn/src/services/firebase/config.ts`
-- Data layer: `golf-gambling-rn/src/services/DataService.ts`
-- Firestore ops: `golf-gambling-rn/src/services/firebase/firestore.ts`
-- Local storage ops: `golf-gambling-rn/src/services/storage/LocalStorageService.ts`
-- Sync service: `golf-gambling-rn/src/services/sync/SyncService.ts`
-- Connectivity: `golf-gambling-rn/src/services/connectivity/ConnectivityManager.ts`
-- Navigation: `golf-gambling-rn/src/navigation/`
-- Tests: `golf-gambling-rn/src/utils/__tests__/`
+## Key Paths (NEW — frontend/)
+- App source: `frontend/src/`
+- App entry: `frontend/src/main.tsx` → `frontend/src/App.tsx`
+- Router: `frontend/src/router.tsx`
+- Firebase config: `frontend/src/services/firebase/config.ts`
+- Data layer: `frontend/src/services/DataService.ts`
+- Firestore ops: `frontend/src/services/firebase/firestore.ts`
+- Local storage ops: `frontend/src/services/storage/LocalStorageService.ts`
+- Sync service: `frontend/src/services/sync/SyncService.ts`
+- Connectivity: `frontend/src/services/connectivity/ConnectivityManager.ts`
+- Pages: `frontend/src/pages/`
+- Components: `frontend/src/components/`
+- Theme: `frontend/src/theme/` (colors, typography, spacing, MUI theme)
+- Capacitor config: `frontend/capacitor.config.ts`
+- Android project: `frontend/android/`
+- Service worker: `frontend/public/sw.js`
 
-## Development
-- `cd golf-gambling-rn && npm run web` — starts Expo web dev server
-- `npm run start` — starts Expo dev server (all platforms)
-- `npm run build:web` — builds web bundle + patches font cache
+## Development (NEW)
+- `cd frontend && npm run dev` — starts Vite dev server (http://localhost:5173)
+- `npm run build` or `npm run build:web` — production web build → dist/
 - `npm run deploy:web` — builds and deploys to Firebase Hosting
+- `npm run cap:build` — builds web + syncs to Capacitor Android
+- `npm run cap:open` — opens Android Studio
+- `npm run cap:run` — runs on connected Android device/emulator
+- `npm run cap:sync` — syncs web assets to Android project
+
+## Development (LEGACY)
+- `cd golf-gambling-rn && npm run web` — starts Expo web dev server
 - `npm run build:apk` — EAS cloud build (Android preview)
 - Tests: `npx tsx <path-to-test-file>`
 
