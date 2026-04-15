@@ -449,22 +449,22 @@ export const GameSetupPage = () => {
               mb: `${spacing.md}px`,
             }}
           >
-            <SearchIcon
-              sx={{ fontSize: 18, color: colors.text.tertiary }}
-            />
+            <SearchIcon sx={{ fontSize: 18, color: colors.text.tertiary }} />
             <TextField
               variant="standard"
               placeholder="Search players..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               fullWidth
-              InputProps={{
-                disableUnderline: true,
-                sx: {
-                  fontFamily: fontFamilies.body,
-                  fontSize: typography.bodyMedium.fontSize,
-                  color: colors.text.primary,
-                  py: `${spacing.sm}px`,
+              slotProps={{
+                input: {
+                  disableUnderline: true,
+                  sx: {
+                    fontFamily: fontFamilies.body,
+                    fontSize: typography.bodyMedium.fontSize,
+                    color: colors.text.primary,
+                    py: `${spacing.sm}px`,
+                  },
                 },
               }}
             />
@@ -472,11 +472,22 @@ export const GameSetupPage = () => {
 
           {filteredPlayers.length === 0 ? (
             <Card sx={{ p: `${spacing.xl}px`, textAlign: "center" }}>
-              <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: `${spacing.sm}px` }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: `${spacing.sm}px`,
+                }}
+              >
                 {searchQuery ? (
-                  <PersonSearchIcon sx={{ fontSize: 40, color: colors.text.tertiary }} />
+                  <PersonSearchIcon
+                    sx={{ fontSize: 40, color: colors.text.tertiary }}
+                  />
                 ) : (
-                  <PersonOffIcon sx={{ fontSize: 40, color: colors.text.tertiary }} />
+                  <PersonOffIcon
+                    sx={{ fontSize: 40, color: colors.text.tertiary }}
+                  />
                 )}
                 <Typography
                   sx={{
@@ -622,11 +633,23 @@ export const GameSetupPage = () => {
                 py: `${spacing.sm}px`,
               }}
             />
-            <Button title="Add" onPress={addGuestPlayer} variant="gold" size="small" />
+            <Button
+              title="Add"
+              onPress={addGuestPlayer}
+              variant="gold"
+              size="small"
+            />
           </Box>
 
           {guestPlayers.length > 0 && (
-            <Box sx={{ mt: `${spacing.md}px`, display: "flex", flexDirection: "column", gap: `${spacing.sm}px` }}>
+            <Box
+              sx={{
+                mt: `${spacing.md}px`,
+                display: "flex",
+                flexDirection: "column",
+                gap: `${spacing.sm}px`,
+              }}
+            >
               {guestPlayers.map((guest) => {
                 const isSelected = selectedPlayerIds.has(guest.id);
                 return (
