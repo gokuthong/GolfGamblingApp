@@ -1,19 +1,25 @@
-import { useState, useCallback, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import CircularProgress from '@mui/material/CircularProgress';
-import Dialog from '@mui/material/Dialog';
-import TextField from '@mui/material/TextField';
-import PersonIcon from '@mui/icons-material/Person';
-import PeopleIcon from '@mui/icons-material/People';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import AddIcon from '@mui/icons-material/Add';
-import { useThemedColors } from '../contexts/ThemeContext';
-import { useStore } from '../store';
-import { dataService } from '../services/DataService';
-import { crossPlatformAlert } from '../utils/alert';
-import { Player } from '../types';
-import { typography, fontFamilies, spacing, borderRadius, shadows } from '../theme';
+import { useState, useCallback, useEffect } from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import TextField from "@mui/material/TextField";
+import PersonIcon from "@mui/icons-material/Person";
+import PeopleIcon from "@mui/icons-material/People";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import AddIcon from "@mui/icons-material/Add";
+import { useThemedColors } from "../contexts/ThemeContext";
+import { useStore } from "../store";
+import { dataService } from "../services/DataService";
+import { crossPlatformAlert } from "../utils/alert";
+import { Player } from "../types";
+import {
+  typography,
+  fontFamilies,
+  spacing,
+  borderRadius,
+  shadows,
+} from "../theme";
 
 export const PlayersPage = () => {
   const colors = useThemedColors();
@@ -21,7 +27,7 @@ export const PlayersPage = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newPlayerName, setNewPlayerName] = useState('');
+  const [newPlayerName, setNewPlayerName] = useState("");
   const [addingPlayer, setAddingPlayer] = useState(false);
 
   const loadPlayers = useCallback(async () => {
@@ -38,7 +44,7 @@ export const PlayersPage = () => {
 
   const handleAddPlayer = async () => {
     if (!newPlayerName.trim()) {
-      crossPlatformAlert('Error', 'Please enter a player name');
+      crossPlatformAlert("Error", "Please enter a player name");
       return;
     }
 
@@ -51,11 +57,11 @@ export const PlayersPage = () => {
         userId: (user as any).uid,
         isGuest: false,
       });
-      setNewPlayerName('');
+      setNewPlayerName("");
       setShowAddModal(false);
       await loadPlayers();
     } catch (error) {
-      crossPlatformAlert('Error', 'Failed to add player');
+      crossPlatformAlert("Error", "Failed to add player");
     } finally {
       setAddingPlayer(false);
     }
@@ -63,19 +69,19 @@ export const PlayersPage = () => {
 
   const handleDeletePlayer = (player: Player) => {
     crossPlatformAlert(
-      'Delete player',
+      "Delete player",
       `Are you sure you want to delete "${player.name}"?`,
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: "Cancel", style: "cancel" },
         {
-          text: 'Delete',
-          style: 'destructive',
+          text: "Delete",
+          style: "destructive",
           onPress: async () => {
             try {
               await dataService.deletePlayer(player.id);
               await loadPlayers();
             } catch (error) {
-              crossPlatformAlert('Error', 'Failed to delete player');
+              crossPlatformAlert("Error", "Failed to delete player");
             }
           },
         },
@@ -87,11 +93,11 @@ export const PlayersPage = () => {
     return (
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
           bgcolor: colors.background.primary,
         }}
       >
@@ -112,9 +118,9 @@ export const PlayersPage = () => {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
         bgcolor: colors.background.primary,
       }}
     >
@@ -123,7 +129,7 @@ export const PlayersPage = () => {
         open={showAddModal}
         onClose={() => {
           setShowAddModal(false);
-          setNewPlayerName('');
+          setNewPlayerName("");
         }}
         PaperProps={{
           sx: {
@@ -131,7 +137,7 @@ export const PlayersPage = () => {
             borderRadius: `${borderRadius.xl}px`,
             border: `1px solid ${colors.border.light}`,
             maxWidth: 400,
-            width: '100%',
+            width: "100%",
             p: `${spacing.xl}px`,
           },
         }}
@@ -140,7 +146,7 @@ export const PlayersPage = () => {
           sx={{
             ...typography.label,
             color: colors.text.tertiary,
-            textTransform: 'uppercase',
+            textTransform: "uppercase",
             mb: `${spacing.sm}px`,
           }}
         >
@@ -170,7 +176,7 @@ export const PlayersPage = () => {
           sx={{
             ...typography.label,
             color: colors.text.tertiary,
-            textTransform: 'uppercase',
+            textTransform: "uppercase",
             mb: `${spacing.sm}px`,
           }}
         >
@@ -184,27 +190,27 @@ export const PlayersPage = () => {
           autoFocus
           variant="standard"
           onKeyDown={(e) => {
-            if (e.key === 'Enter') handleAddPlayer();
+            if (e.key === "Enter") handleAddPlayer();
           }}
           sx={{
             mb: `${spacing.xl}px`,
-            '& .MuiInput-root': {
+            "& .MuiInput-root": {
               fontFamily: fontFamilies.body,
               fontSize: typography.bodyLarge.fontSize,
               color: colors.text.primary,
-              '&:before': {
+              "&:before": {
                 borderBottomColor: colors.border.light,
               },
-              '&:hover:before': {
+              "&:hover:before": {
                 borderBottomColor: `${colors.border.medium} !important`,
               },
-              '&.Mui-focused:after': {
+              "&.Mui-focused:after": {
                 borderBottomColor: colors.accent.gold,
               },
             },
-            '& .MuiInput-input': {
+            "& .MuiInput-input": {
               py: `${spacing.md}px`,
-              '&::placeholder': {
+              "&::placeholder": {
                 color: colors.text.tertiary,
                 opacity: 1,
               },
@@ -212,23 +218,23 @@ export const PlayersPage = () => {
           }}
         />
 
-        <Box sx={{ display: 'flex', gap: `${spacing.md}px` }}>
+        <Box sx={{ display: "flex", gap: `${spacing.md}px` }}>
           <Box
             onClick={() => {
               setShowAddModal(false);
-              setNewPlayerName('');
+              setNewPlayerName("");
             }}
             sx={{
               flex: 1,
               py: `${spacing.md}px`,
               borderRadius: `${borderRadius.full}px`,
               border: `1px solid ${colors.border.light}`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'background-color 200ms ease',
-              '&:hover': {
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              transition: "background-color 200ms ease",
+              "&:hover": {
                 bgcolor: colors.surfaces.level2,
               },
             }}
@@ -251,14 +257,16 @@ export const PlayersPage = () => {
               py: `${spacing.md}px`,
               borderRadius: `${borderRadius.full}px`,
               bgcolor: addingPlayer ? colors.text.disabled : colors.accent.gold,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: addingPlayer ? 'not-allowed' : 'pointer',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: addingPlayer ? "not-allowed" : "pointer",
               opacity: addingPlayer ? 0.6 : 1,
-              transition: 'background-color 200ms ease',
-              '&:hover': {
-                bgcolor: addingPlayer ? colors.text.disabled : colors.accent.goldDark,
+              transition: "background-color 200ms ease",
+              "&:hover": {
+                bgcolor: addingPlayer
+                  ? colors.text.disabled
+                  : colors.accent.goldDark,
               },
             }}
           >
@@ -270,13 +278,13 @@ export const PlayersPage = () => {
                 letterSpacing: 0.3,
               }}
             >
-              {addingPlayer ? 'Adding...' : 'Add player'}
+              {addingPlayer ? "Adding..." : "Add player"}
             </Typography>
           </Box>
         </Box>
       </Dialog>
 
-      <Box sx={{ flex: 1, overflow: 'auto' }}>
+      <Box sx={{ flex: 1, overflow: "auto" }}>
         {/* Header */}
         <Box
           sx={{
@@ -289,7 +297,7 @@ export const PlayersPage = () => {
             sx={{
               ...typography.label,
               color: colors.text.tertiary,
-              textTransform: 'uppercase',
+              textTransform: "uppercase",
               mb: `${spacing.sm}px`,
             }}
           >
@@ -309,7 +317,7 @@ export const PlayersPage = () => {
               height: 1.5,
               width: 48,
               bgcolor: colors.accent.gold,
-              borderRadius: '1px',
+              borderRadius: "1px",
               mb: `${spacing.md}px`,
             }}
           />
@@ -328,9 +336,9 @@ export const PlayersPage = () => {
           <Box
             sx={{
               flex: 1,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
               px: `${spacing.xl}px`,
               py: `${spacing.xxl}px`,
             }}
@@ -341,11 +349,11 @@ export const PlayersPage = () => {
                 borderRadius: `${borderRadius.xl}px`,
                 border: `1px solid ${colors.border.light}`,
                 p: `${spacing.xl}px`,
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textAlign: 'center',
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
                 boxShadow: shadows.small,
               }}
             >
@@ -394,8 +402,8 @@ export const PlayersPage = () => {
                 {/* Player header */}
                 <Box
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
+                    display: "flex",
+                    alignItems: "center",
                     gap: `${spacing.md}px`,
                     mb: `${spacing.md}px`,
                   }}
@@ -404,22 +412,24 @@ export const PlayersPage = () => {
                     sx={{
                       width: 44,
                       height: 44,
-                      borderRadius: '50%',
+                      borderRadius: "50%",
                       bgcolor: colors.surfaces.level2,
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
                       border: `1px solid ${colors.border.goldSubtle}`,
                       flexShrink: 0,
                     }}
                   >
-                    <PersonIcon sx={{ fontSize: 22, color: colors.accent.gold }} />
+                    <PersonIcon
+                      sx={{ fontSize: 22, color: colors.accent.gold }}
+                    />
                   </Box>
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Box
                       sx={{
-                        display: 'flex',
-                        alignItems: 'center',
+                        display: "flex",
+                        alignItems: "center",
                         gap: `${spacing.sm}px`,
                         mb: `${spacing.xs}px`,
                       }}
@@ -440,7 +450,7 @@ export const PlayersPage = () => {
                         <Box
                           sx={{
                             px: `${spacing.sm}px`,
-                            py: '2px',
+                            py: "2px",
                             borderRadius: `${borderRadius.full}px`,
                             border: `1px solid ${colors.border.light}`,
                           }}
@@ -476,7 +486,7 @@ export const PlayersPage = () => {
                 {/* Actions */}
                 <Box
                   sx={{
-                    display: 'flex',
+                    display: "flex",
                     gap: `${spacing.sm}px`,
                     borderTop: `1px solid ${colors.border.light}`,
                     pt: `${spacing.md}px`,
@@ -486,21 +496,23 @@ export const PlayersPage = () => {
                     onClick={() => handleDeletePlayer(player)}
                     sx={{
                       flex: 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                       gap: `${spacing.xs}px`,
                       py: `${spacing.sm}px`,
                       borderRadius: `${borderRadius.full}px`,
                       border: `1px solid ${colors.border.light}`,
-                      cursor: 'pointer',
-                      transition: 'background-color 200ms ease',
-                      '&:hover': {
+                      cursor: "pointer",
+                      transition: "background-color 200ms ease",
+                      "&:hover": {
                         bgcolor: `${colors.scoring.negative}11`,
                       },
                     }}
                   >
-                    <DeleteOutlineIcon sx={{ fontSize: 14, color: colors.scoring.negative }} />
+                    <DeleteOutlineIcon
+                      sx={{ fontSize: 14, color: colors.scoring.negative }}
+                    />
                     <Typography
                       sx={{
                         fontFamily: fontFamilies.bodySemiBold,
@@ -532,20 +544,20 @@ export const PlayersPage = () => {
         <Box
           onClick={() => setShowAddModal(true)}
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             gap: `${spacing.sm}px`,
             py: `${spacing.md}px`,
             bgcolor: colors.accent.gold,
             borderRadius: `${borderRadius.full}px`,
-            cursor: 'pointer',
-            transition: 'background-color 200ms ease',
-            '&:hover': {
+            cursor: "pointer",
+            transition: "background-color 200ms ease",
+            "&:hover": {
               bgcolor: colors.accent.goldDark,
             },
-            '&:active': {
-              transform: 'scale(0.98)',
+            "&:active": {
+              transform: "scale(0.98)",
             },
           }}
         >
