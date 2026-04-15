@@ -12,7 +12,7 @@ import { useThemedColors } from "../contexts/ThemeContext";
 import { useStore } from "../store";
 import { dataService } from "../services/DataService";
 import { crossPlatformAlert } from "../utils/alert";
-import { Player } from "../types";
+import type { Player } from "../types";
 import {
   typography,
   fontFamilies,
