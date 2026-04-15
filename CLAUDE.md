@@ -57,7 +57,7 @@
 - **Writes (online)**: Local first (instant), then Firestore. On failure, entity marked dirty for later sync.
 - **Reads (online)**: Local-first by default. Falls back to Firestore if local returns null. Multi-user queries use Firestore-first.
 - **Deletes**: Local first, then Firestore. On failure, queued for sync.
-- **Sync**: `SyncService` pushes dirty entities + pending deletes on reconnect. Dirty state persisted in AsyncStorage.
+- **Sync**: `SyncService` pushes dirty entities + pending deletes on reconnect. Dirty state persisted in localStorage.
 - **Hole/score writes**: Mark parent game as dirty, not individual holes/scores.
 
 ## Game Rules
