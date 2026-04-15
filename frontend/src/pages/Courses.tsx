@@ -10,7 +10,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useThemedColors } from "../contexts/ThemeContext";
 import { dataService } from "../services/DataService";
 import { crossPlatformAlert } from "../utils/alert";
-import { Course } from "../types";
+import type { Course } from "../types";
 import {
   typography,
   fontFamilies,
