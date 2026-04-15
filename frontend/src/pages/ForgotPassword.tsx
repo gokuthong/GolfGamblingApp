@@ -176,14 +176,16 @@ export const ForgotPasswordPage = () => {
             size="small"
             disabled={loading || emailSent}
             sx={{ mb: `${spacing.md}px` }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <EmailIcon
-                    sx={{ color: colors.text.tertiary, fontSize: 20 }}
-                  />
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <EmailIcon
+                      sx={{ color: colors.text.tertiary, fontSize: 20 }}
+                    />
+                  </InputAdornment>
+                ),
+              },
             }}
           />
 
