@@ -1,18 +1,12 @@
-import React from 'react';
-import {
-  Dialog,
-  Box,
-  Typography,
-  Button,
-  Slide,
-} from '@mui/material';
-import { TransitionProps } from '@mui/material/transitions';
-import { useThemedColors } from '../../contexts/ThemeContext';
-import { fontFamilies, spacing } from '../../theme';
+import React from "react";
+import { Dialog, Box, Typography, Button, Slide } from "@mui/material";
+import type { TransitionProps } from "@mui/material/transitions";
+import { useThemedColors } from "../../contexts/ThemeContext";
+import { fontFamilies, spacing } from "../../theme";
 
 const SlideUp = React.forwardRef(function Transition(
-  props: TransitionProps & { children: React.ReactElement },
-  ref: React.Ref<unknown>
+  props: TransitionProps & { children: React.ReactElement<any> },
+  ref: React.Ref<unknown>,
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -41,29 +35,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       maxWidth="sm"
       PaperProps={{
         sx: {
-          position: 'fixed',
+          position: "fixed",
           bottom: 0,
           m: 0,
-          borderTopLeftRadius: '24px',
-          borderTopRightRadius: '24px',
+          borderTopLeftRadius: "24px",
+          borderTopRightRadius: "24px",
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
           bgcolor: colors.background.card,
           borderTop: `1px solid ${colors.border.light}`,
           borderLeft: `1px solid ${colors.border.light}`,
           borderRight: `1px solid ${colors.border.light}`,
-          px: '24px',
-          pt: '12px',
-          pb: '40px',
-          minHeight: '40vh',
-          maxHeight: '80vh',
-          width: '100%',
+          px: "24px",
+          pt: "12px",
+          pb: "40px",
+          minHeight: "40vh",
+          maxHeight: "80vh",
+          width: "100%",
           maxWidth: 600,
         },
       }}
       sx={{
-        '& .MuiBackdrop-root': {
-          bgcolor: 'rgba(0, 0, 0, 0.7)',
+        "& .MuiBackdrop-root": {
+          bgcolor: "rgba(0, 0, 0, 0.7)",
         },
       }}
     >
@@ -73,9 +67,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           width: 40,
           height: 4,
           bgcolor: colors.border.medium,
-          borderRadius: '2px',
-          mx: 'auto',
-          mb: '20px',
+          borderRadius: "2px",
+          mx: "auto",
+          mb: "20px",
         }}
       />
 
@@ -86,8 +80,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           fontFamily: fontFamilies.heading,
           fontWeight: 600,
           color: colors.text.primary,
-          textAlign: 'center',
-          mb: '8px',
+          textAlign: "center",
+          mb: "8px",
         }}
       >
         Welcome to Golf Gambling
@@ -99,16 +93,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           fontSize: 16,
           fontFamily: fontFamilies.body,
           color: colors.text.secondary,
-          textAlign: 'center',
-          mb: '32px',
-          lineHeight: '22px',
+          textAlign: "center",
+          mb: "32px",
+          lineHeight: "22px",
         }}
       >
         Sign up to sync your data and access online features
       </Typography>
 
       {/* Buttons */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
         {/* Sign Up */}
         <Button
           variant="contained"
@@ -124,9 +118,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             fontFamily: fontFamilies.bodySemiBold,
             fontWeight: 600,
             fontSize: 15,
-            borderRadius: '9999px',
-            textTransform: 'none',
-            '&:hover': {
+            borderRadius: "9999px",
+            textTransform: "none",
+            "&:hover": {
               bgcolor: colors.accent.goldDark,
             },
           }}
@@ -149,11 +143,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             fontFamily: fontFamilies.bodySemiBold,
             fontWeight: 600,
             fontSize: 15,
-            borderRadius: '9999px',
-            textTransform: 'none',
-            '&:hover': {
+            borderRadius: "9999px",
+            textTransform: "none",
+            "&:hover": {
               borderColor: colors.accent.gold,
-              bgcolor: 'transparent',
+              bgcolor: "transparent",
             },
           }}
         >
@@ -170,11 +164,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             color: colors.text.secondary,
             fontFamily: fontFamilies.body,
             fontSize: 16,
-            textTransform: 'none',
-            textDecoration: 'underline',
-            '&:hover': {
-              bgcolor: 'transparent',
-              textDecoration: 'underline',
+            textTransform: "none",
+            textDecoration: "underline",
+            "&:hover": {
+              bgcolor: "transparent",
+              textDecoration: "underline",
               color: colors.text.primary,
             },
           }}
