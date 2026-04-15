@@ -641,11 +641,13 @@ export const GameHistoryPage = () => {
           </ListItemIcon>
           <ListItemText
             primary="View summary"
-            primaryTypographyProps={{
-              sx: {
-                fontFamily: fontFamilies.body,
-                fontSize: typography.bodyMedium.fontSize,
-                color: colors.text.primary,
+            slotProps={{
+              primary: {
+                sx: {
+                  fontFamily: fontFamilies.body,
+                  fontSize: typography.bodyMedium.fontSize,
+                  color: colors.text.primary,
+                },
               },
             }}
           />
