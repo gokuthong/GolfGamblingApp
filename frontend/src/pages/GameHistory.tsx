@@ -14,7 +14,7 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import SummarizeOutlinedIcon from "@mui/icons-material/SummarizeOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
 import HistoryIcon from "@mui/icons-material/History";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -349,9 +349,7 @@ export const GameHistoryPage = () => {
                 mb: `${spacing.lg}px`,
               }}
             >
-              <HistoryIcon
-                sx={{ fontSize: 32, color: colors.accent.gold }}
-              />
+              <HistoryIcon sx={{ fontSize: 32, color: colors.accent.gold }} />
             </Box>
             <Typography
               sx={{
@@ -378,14 +376,12 @@ export const GameHistoryPage = () => {
         ) : (
           /* Game cards */
           gamesWithDetails.map((item) => {
-            const { game, players, winner, finalPoints, totalStrokes } =
-              item;
+            const { game, players, winner, finalPoints, totalStrokes } = item;
             const gameDateText = game.completedAt
               ? formatDate(game.completedAt)
               : formatDate(game.date);
             const sortedPlayers = [...players].sort(
-              (a, b) =>
-                (finalPoints[b.id] || 0) - (finalPoints[a.id] || 0),
+              (a, b) => (finalPoints[b.id] || 0) - (finalPoints[a.id] || 0),
             );
 
             return (
@@ -635,9 +631,7 @@ export const GameHistoryPage = () => {
           },
         }}
       >
-        <MenuItem
-          onClick={() => menuGameId && handleViewSummary(menuGameId)}
-        >
+        <MenuItem onClick={() => menuGameId && handleViewSummary(menuGameId)}>
           <ListItemIcon>
             <SummarizeOutlinedIcon
               sx={{ color: colors.text.secondary, fontSize: 20 }}
@@ -654,9 +648,7 @@ export const GameHistoryPage = () => {
             }}
           />
         </MenuItem>
-        <MenuItem
-          onClick={() => menuGameId && handleEditScores(menuGameId)}
-        >
+        <MenuItem onClick={() => menuGameId && handleEditScores(menuGameId)}>
           <ListItemIcon>
             <EditOutlinedIcon
               sx={{ color: colors.text.secondary, fontSize: 20 }}
@@ -677,9 +669,7 @@ export const GameHistoryPage = () => {
         <MenuItem
           onClick={() => {
             if (!menuGameId) return;
-            const item = gamesWithDetails.find(
-              (g) => g.game.id === menuGameId,
-            );
+            const item = gamesWithDetails.find((g) => g.game.id === menuGameId);
             const dateText = item?.game.completedAt
               ? formatDate(item.game.completedAt)
               : item?.game.date
