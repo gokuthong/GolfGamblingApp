@@ -220,33 +220,35 @@ export const LoginPage = () => {
             fullWidth
             size="small"
             sx={{ mb: `${spacing.md}px` }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LockIcon
-                    sx={{ color: colors.text.tertiary, fontSize: 20 }}
-                  />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                    size="small"
-                  >
-                    {showPassword ? (
-                      <VisibilityOff
-                        sx={{ color: colors.text.tertiary, fontSize: 20 }}
-                      />
-                    ) : (
-                      <Visibility
-                        sx={{ color: colors.text.tertiary, fontSize: 20 }}
-                      />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockIcon
+                      sx={{ color: colors.text.tertiary, fontSize: 20 }}
+                    />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                      size="small"
+                    >
+                      {showPassword ? (
+                        <VisibilityOff
+                          sx={{ color: colors.text.tertiary, fontSize: 20 }}
+                        />
+                      ) : (
+                        <Visibility
+                          sx={{ color: colors.text.tertiary, fontSize: 20 }}
+                        />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
             }}
           />
 
