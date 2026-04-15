@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -10,7 +10,7 @@ import {
   InputAdornment,
   IconButton,
   LinearProgress,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Email as EmailIcon,
   Lock as LockIcon,
@@ -18,21 +18,21 @@ import {
   Person as PersonIcon,
   Visibility,
   VisibilityOff,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { crossPlatformAlert } from '../utils/alert';
-import { authService } from '../services/firebase';
-import { dataService } from '../services/DataService';
-import { useThemedColors } from '../contexts/ThemeContext';
-import { typography, fontFamilies, spacing } from '../theme';
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { crossPlatformAlert } from "../utils/alert";
+import { authService } from "../services/firebase";
+import { dataService } from "../services/DataService";
+import { useThemedColors } from "../contexts/ThemeContext";
+import { typography, fontFamilies, spacing } from "../theme";
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
   const colors = useThemedColors();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [displayName, setDisplayName] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -43,71 +43,68 @@ export const RegisterPage = () => {
   };
 
   const validatePassword = (
-    password: string
+    password: string,
   ): { valid: boolean; message?: string } => {
     if (password.length < 8)
       return {
         valid: false,
-        message: 'Password must be at least 8 characters',
+        message: "Password must be at least 8 characters",
       };
     if (!/[A-Z]/.test(password))
       return {
         valid: false,
-        message: 'Password must contain an uppercase letter',
+        message: "Password must contain an uppercase letter",
       };
     if (!/[a-z]/.test(password))
       return {
         valid: false,
-        message: 'Password must contain a lowercase letter',
+        message: "Password must contain a lowercase letter",
       };
     if (!/[0-9]/.test(password))
-      return { valid: false, message: 'Password must contain a number' };
+      return { valid: false, message: "Password must contain a number" };
     return { valid: true };
   };
 
   const validateForm = (): boolean => {
     if (!email.trim()) {
-      crossPlatformAlert('Validation Error', 'Please enter your email');
+      crossPlatformAlert("Validation Error", "Please enter your email");
       return false;
     }
     if (!validateEmail(email)) {
       crossPlatformAlert(
-        'Validation Error',
-        'Please enter a valid email address'
+        "Validation Error",
+        "Please enter a valid email address",
       );
       return false;
     }
     if (!displayName.trim()) {
-      crossPlatformAlert(
-        'Validation Error',
-        'Please enter your display name'
-      );
+      crossPlatformAlert("Validation Error", "Please enter your display name");
       return false;
     }
     if (displayName.trim().length < 2) {
       crossPlatformAlert(
-        'Validation Error',
-        'Display name must be at least 2 characters'
+        "Validation Error",
+        "Display name must be at least 2 characters",
       );
       return false;
     }
     if (displayName.trim().length > 50) {
       crossPlatformAlert(
-        'Validation Error',
-        'Display name must be less than 50 characters'
+        "Validation Error",
+        "Display name must be less than 50 characters",
       );
       return false;
     }
     const passwordValidation = validatePassword(password);
     if (!passwordValidation.valid) {
       crossPlatformAlert(
-        'Validation Error',
-        passwordValidation.message || 'Invalid password'
+        "Validation Error",
+        passwordValidation.message || "Invalid password",
       );
       return false;
     }
     if (password !== confirmPassword) {
-      crossPlatformAlert('Validation Error', 'Passwords do not match');
+      crossPlatformAlert("Validation Error", "Passwords do not match");
       return false;
     }
     return true;
@@ -120,35 +117,35 @@ export const RegisterPage = () => {
       const userCredential = await authService.signUp(
         email.trim(),
         password,
-        displayName.trim()
+        displayName.trim(),
       );
       const userNumber = await dataService.createUserProfile(
         userCredential.uid,
         email.trim(),
-        displayName.trim()
+        displayName.trim(),
       );
 
-      if (userNumber === '001') {
-        await dataService.setUserRole(userCredential.uid, 'super_admin');
-        await dataService.setApprovalStatus(userCredential.uid, 'approved');
+      if (userNumber === "001") {
+        await dataService.setUserRole(userCredential.uid, "super_admin");
+        await dataService.setApprovalStatus(userCredential.uid, "approved");
         const profile = await dataService.getUserProfile(userCredential.uid);
         if (profile) {
           localStorage.setItem(
             `@user:${userCredential.uid}`,
             JSON.stringify({
               ...profile,
-              role: 'super_admin',
-              approvalStatus: 'approved',
-            })
+              role: "super_admin",
+              approvalStatus: "approved",
+            }),
           );
         }
         crossPlatformAlert(
-          'Welcome, Super Admin!',
+          "Welcome, Super Admin!",
           `Your account (#${userNumber}) has been created with administrator privileges. You are now signed in.`,
-          [{ text: 'OK', onPress: () => navigate('/login') }]
+          [{ text: "OK", onPress: () => navigate("/login") }],
         );
       } else {
-        await dataService.setApprovalStatus(userCredential.uid, 'pending');
+        await dataService.setApprovalStatus(userCredential.uid, "pending");
         await dataService.addPendingUser(userCredential.uid, {
           email: email.trim(),
           displayName: displayName.trim(),
@@ -156,20 +153,20 @@ export const RegisterPage = () => {
         });
         await authService.signOut();
         crossPlatformAlert(
-          'Account Created',
+          "Account Created",
           `Your account (#${userNumber}) is pending approval by an administrator. You'll be able to sign in once your account is approved.`,
-          [{ text: 'OK' }]
+          [{ text: "OK" }],
         );
       }
     } catch (error: any) {
-      let errorMessage = 'Failed to create account';
-      if (error.code === 'auth/email-already-in-use')
-        errorMessage = 'This email is already registered';
-      else if (error.code === 'auth/invalid-email')
-        errorMessage = 'Invalid email address';
-      else if (error.code === 'auth/weak-password')
-        errorMessage = 'Password is too weak';
-      crossPlatformAlert('Registration Failed', errorMessage);
+      let errorMessage = "Failed to create account";
+      if (error.code === "auth/email-already-in-use")
+        errorMessage = "This email is already registered";
+      else if (error.code === "auth/invalid-email")
+        errorMessage = "Invalid email address";
+      else if (error.code === "auth/weak-password")
+        errorMessage = "Password is too weak";
+      crossPlatformAlert("Registration Failed", errorMessage);
     } finally {
       setLoading(false);
     }
@@ -181,7 +178,7 @@ export const RegisterPage = () => {
     width: number;
   } => {
     if (!password)
-      return { strength: '', color: colors.text.tertiary, width: 0 };
+      return { strength: "", color: colors.text.tertiary, width: 0 };
     let score = 0;
     if (password.length >= 8) score++;
     if (/[A-Z]/.test(password)) score++;
@@ -189,17 +186,17 @@ export const RegisterPage = () => {
     if (/[0-9]/.test(password)) score++;
     if (/[^A-Za-z0-9]/.test(password)) score++;
     if (score <= 2)
-      return { strength: 'Weak', color: colors.scoring.negative, width: 25 };
-    if (score === 3) return { strength: 'Fair', color: '#C98A2E', width: 50 };
+      return { strength: "Weak", color: colors.scoring.negative, width: 25 };
+    if (score === 3) return { strength: "Fair", color: "#C98A2E", width: 50 };
     if (score === 4)
-      return { strength: 'Good', color: colors.primary[500], width: 75 };
-    return { strength: 'Strong', color: colors.scoring.positive, width: 100 };
+      return { strength: "Good", color: colors.primary[500], width: 75 };
+    return { strength: "Strong", color: colors.scoring.positive, width: 100 };
   };
 
   const passwordStrength = getPasswordStrength();
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !loading) {
+    if (e.key === "Enter" && !loading) {
       handleRegister();
     }
   };
@@ -207,11 +204,11 @@ export const RegisterPage = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        minHeight: "100vh",
         bgcolor: colors.background.primary,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'auto',
+        display: "flex",
+        flexDirection: "column",
+        overflow: "auto",
       }}
     >
       <Box
@@ -221,10 +218,10 @@ export const RegisterPage = () => {
           pt: `${spacing.xxxl}px`,
           pb: `${spacing.xl}px`,
           maxWidth: 480,
-          width: '100%',
-          mx: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
+          width: "100%",
+          mx: "auto",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         {/* Brand Section */}
@@ -233,7 +230,7 @@ export const RegisterPage = () => {
             sx={{
               ...typography.label,
               color: colors.text.tertiary,
-              textTransform: 'uppercase',
+              textTransform: "uppercase",
               mb: `${spacing.sm}px`,
             }}
           >
@@ -253,7 +250,7 @@ export const RegisterPage = () => {
               height: 1.5,
               width: 48,
               bgcolor: colors.accent.gold,
-              borderRadius: '1px',
+              borderRadius: "1px",
               mb: `${spacing.md}px`,
             }}
           />
@@ -276,7 +273,7 @@ export const RegisterPage = () => {
             mb: `${spacing.xl}px`,
             bgcolor: colors.background.card,
             border: `1px solid ${colors.border.light}`,
-            borderRadius: '20px',
+            borderRadius: "20px",
           }}
         >
           <TextField
@@ -289,14 +286,16 @@ export const RegisterPage = () => {
             fullWidth
             size="small"
             sx={{ mb: `${spacing.md}px` }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <PersonIcon
-                    sx={{ color: colors.text.tertiary, fontSize: 20 }}
-                  />
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PersonIcon
+                      sx={{ color: colors.text.tertiary, fontSize: 20 }}
+                    />
+                  </InputAdornment>
+                ),
+              },
             }}
           />
 
@@ -327,11 +326,13 @@ export const RegisterPage = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={handleKeyDown}
-            type={showPassword ? 'text' : 'password'}
+            type={showPassword ? "text" : "password"}
             placeholder="Create password"
             fullWidth
             size="small"
-            sx={{ mb: password.length > 0 ? `${spacing.sm}px` : `${spacing.md}px` }}
+            sx={{
+              mb: password.length > 0 ? `${spacing.sm}px` : `${spacing.md}px`,
+            }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -366,8 +367,8 @@ export const RegisterPage = () => {
           {password.length > 0 && (
             <Box
               sx={{
-                display: 'flex',
-                alignItems: 'center',
+                display: "flex",
+                alignItems: "center",
                 mb: `${spacing.md}px`,
                 gap: `${spacing.sm}px`,
               }}
@@ -377,17 +378,17 @@ export const RegisterPage = () => {
                   flex: 1,
                   height: 4,
                   bgcolor: colors.border.light,
-                  borderRadius: '2px',
-                  overflow: 'hidden',
+                  borderRadius: "2px",
+                  overflow: "hidden",
                 }}
               >
                 <Box
                   sx={{
-                    height: '100%',
+                    height: "100%",
                     width: `${passwordStrength.width}%`,
                     bgcolor: passwordStrength.color,
-                    borderRadius: '2px',
-                    transition: 'width 0.3s ease, background-color 0.3s ease',
+                    borderRadius: "2px",
+                    transition: "width 0.3s ease, background-color 0.3s ease",
                   }}
                 />
               </Box>
@@ -397,7 +398,7 @@ export const RegisterPage = () => {
                   fontSize: 11,
                   letterSpacing: 0.5,
                   width: 50,
-                  textAlign: 'right',
+                  textAlign: "right",
                   color: passwordStrength.color,
                   fontWeight: 600,
                 }}
@@ -412,7 +413,7 @@ export const RegisterPage = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             onKeyDown={handleKeyDown}
-            type={showConfirmPassword ? 'text' : 'password'}
+            type={showConfirmPassword ? "text" : "password"}
             placeholder="Confirm password"
             fullWidth
             size="small"
@@ -428,9 +429,7 @@ export const RegisterPage = () => {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     edge="end"
                     size="small"
                   >
@@ -462,24 +461,24 @@ export const RegisterPage = () => {
               fontFamily: fontFamilies.bodySemiBold,
               fontWeight: 600,
               fontSize: typography.button.fontSize,
-              borderRadius: '9999px',
-              textTransform: 'none',
-              '&:hover': {
+              borderRadius: "9999px",
+              textTransform: "none",
+              "&:hover": {
                 bgcolor: colors.accent.goldDark,
               },
-              '&.Mui-disabled': {
+              "&.Mui-disabled": {
                 bgcolor: colors.accent.goldMuted,
                 color: colors.text.disabled,
               },
             }}
           >
             {loading ? (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <CircularProgress size={18} sx={{ color: 'inherit' }} />
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <CircularProgress size={18} sx={{ color: "inherit" }} />
                 Creating account...
               </Box>
             ) : (
-              'Create account'
+              "Create account"
             )}
           </Button>
         </Paper>
@@ -488,8 +487,8 @@ export const RegisterPage = () => {
         <Box sx={{ mb: `${spacing.lg}px` }}>
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
               mb: `${spacing.lg}px`,
             }}
           >
@@ -510,7 +509,7 @@ export const RegisterPage = () => {
           <Button
             variant="outlined"
             fullWidth
-            onClick={() => navigate('/login')}
+            onClick={() => navigate("/login")}
             disabled={loading}
             sx={{
               py: 1.5,
@@ -519,11 +518,11 @@ export const RegisterPage = () => {
               fontFamily: fontFamilies.bodySemiBold,
               fontWeight: 600,
               fontSize: typography.button.fontSize,
-              borderRadius: '9999px',
-              textTransform: 'none',
-              '&:hover': {
+              borderRadius: "9999px",
+              textTransform: "none",
+              "&:hover": {
                 borderColor: colors.accent.gold,
-                bgcolor: 'transparent',
+                bgcolor: "transparent",
               },
             }}
           >
@@ -534,10 +533,10 @@ export const RegisterPage = () => {
         {/* Footer */}
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            mt: 'auto',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            mt: "auto",
             pt: `${spacing.lg}px`,
           }}
         >
@@ -545,7 +544,7 @@ export const RegisterPage = () => {
             sx={{
               ...typography.bodySmall,
               color: colors.text.tertiary,
-              textAlign: 'center',
+              textAlign: "center",
               maxWidth: 320,
             }}
           >
