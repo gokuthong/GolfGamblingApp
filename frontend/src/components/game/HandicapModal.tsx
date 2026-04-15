@@ -393,14 +393,16 @@ export const HandicapModal: React.FC<HandicapModalProps> = ({
                   value={indexInput}
                   onChange={(e) => setIndexInput(e.target.value)}
                   placeholder="#"
-                  inputProps={{ maxLength: 2 }}
-                  InputProps={{
-                    disableUnderline: true,
-                    sx: {
-                      fontFamily: fontFamilies.mono,
-                      fontSize: typography.bodyMedium.fontSize,
-                      color: colors.text.primary,
-                      textAlign: "center",
+                  slotProps={{
+                    htmlInput: { maxLength: 2 },
+                    input: {
+                      disableUnderline: true,
+                      sx: {
+                        fontFamily: fontFamilies.mono,
+                        fontSize: typography.bodyMedium.fontSize,
+                        color: colors.text.primary,
+                        textAlign: "center",
+                      },
                     },
                   }}
                   sx={{
