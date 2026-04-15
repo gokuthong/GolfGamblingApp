@@ -30,29 +30,31 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     <Dialog
       open={visible}
       onClose={onClose}
-      TransitionComponent={SlideUp}
+      slots={{ transition: SlideUp }}
       fullWidth
       maxWidth="sm"
-      PaperProps={{
-        sx: {
-          position: "fixed",
-          bottom: 0,
-          m: 0,
-          borderTopLeftRadius: "24px",
-          borderTopRightRadius: "24px",
-          borderBottomLeftRadius: 0,
-          borderBottomRightRadius: 0,
-          bgcolor: colors.background.card,
-          borderTop: `1px solid ${colors.border.light}`,
-          borderLeft: `1px solid ${colors.border.light}`,
-          borderRight: `1px solid ${colors.border.light}`,
-          px: "24px",
-          pt: "12px",
-          pb: "40px",
-          minHeight: "40vh",
-          maxHeight: "80vh",
-          width: "100%",
-          maxWidth: 600,
+      slotProps={{
+        paper: {
+          sx: {
+            position: "fixed",
+            bottom: 0,
+            m: 0,
+            borderTopLeftRadius: "24px",
+            borderTopRightRadius: "24px",
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0,
+            bgcolor: colors.background.card,
+            borderTop: `1px solid ${colors.border.light}`,
+            borderLeft: `1px solid ${colors.border.light}`,
+            borderRight: `1px solid ${colors.border.light}`,
+            px: "24px",
+            pt: "12px",
+            pb: "40px",
+            minHeight: "40vh",
+            maxHeight: "80vh",
+            width: "100%",
+            maxWidth: 600,
+          },
         },
       }}
       sx={{
