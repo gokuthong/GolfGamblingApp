@@ -276,9 +276,7 @@ export const OverallStandingsPage = () => {
                   sx={{
                     fontFamily: fontFamilies.display,
                     fontSize: 20,
-                    color: isLeader
-                      ? colors.accent.gold
-                      : colors.text.tertiary,
+                    color: isLeader ? colors.accent.gold : colors.text.tertiary,
                     width: 24,
                     letterSpacing: -0.3,
                   }}
@@ -289,9 +287,7 @@ export const OverallStandingsPage = () => {
                   sx={{
                     ...typography.bodyLarge,
                     fontFamily: fontFamilies.bodySemiBold,
-                    color: isLeader
-                      ? colors.accent.gold
-                      : colors.text.primary,
+                    color: isLeader ? colors.accent.gold : colors.text.primary,
                     flex: 1,
                     overflow: "hidden",
                     textOverflow: "ellipsis",

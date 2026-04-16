@@ -1,16 +1,16 @@
-import { Game, GameData } from '../../types/game';
-import { Hole, HoleData } from '../../types/hole';
-import { Score, ScoreData } from '../../types/score';
-import { Player, PlayerData } from '../../types/player';
-import { Course, CourseData } from '../../types/course';
+import { Game, GameData } from "../../types/game";
+import { Hole, HoleData } from "../../types/hole";
+import { Score, ScoreData } from "../../types/score";
+import { Player, PlayerData } from "../../types/player";
+import { Course, CourseData } from "../../types/course";
 
 /**
  * Generate a unique ID (UUID v4)
  */
 export function generateId(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -85,13 +85,13 @@ export const StorageKeys = {
   game: (gameId: string) => `@game:${gameId}`,
   players: (userId: string) => `@players:${userId}`,
   courses: (userId: string) => `@courses:${userId}`,
-  offlineMode: () => '@auth:offlineMode',
-  deviceId: () => '@auth:deviceId',
-  pendingUsers: () => '@auth:pendingUsers',
+  offlineMode: () => "@auth:offlineMode",
+  deviceId: () => "@auth:deviceId",
+  pendingUsers: () => "@auth:pendingUsers",
   userApprovalData: (userId: string) => `@user:approval:${userId}`,
   userRole: (userId: string) => `@user:role:${userId}`,
-  syncDirtyEntities: () => '@sync:dirtyEntities',
-  syncPendingDeletes: () => '@sync:pendingDeletes',
+  syncDirtyEntities: () => "@sync:dirtyEntities",
+  syncPendingDeletes: () => "@sync:pendingDeletes",
   cacheSeeded: (userId: string) => `@cache:seeded:${userId}`,
 };
 
@@ -130,8 +130,12 @@ export function deserializeStoredGame(json: string): StoredGame {
     game: {
       ...parsed.game,
       date: new Date(parsed.game.date),
-      createdAt: parsed.game.createdAt ? new Date(parsed.game.createdAt) : undefined,
-      completedAt: parsed.game.completedAt ? new Date(parsed.game.completedAt) : undefined,
+      createdAt: parsed.game.createdAt
+        ? new Date(parsed.game.createdAt)
+        : undefined,
+      completedAt: parsed.game.completedAt
+        ? new Date(parsed.game.completedAt)
+        : undefined,
     },
     holes: parsed.holes || [],
     scores: parsed.scores || [],

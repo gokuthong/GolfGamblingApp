@@ -1,9 +1,9 @@
-import React from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { useThemedColors } from '../../contexts/ThemeContext';
-import { typography, fontFamilies, spacing } from '../../theme';
-import { Hole, Score, Player } from '../../types';
+import React from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { useThemedColors } from "../../contexts/ThemeContext";
+import { typography, fontFamilies, spacing } from "../../theme";
+import { Hole, Score, Player } from "../../types";
 
 interface ScorecardProps {
   holes: Hole[];
@@ -24,13 +24,18 @@ export const Scorecard: React.FC<ScorecardProps> = ({
   const sortedHoles = [...holes].sort((a, b) => a.holeNumber - b.holeNumber);
 
   // Get strokes for a specific player and hole (returns null for non-confirmed holes)
-  const getStrokesForHole = (playerId: string, holeId: string): number | null => {
+  const getStrokesForHole = (
+    playerId: string,
+    holeId: string,
+  ): number | null => {
     const hole = holes.find((h) => h.id === holeId);
     // If hole is not confirmed, return null (show blank)
     if (hole && hole.confirmed === false) {
       return null;
     }
-    const score = scores.find((s) => s.playerId === playerId && s.holeId === holeId);
+    const score = scores.find(
+      (s) => s.playerId === playerId && s.holeId === holeId,
+    );
     // If no score exists, default to par (player hasn't modified their score)
     if (!score) {
       return hole?.par || 0;
@@ -59,19 +64,19 @@ export const Scorecard: React.FC<ScorecardProps> = ({
   const cellBase = {
     py: `${spacing.sm}px`,
     px: `${spacing.xs}px`,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     minHeight: 40,
-    borderRight: '2px solid #000000',
-    boxSizing: 'border-box' as const,
+    borderRight: "2px solid #000000",
+    boxSizing: "border-box" as const,
   };
 
   const playerNameCellSx = {
     ...cellBase,
     width: 100,
     minWidth: 100,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
     pl: `${spacing.sm}px`,
   };
 
@@ -102,10 +107,10 @@ export const Scorecard: React.FC<ScorecardProps> = ({
       <Box
         sx={{
           mb: `${spacing.md}px`,
-          border: '3px solid #000000',
-          borderRadius: '4px',
-          overflow: 'hidden',
-          overflowX: 'auto',
+          border: "3px solid #000000",
+          borderRadius: "4px",
+          overflow: "hidden",
+          overflowX: "auto",
         }}
       >
         <Typography
@@ -115,18 +120,18 @@ export const Scorecard: React.FC<ScorecardProps> = ({
             fontWeight: 600,
             color: colors.accent.gold,
             mb: `${spacing.sm}px`,
-            textAlign: 'center',
+            textAlign: "center",
           }}
         >
-          {courseName || 'Scorecard'}
+          {courseName || "Scorecard"}
         </Typography>
 
         {/* Header Row - Hole Numbers */}
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            borderBottom: '3px solid #000000',
+            display: "flex",
+            flexDirection: "row",
+            borderBottom: "3px solid #000000",
           }}
         >
           <Box sx={{ ...playerNameCellSx, ...headerCellSx }}>
@@ -136,21 +141,24 @@ export const Scorecard: React.FC<ScorecardProps> = ({
                 fontSize: 12,
                 fontWeight: 600,
                 color: colors.accent.gold,
-                textTransform: 'uppercase',
+                textTransform: "uppercase",
               }}
             >
               Player
             </Typography>
           </Box>
           {sortedHoles.map((hole) => (
-            <Box key={hole.id} sx={{ ...holeCellSx, ...headerCellSx, flexDirection: 'column' }}>
+            <Box
+              key={hole.id}
+              sx={{ ...holeCellSx, ...headerCellSx, flexDirection: "column" }}
+            >
               <Typography
                 sx={{
                   fontFamily: fontFamilies.bodySemiBold,
                   fontSize: 12,
                   fontWeight: 600,
                   color: colors.accent.gold,
-                  textTransform: 'uppercase',
+                  textTransform: "uppercase",
                 }}
               >
                 {hole.holeNumber}
@@ -161,7 +169,7 @@ export const Scorecard: React.FC<ScorecardProps> = ({
                     fontFamily: fontFamilies.mono,
                     fontSize: 9,
                     color: colors.text.secondary,
-                    mt: '2px',
+                    mt: "2px",
                   }}
                 >
                   #{hole.index}
@@ -176,7 +184,7 @@ export const Scorecard: React.FC<ScorecardProps> = ({
                 fontSize: 12,
                 fontWeight: 600,
                 color: colors.accent.gold,
-                textTransform: 'uppercase',
+                textTransform: "uppercase",
               }}
             >
               Total
@@ -187,9 +195,9 @@ export const Scorecard: React.FC<ScorecardProps> = ({
         {/* Par Row */}
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            borderBottom: '2px solid #000000',
+            display: "flex",
+            flexDirection: "row",
+            borderBottom: "2px solid #000000",
           }}
         >
           <Box sx={{ ...playerNameCellSx, ...parRowSx }}>
@@ -239,9 +247,9 @@ export const Scorecard: React.FC<ScorecardProps> = ({
             <Box
               key={player.id}
               sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                borderBottom: '2px solid #000000',
+                display: "flex",
+                flexDirection: "row",
+                borderBottom: "2px solid #000000",
                 ...(playerIndex % 2 === 0 && {
                   backgroundColor: colors.glass.light,
                 }),
@@ -272,11 +280,11 @@ export const Scorecard: React.FC<ScorecardProps> = ({
                 let textColor = colors.text.primary;
 
                 if (!isBlank && strokesToPar < 0) {
-                  badgeBg = colors.scoring.birdie + '20';
+                  badgeBg = colors.scoring.birdie + "20";
                   badgeBorder = colors.scoring.birdie;
                   textColor = colors.scoring.birdie;
                 } else if (!isBlank && strokesToPar > 0) {
-                  badgeBg = colors.scoring.negative + '20';
+                  badgeBg = colors.scoring.negative + "20";
                   badgeBorder = colors.scoring.negative;
                   textColor = colors.scoring.negative;
                 }
@@ -287,11 +295,11 @@ export const Scorecard: React.FC<ScorecardProps> = ({
                       sx={{
                         width: 32,
                         height: 32,
-                        borderRadius: '50%',
+                        borderRadius: "50%",
                         backgroundColor: badgeBg,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
                         border: `1px solid ${badgeBorder}`,
                       }}
                     >
@@ -303,7 +311,7 @@ export const Scorecard: React.FC<ScorecardProps> = ({
                           color: textColor,
                         }}
                       >
-                        {isBlank ? '-' : strokes}
+                        {isBlank ? "-" : strokes}
                       </Typography>
                     </Box>
                   </Box>
@@ -335,8 +343,8 @@ export const Scorecard: React.FC<ScorecardProps> = ({
                               : colors.text.primary,
                       }}
                     >
-                      {' '}
-                      ({scoreToPar > 0 ? '+' : ''}
+                      {" "}
+                      ({scoreToPar > 0 ? "+" : ""}
                       {scoreToPar})
                     </Typography>
                   )}

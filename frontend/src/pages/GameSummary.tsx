@@ -198,8 +198,7 @@ export const GameSummaryPage = () => {
       console.error("Failed to generate PDF:", error);
       crossPlatformAlert(
         "PDF Generation Failed",
-        error?.message ||
-          "Unable to generate scorecard PDF. Please try again.",
+        error?.message || "Unable to generate scorecard PDF. Please try again.",
         [{ text: "OK" }],
       );
     } finally {
@@ -1131,7 +1130,10 @@ function ScorecardTable({
         >
           <thead>
             <tr>
-              <Box component="th" sx={{ textAlign: "left !important", minWidth: 70 }}>
+              <Box
+                component="th"
+                sx={{ textAlign: "left !important", minWidth: 70 }}
+              >
                 {label}
               </Box>
               {nineHoles.map((h) => (
@@ -1157,7 +1159,10 @@ function ScorecardTable({
               {nineHoles.map((h) => (
                 <td key={h.id}>{h.par}</td>
               ))}
-              <Box component="td" sx={{ fontWeight: 700, color: colors.text.tertiary }}>
+              <Box
+                component="td"
+                sx={{ fontWeight: 700, color: colors.text.tertiary }}
+              >
                 {ninePar}
               </Box>
             </tr>
@@ -1195,7 +1200,10 @@ function ScorecardTable({
                       <Box
                         component="td"
                         key={h.id}
-                        sx={{ color: `${cellColor} !important`, fontWeight: diff < 0 ? 700 : 400 }}
+                        sx={{
+                          color: `${cellColor} !important`,
+                          fontWeight: diff < 0 ? 700 : 400,
+                        }}
                       >
                         {strokes}
                       </Box>
@@ -1203,7 +1211,10 @@ function ScorecardTable({
                   })}
                   <Box
                     component="td"
-                    sx={{ fontWeight: 700, color: `${colors.text.primary} !important` }}
+                    sx={{
+                      fontWeight: 700,
+                      color: `${colors.text.primary} !important`,
+                    }}
                   >
                     {total}
                   </Box>

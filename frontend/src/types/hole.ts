@@ -9,4 +9,4 @@ export interface Hole {
   confirmed?: boolean;
 }
 
-export interface HoleData extends Omit<Hole, 'id'> {}
+export interface HoleData extends Omit<Hole, "id"> {}

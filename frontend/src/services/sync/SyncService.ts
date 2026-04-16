@@ -1,8 +1,18 @@
-import { doc, setDoc, deleteDoc, Timestamp, collection, query, where, getDocs, writeBatch } from 'firebase/firestore';
-import { firestore } from '../firebase/config';
-import { connectivityManager } from '../connectivity';
-import { localStorageService } from '../storage/LocalStorageService';
-import { StorageKeys, deserializeStoredGame } from '../storage/storageUtils';
+import {
+  doc,
+  setDoc,
+  deleteDoc,
+  Timestamp,
+  collection,
+  query,
+  where,
+  getDocs,
+  writeBatch,
+} from "firebase/firestore";
+import { firestore } from "../firebase/config";
+import { connectivityManager } from "../connectivity";
+import { localStorageService } from "../storage/LocalStorageService";
+import { StorageKeys, deserializeStoredGame } from "../storage/storageUtils";
 
 interface DirtyEntity {
   entityType: string;
@@ -19,11 +29,13 @@ class SyncService {
   private removeConnectivityListener: (() => void) | null = null;
 
   initialize(): void {
-    this.removeConnectivityListener = connectivityManager.addListener((isOnline) => {
-      if (isOnline) {
-        this.syncAll();
-      }
-    });
+    this.removeConnectivityListener = connectivityManager.addListener(
+      (isOnline) => {
+        if (isOnline) {
+          this.syncAll();
+        }
+      },
+    );
   }
 
   dispose(): void {
@@ -37,7 +49,10 @@ class SyncService {
     const dirtySet = await this.getDirtyEntities();
     const key = `${entity.entityType}:${entity.entityId}`;
     dirtySet[key] = entity;
-    localStorage.setItem(StorageKeys.syncDirtyEntities(), JSON.stringify(dirtySet));
+    localStorage.setItem(
+      StorageKeys.syncDirtyEntities(),
+      JSON.stringify(dirtySet),
+    );
   }
 
   async markDelete(entity: PendingDelete): Promise<void> {
@@ -46,7 +61,10 @@ class SyncService {
     // Avoid duplicates
     if (!deletes.find((d) => `${d.entityType}:${d.entityId}` === key)) {
       deletes.push(entity);
-      localStorage.setItem(StorageKeys.syncPendingDeletes(), JSON.stringify(deletes));
+      localStorage.setItem(
+        StorageKeys.syncPendingDeletes(),
+        JSON.stringify(deletes),
+      );
     }
   }
 
@@ -64,7 +82,7 @@ class SyncService {
       await this.syncDirtyEntities();
       await this.syncPendingDeletes();
     } catch (error) {
-      console.error('SyncService: error during syncAll:', error);
+      console.error("SyncService: error during syncAll:", error);
     } finally {
       this.syncing = false;
     }
@@ -100,23 +118,25 @@ class SyncService {
       const entity = dirtySet[key];
       try {
         switch (entity.entityType) {
-          case 'game':
+          case "game":
             await this.syncGame(entity.entityId);
             break;
-          case 'player':
+          case "player":
             await this.syncPlayer(entity.entityId);
             break;
-          case 'course':
+          case "course":
             await this.syncCourse(entity.entityId);
             break;
-          case 'user':
+          case "user":
             await this.syncUser(entity.entityId);
             break;
-          case 'pendingUser':
+          case "pendingUser":
             await this.syncPendingUser(entity.entityId);
             break;
           default:
-            console.warn(`SyncService: unknown entity type ${entity.entityType}`);
+            console.warn(
+              `SyncService: unknown entity type ${entity.entityType}`,
+            );
         }
       } catch (error) {
         console.error(`SyncService: failed to sync ${key}:`, error);
@@ -124,7 +144,10 @@ class SyncService {
       }
     }
 
-    localStorage.setItem(StorageKeys.syncDirtyEntities(), JSON.stringify(remaining));
+    localStorage.setItem(
+      StorageKeys.syncDirtyEntities(),
+      JSON.stringify(remaining),
+    );
   }
 
   private async syncPendingDeletes(): Promise<void> {
@@ -137,32 +160,38 @@ class SyncService {
     for (const del of deletes) {
       try {
         switch (del.entityType) {
-          case 'game':
+          case "game":
             await this.deleteGameFromFirestore(del.entityId);
             break;
-          case 'player':
-            await deleteDoc(doc(firestore, 'players', del.entityId));
+          case "player":
+            await deleteDoc(doc(firestore, "players", del.entityId));
             break;
-          case 'course':
-            await deleteDoc(doc(firestore, 'courses', del.entityId));
+          case "course":
+            await deleteDoc(doc(firestore, "courses", del.entityId));
             break;
-          case 'pendingUser':
-            await deleteDoc(doc(firestore, 'pendingUsers', del.entityId));
+          case "pendingUser":
+            await deleteDoc(doc(firestore, "pendingUsers", del.entityId));
             break;
-          case 'user':
+          case "user":
             // Full user deletion is complex — just delete the profile doc
-            await deleteDoc(doc(firestore, 'users', del.entityId));
+            await deleteDoc(doc(firestore, "users", del.entityId));
             break;
           default:
             console.warn(`SyncService: unknown delete type ${del.entityType}`);
         }
       } catch (error) {
-        console.error(`SyncService: failed to delete ${del.entityType}:${del.entityId}:`, error);
+        console.error(
+          `SyncService: failed to delete ${del.entityType}:${del.entityId}:`,
+          error,
+        );
         remaining.push(del);
       }
     }
 
-    localStorage.setItem(StorageKeys.syncPendingDeletes(), JSON.stringify(remaining));
+    localStorage.setItem(
+      StorageKeys.syncPendingDeletes(),
+      JSON.stringify(remaining),
+    );
   }
 
   private async syncGame(gameId: string): Promise<void> {
@@ -176,19 +205,22 @@ class SyncService {
       date: Timestamp.fromDate(game.date),
       status: game.status,
       playerIds: game.playerIds,
-      createdAt: game.createdAt ? Timestamp.fromDate(game.createdAt) : Timestamp.now(),
+      createdAt: game.createdAt
+        ? Timestamp.fromDate(game.createdAt)
+        : Timestamp.now(),
     };
     if (game.createdBy) gameData.createdBy = game.createdBy;
-    if (game.completedAt) gameData.completedAt = Timestamp.fromDate(game.completedAt);
+    if (game.completedAt)
+      gameData.completedAt = Timestamp.fromDate(game.completedAt);
     if (game.courseId) gameData.courseId = game.courseId;
     if (game.courseName) gameData.courseName = game.courseName;
     if (game.handicaps) gameData.handicaps = game.handicaps;
 
-    await setDoc(doc(firestore, 'games', gameId), gameData);
+    await setDoc(doc(firestore, "games", gameId), gameData);
 
     // Write holes
     for (const hole of holes) {
-      await setDoc(doc(firestore, 'holes', hole.id), {
+      await setDoc(doc(firestore, "holes", hole.id), {
         gameId: hole.gameId,
         holeNumber: hole.holeNumber,
         par: hole.par,
@@ -211,7 +243,7 @@ class SyncService {
       if (score.multiplier !== undefined) {
         scoreDoc.multiplier = score.multiplier;
       }
-      await setDoc(doc(firestore, 'scores', score.id), scoreDoc);
+      await setDoc(doc(firestore, "scores", score.id), scoreDoc);
     }
   }
 
@@ -227,7 +259,7 @@ class SyncService {
     if (player.createdBy) playerData.createdBy = player.createdBy;
     if (player.userNumber) playerData.userNumber = player.userNumber;
 
-    await setDoc(doc(firestore, 'players', playerId), playerData);
+    await setDoc(doc(firestore, "players", playerId), playerData);
   }
 
   private async syncCourse(courseId: string): Promise<void> {
@@ -237,31 +269,41 @@ class SyncService {
     const courseData: Record<string, any> = {
       name: course.name,
       holes: course.holes,
-      createdAt: course.createdAt ? Timestamp.fromDate(course.createdAt) : Timestamp.now(),
-      updatedAt: course.updatedAt ? Timestamp.fromDate(course.updatedAt) : Timestamp.now(),
+      createdAt: course.createdAt
+        ? Timestamp.fromDate(course.createdAt)
+        : Timestamp.now(),
+      updatedAt: course.updatedAt
+        ? Timestamp.fromDate(course.updatedAt)
+        : Timestamp.now(),
     };
     if (course.createdBy) courseData.createdBy = course.createdBy;
 
-    await setDoc(doc(firestore, 'courses', courseId), courseData);
+    await setDoc(doc(firestore, "courses", courseId), courseData);
   }
 
   private async syncUser(userId: string): Promise<void> {
     const profile = await localStorageService.getUserProfile(userId);
     if (!profile) return;
 
-    await setDoc(doc(firestore, 'users', userId), {
-      email: profile.email,
-      displayName: profile.displayName,
-      userNumber: profile.userNumber,
-      role: profile.role || 'user',
-      approvalStatus: profile.approvalStatus || 'approved',
-      createdAt: profile.createdAt ? Timestamp.fromDate(new Date(profile.createdAt)) : Timestamp.now(),
-      settings: profile.settings || {
-        darkMode: false,
-        hapticFeedback: true,
-        defaultHandicap: 0,
+    await setDoc(
+      doc(firestore, "users", userId),
+      {
+        email: profile.email,
+        displayName: profile.displayName,
+        userNumber: profile.userNumber,
+        role: profile.role || "user",
+        approvalStatus: profile.approvalStatus || "approved",
+        createdAt: profile.createdAt
+          ? Timestamp.fromDate(new Date(profile.createdAt))
+          : Timestamp.now(),
+        settings: profile.settings || {
+          darkMode: false,
+          hapticFeedback: true,
+          defaultHandicap: 0,
+        },
       },
-    }, { merge: true });
+      { merge: true },
+    );
   }
 
   private async syncPendingUser(userId: string): Promise<void> {
@@ -270,11 +312,13 @@ class SyncService {
     const user = pendingUsers.find((u: any) => u.id === userId);
     if (!user) return;
 
-    await setDoc(doc(firestore, 'pendingUsers', userId), {
+    await setDoc(doc(firestore, "pendingUsers", userId), {
       email: user.email,
       displayName: user.displayName,
       userNumber: user.userNumber,
-      createdAt: user.createdAt ? Timestamp.fromDate(new Date(user.createdAt)) : Timestamp.now(),
+      createdAt: user.createdAt
+        ? Timestamp.fromDate(new Date(user.createdAt))
+        : Timestamp.now(),
       avatarUrl: user.avatarUrl || null,
     });
   }
@@ -283,12 +327,12 @@ class SyncService {
     const batch = writeBatch(firestore);
 
     // Delete game document
-    batch.delete(doc(firestore, 'games', gameId));
+    batch.delete(doc(firestore, "games", gameId));
 
     // Delete all holes for this game
     const holesQuery = query(
-      collection(firestore, 'holes'),
-      where('gameId', '==', gameId)
+      collection(firestore, "holes"),
+      where("gameId", "==", gameId),
     );
     const holesSnapshot = await getDocs(holesQuery);
     holesSnapshot.docs.forEach((d) => {
@@ -297,8 +341,8 @@ class SyncService {
 
     // Delete all scores for this game
     const scoresQuery = query(
-      collection(firestore, 'scores'),
-      where('gameId', '==', gameId)
+      collection(firestore, "scores"),
+      where("gameId", "==", gameId),
     );
     const scoresSnapshot = await getDocs(scoresQuery);
     scoresSnapshot.docs.forEach((d) => {

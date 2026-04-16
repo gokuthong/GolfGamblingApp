@@ -1,5 +1,5 @@
-import { StateCreator } from 'zustand';
-import { UserSettings } from '../../types';
+import { StateCreator } from "zustand";
+import { UserSettings } from "../../types";
 
 export interface SettingsSlice {
   settings: UserSettings;
@@ -24,6 +24,9 @@ export const createSettingsSlice: StateCreator<SettingsSlice> = (set) => ({
     })),
   toggleHapticFeedback: () =>
     set((state) => ({
-      settings: { ...state.settings, hapticFeedback: !state.settings.hapticFeedback },
+      settings: {
+        ...state.settings,
+        hapticFeedback: !state.settings.hapticFeedback,
+      },
     })),
 });

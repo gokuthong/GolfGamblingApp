@@ -16,12 +16,12 @@ class ConnectivityManager {
     const handleOnline = () => this.updateOnlineStatus(true);
     const handleOffline = () => this.updateOnlineStatus(false);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     this.cleanup = () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
   }
 

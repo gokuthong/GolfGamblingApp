@@ -97,7 +97,15 @@ export const lightColors = {
     negative: "rgba(198, 40, 40, 0.18)",
   },
   charts: {
-    series: ["#D4AF37", "#006747", "#0277BD", "#6A1B9A", "#D97706", "#2E7D3E", "#C62828"],
+    series: [
+      "#D4AF37",
+      "#006747",
+      "#0277BD",
+      "#6A1B9A",
+      "#D97706",
+      "#2E7D3E",
+      "#C62828",
+    ],
     grid: "#EAE5DA",
     axis: "#A8A090",
   },
@@ -208,7 +216,15 @@ export const darkColors = {
     negative: "rgba(248, 113, 113, 0.28)",
   },
   charts: {
-    series: ["#E8C866", "#4ADE80", "#60A5FA", "#C084FC", "#FB923C", "#34D399", "#F87171"],
+    series: [
+      "#E8C866",
+      "#4ADE80",
+      "#60A5FA",
+      "#C084FC",
+      "#FB923C",
+      "#34D399",
+      "#F87171",
+    ],
     grid: "#2A2A2A",
     axis: "#7A7468",
   },

@@ -9,7 +9,7 @@ export interface Player {
   userNumber?: string;
 }
 
-export interface PlayerData extends Omit<Player, 'id'> {}
+export interface PlayerData extends Omit<Player, "id"> {}
 
 export interface PlayerStats {
   gamesPlayed: number;

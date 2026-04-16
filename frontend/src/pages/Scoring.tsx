@@ -128,10 +128,7 @@ export const ScoringPage = () => {
     }
   };
 
-  const setPlayerMultiplier = async (
-    playerId: string,
-    multiplier: number,
-  ) => {
+  const setPlayerMultiplier = async (playerId: string, multiplier: number) => {
     if (!currentHole || !gameId) return;
 
     const updateKey = `${currentHole.id}_${playerId}`;
@@ -814,9 +811,7 @@ export const ScoringPage = () => {
                       borderRadius: `${borderRadius.full}px`,
                       border: `1px solid ${colors.border.light}`,
                       py: cmpCard ? "3px" : `${spacing.xs}px`,
-                      px: cmpCard
-                        ? `${spacing.xs}px`
-                        : `${spacing.sm}px`,
+                      px: cmpCard ? `${spacing.xs}px` : `${spacing.sm}px`,
                     }}
                   >
                     <Box
@@ -908,9 +903,7 @@ export const ScoringPage = () => {
                       flexDirection: "column",
                       alignItems: "center",
                       minWidth: cmpCard ? 50 : 60,
-                      px: cmpCard
-                        ? `${spacing.xs - 2}px`
-                        : `${spacing.xs}px`,
+                      px: cmpCard ? `${spacing.xs - 2}px` : `${spacing.xs}px`,
                     }}
                   >
                     <Typography
@@ -952,12 +945,8 @@ export const ScoringPage = () => {
         <Card
           glassMorphism
           sx={{
-            p: cmpCard
-              ? `${spacing.xs - 2}px`
-              : `${spacing.sm}px`,
-            mt: cmpCard
-              ? `${spacing.xs - 2}px`
-              : `${spacing.xs}px`,
+            p: cmpCard ? `${spacing.xs - 2}px` : `${spacing.sm}px`,
+            mt: cmpCard ? `${spacing.xs - 2}px` : `${spacing.xs}px`,
             border: `1px solid ${colors.border.light}`,
           }}
         >
@@ -1032,12 +1021,8 @@ export const ScoringPage = () => {
         <Card
           glassMorphism
           sx={{
-            p: cmpCard
-              ? `${spacing.xs - 2}px`
-              : `${spacing.sm}px`,
-            mt: cmpCard
-              ? `${spacing.xs - 2}px`
-              : `${spacing.xs}px`,
+            p: cmpCard ? `${spacing.xs - 2}px` : `${spacing.sm}px`,
+            mt: cmpCard ? `${spacing.xs - 2}px` : `${spacing.xs}px`,
             border: `1px solid ${colors.border.light}`,
           }}
         >

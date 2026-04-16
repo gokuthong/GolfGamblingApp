@@ -71,8 +71,7 @@ export const Button: React.FC<ButtonProps> = ({
   })();
 
   // Secondary + outline use rounded-lg (less dominant); primary/gold are pill
-  const radius =
-    isSecondary || isOutline ? borderRadius.lg : sizeConfig.radius;
+  const radius = isSecondary || isOutline ? borderRadius.lg : sizeConfig.radius;
 
   const textColor = (() => {
     if (isPrimary) return colors.text.inverse;

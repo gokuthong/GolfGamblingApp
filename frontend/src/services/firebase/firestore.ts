@@ -15,8 +15,8 @@ import {
   WriteBatch,
   writeBatch,
   Unsubscribe,
-} from 'firebase/firestore';
-import { firestore } from './config';
+} from "firebase/firestore";
+import { firestore } from "./config";
 import {
   Game,
   GameData,
@@ -28,18 +28,18 @@ import {
   PlayerData,
   Course,
   CourseData,
-} from '../../types';
-import { CONSTANTS } from '../../utils/constants';
+} from "../../types";
+import { CONSTANTS } from "../../utils/constants";
 
 class FirestoreService {
   // Collections
-  private gamesCollection = collection(firestore, 'games');
-  private holesCollection = collection(firestore, 'holes');
-  private scoresCollection = collection(firestore, 'scores');
-  private playersCollection = collection(firestore, 'players');
-  private coursesCollection = collection(firestore, 'courses');
-  private usersCollection = collection(firestore, 'users');
-  private countersCollection = collection(firestore, 'counters');
+  private gamesCollection = collection(firestore, "games");
+  private holesCollection = collection(firestore, "holes");
+  private scoresCollection = collection(firestore, "scores");
+  private playersCollection = collection(firestore, "players");
+  private coursesCollection = collection(firestore, "courses");
+  private usersCollection = collection(firestore, "users");
+  private countersCollection = collection(firestore, "counters");
 
   // Helper to convert Firestore Timestamp to Date
   private timestampToDate(timestamp: any): Date {
@@ -51,10 +51,15 @@ class FirestoreService {
 
   // GAME OPERATIONS
 
-  async createGame(playerIds: string[], userId?: string, courseId?: string, courseName?: string): Promise<string> {
+  async createGame(
+    playerIds: string[],
+    userId?: string,
+    courseId?: string,
+    courseName?: string,
+  ): Promise<string> {
     const gameData: GameData = {
       date: Timestamp.now(),
-      status: 'active',
+      status: "active",
       playerIds,
       createdAt: Timestamp.now(),
     };
@@ -77,7 +82,7 @@ class FirestoreService {
   }
 
   async getGame(gameId: string): Promise<Game | null> {
-    const docRef = doc(firestore, 'games', gameId);
+    const docRef = doc(firestore, "games", gameId);
     const docSnap = await getDoc(docRef);
 
     if (!docSnap.exists()) {
@@ -91,8 +96,12 @@ class FirestoreService {
       status: data.status,
       playerIds: data.playerIds,
       createdBy: data.createdBy,
-      createdAt: data.createdAt ? this.timestampToDate(data.createdAt) : undefined,
-      completedAt: data.completedAt ? this.timestampToDate(data.completedAt) : undefined,
+      createdAt: data.createdAt
+        ? this.timestampToDate(data.createdAt)
+        : undefined,
+      completedAt: data.completedAt
+        ? this.timestampToDate(data.completedAt)
+        : undefined,
       courseId: data.courseId,
       courseName: data.courseName,
       handicaps: data.handicaps,
@@ -100,13 +109,13 @@ class FirestoreService {
   }
 
   async updateGame(gameId: string, updates: Partial<GameData>): Promise<void> {
-    const docRef = doc(firestore, 'games', gameId);
+    const docRef = doc(firestore, "games", gameId);
     await updateDoc(docRef, updates);
   }
 
   async completeGame(gameId: string): Promise<void> {
     await this.updateGame(gameId, {
-      status: 'completed',
+      status: "completed",
       completedAt: Timestamp.now(),
     });
   }
@@ -115,26 +124,26 @@ class FirestoreService {
     const batch = writeBatch(firestore);
 
     // Delete game document
-    const gameRef = doc(firestore, 'games', gameId);
+    const gameRef = doc(firestore, "games", gameId);
     batch.delete(gameRef);
 
     // Delete all holes for this game
     const holesQuery = query(
       this.holesCollection,
-      where('gameId', '==', gameId)
+      where("gameId", "==", gameId),
     );
     const holesSnapshot = await getDocs(holesQuery);
-    holesSnapshot.docs.forEach(doc => {
+    holesSnapshot.docs.forEach((doc) => {
       batch.delete(doc.ref);
     });
 
     // Delete all scores for this game
     const scoresQuery = query(
       this.scoresCollection,
-      where('gameId', '==', gameId)
+      where("gameId", "==", gameId),
     );
     const scoresSnapshot = await getDocs(scoresQuery);
-    scoresSnapshot.docs.forEach(doc => {
+    scoresSnapshot.docs.forEach((doc) => {
       batch.delete(doc.ref);
     });
 
@@ -147,15 +156,12 @@ class FirestoreService {
     const twoWeeksAgoTimestamp = Timestamp.fromDate(twoWeeksAgo);
 
     // Query games created by this user
-    const q = query(
-      this.gamesCollection,
-      where('createdBy', '==', userId)
-    );
+    const q = query(this.gamesCollection, where("createdBy", "==", userId));
     const snapshot = await getDocs(q);
 
     const gamesToDelete: string[] = [];
 
-    snapshot.docs.forEach(doc => {
+    snapshot.docs.forEach((doc) => {
       const data = doc.data() as GameData;
       const gameDate = data.completedAt || data.createdAt || data.date;
 
@@ -172,9 +178,12 @@ class FirestoreService {
     return gamesToDelete.length;
   }
 
-  streamGame(gameId: string, callback: (game: Game | null) => void): Unsubscribe {
-    const docRef = doc(firestore, 'games', gameId);
-    return onSnapshot(docRef, docSnap => {
+  streamGame(
+    gameId: string,
+    callback: (game: Game | null) => void,
+  ): Unsubscribe {
+    const docRef = doc(firestore, "games", gameId);
+    return onSnapshot(docRef, (docSnap) => {
       if (!docSnap.exists()) {
         callback(null);
         return;
@@ -187,16 +196,20 @@ class FirestoreService {
         status: data.status,
         playerIds: data.playerIds,
         createdBy: data.createdBy,
-        createdAt: data.createdAt ? this.timestampToDate(data.createdAt) : undefined,
-        completedAt: data.completedAt ? this.timestampToDate(data.completedAt) : undefined,
+        createdAt: data.createdAt
+          ? this.timestampToDate(data.createdAt)
+          : undefined,
+        completedAt: data.completedAt
+          ? this.timestampToDate(data.completedAt)
+          : undefined,
       });
     });
   }
 
   streamAllGames(callback: (games: Game[]) => void): Unsubscribe {
-    const q = query(this.gamesCollection, orderBy('date', 'desc'));
-    return onSnapshot(q, snapshot => {
-      const games: Game[] = snapshot.docs.map(doc => {
+    const q = query(this.gamesCollection, orderBy("date", "desc"));
+    return onSnapshot(q, (snapshot) => {
+      const games: Game[] = snapshot.docs.map((doc) => {
         const data = doc.data() as GameData;
         return {
           id: doc.id,
@@ -204,22 +217,26 @@ class FirestoreService {
           status: data.status,
           playerIds: data.playerIds,
           createdBy: data.createdBy,
-          createdAt: data.createdAt ? this.timestampToDate(data.createdAt) : undefined,
-          completedAt: data.completedAt ? this.timestampToDate(data.completedAt) : undefined,
+          createdAt: data.createdAt
+            ? this.timestampToDate(data.createdAt)
+            : undefined,
+          completedAt: data.completedAt
+            ? this.timestampToDate(data.completedAt)
+            : undefined,
         };
       });
       callback(games);
     });
   }
 
-  streamCompletedGames(userId: string, callback: (games: Game[]) => void): Unsubscribe {
+  streamCompletedGames(
+    userId: string,
+    callback: (games: Game[]) => void,
+  ): Unsubscribe {
     // Query only by createdBy to avoid needing a composite index
-    const q = query(
-      this.gamesCollection,
-      where('createdBy', '==', userId)
-    );
-    return onSnapshot(q, snapshot => {
-      const allGames: Game[] = snapshot.docs.map(doc => {
+    const q = query(this.gamesCollection, where("createdBy", "==", userId));
+    return onSnapshot(q, (snapshot) => {
+      const allGames: Game[] = snapshot.docs.map((doc) => {
         const data = doc.data() as GameData;
         return {
           id: doc.id,
@@ -227,14 +244,18 @@ class FirestoreService {
           status: data.status,
           playerIds: data.playerIds,
           createdBy: data.createdBy,
-          createdAt: data.createdAt ? this.timestampToDate(data.createdAt) : undefined,
-          completedAt: data.completedAt ? this.timestampToDate(data.completedAt) : undefined,
+          createdAt: data.createdAt
+            ? this.timestampToDate(data.createdAt)
+            : undefined,
+          completedAt: data.completedAt
+            ? this.timestampToDate(data.completedAt)
+            : undefined,
         };
       });
 
       // Filter for completed games and sort in memory
       const completedGames = allGames
-        .filter(game => game.status === 'completed')
+        .filter((game) => game.status === "completed")
         .sort((a, b) => {
           const aTime = a.completedAt?.getTime() || 0;
           const bTime = b.completedAt?.getTime() || 0;
@@ -246,13 +267,10 @@ class FirestoreService {
   }
 
   async getActiveGamesForUser(userId: string): Promise<Game[]> {
-    const q = query(
-      this.gamesCollection,
-      where('createdBy', '==', userId)
-    );
+    const q = query(this.gamesCollection, where("createdBy", "==", userId));
     const snapshot = await getDocs(q);
 
-    const allGames: Game[] = snapshot.docs.map(doc => {
+    const allGames: Game[] = snapshot.docs.map((doc) => {
       const data = doc.data() as GameData;
       return {
         id: doc.id,
@@ -260,15 +278,19 @@ class FirestoreService {
         status: data.status,
         playerIds: data.playerIds,
         createdBy: data.createdBy,
-        createdAt: data.createdAt ? this.timestampToDate(data.createdAt) : undefined,
-        completedAt: data.completedAt ? this.timestampToDate(data.completedAt) : undefined,
+        createdAt: data.createdAt
+          ? this.timestampToDate(data.createdAt)
+          : undefined,
+        completedAt: data.completedAt
+          ? this.timestampToDate(data.completedAt)
+          : undefined,
         handicaps: data.handicaps,
       };
     });
 
     // Filter for active games and sort by creation date (most recent first)
     const activeGames = allGames
-      .filter(game => game.status === 'active')
+      .filter((game) => game.status === "active")
       .sort((a, b) => {
         const aTime = a.createdAt?.getTime() || 0;
         const bTime = b.createdAt?.getTime() || 0;
@@ -280,12 +302,9 @@ class FirestoreService {
 
   async getGamesForUser(userId: string): Promise<Game[]> {
     // Query only by createdBy to avoid needing a composite index
-    const q = query(
-      this.gamesCollection,
-      where('createdBy', '==', userId)
-    );
+    const q = query(this.gamesCollection, where("createdBy", "==", userId));
     const snapshot = await getDocs(q);
-    const games = snapshot.docs.map(doc => {
+    const games = snapshot.docs.map((doc) => {
       const data = doc.data() as GameData;
       return {
         id: doc.id,
@@ -293,8 +312,12 @@ class FirestoreService {
         status: data.status,
         playerIds: data.playerIds,
         createdBy: data.createdBy,
-        createdAt: data.createdAt ? this.timestampToDate(data.createdAt) : undefined,
-        completedAt: data.completedAt ? this.timestampToDate(data.completedAt) : undefined,
+        createdAt: data.createdAt
+          ? this.timestampToDate(data.createdAt)
+          : undefined,
+        completedAt: data.completedAt
+          ? this.timestampToDate(data.completedAt)
+          : undefined,
         courseId: data.courseId,
         courseName: data.courseName,
         handicaps: data.handicaps,
@@ -333,11 +356,13 @@ class FirestoreService {
   }
 
   async updateHole(holeId: string, updates: Partial<HoleData>): Promise<void> {
-    const docRef = doc(firestore, 'holes', holeId);
+    const docRef = doc(firestore, "holes", holeId);
     await updateDoc(docRef, updates);
   }
 
-  async batchUpdateHoles(holeUpdates: Array<{ holeId: string; updates: Partial<HoleData> }>): Promise<void> {
+  async batchUpdateHoles(
+    holeUpdates: Array<{ holeId: string; updates: Partial<HoleData> }>,
+  ): Promise<void> {
     if (holeUpdates.length === 0) return;
 
     // Firestore allows max 500 operations per batch
@@ -347,7 +372,7 @@ class FirestoreService {
       const batchData = holeUpdates.slice(i, i + batchSize);
 
       batchData.forEach(({ holeId, updates }) => {
-        const docRef = doc(firestore, 'holes', holeId);
+        const docRef = doc(firestore, "holes", holeId);
         batch.update(docRef, updates);
       });
 
@@ -358,24 +383,30 @@ class FirestoreService {
   async getHolesForGame(gameId: string): Promise<Hole[]> {
     const q = query(
       this.holesCollection,
-      where('gameId', '==', gameId),
-      orderBy('holeNumber', 'asc')
+      where("gameId", "==", gameId),
+      orderBy("holeNumber", "asc"),
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Hole));
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Hole);
   }
 
-  streamHolesForGame(gameId: string, callback: (holes: Hole[]) => void): Unsubscribe {
+  streamHolesForGame(
+    gameId: string,
+    callback: (holes: Hole[]) => void,
+  ): Unsubscribe {
     const q = query(
       this.holesCollection,
-      where('gameId', '==', gameId),
-      orderBy('holeNumber', 'asc')
+      where("gameId", "==", gameId),
+      orderBy("holeNumber", "asc"),
     );
-    return onSnapshot(q, snapshot => {
-      const holes: Hole[] = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      } as Hole));
+    return onSnapshot(q, (snapshot) => {
+      const holes: Hole[] = snapshot.docs.map(
+        (doc) =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          }) as Hole,
+      );
       callback(holes);
     });
   }
@@ -400,10 +431,13 @@ class FirestoreService {
     await batch.commit();
   }
 
-  async initializeHolesForGameFromCourse(gameId: string, courseId: string): Promise<void> {
+  async initializeHolesForGameFromCourse(
+    gameId: string,
+    courseId: string,
+  ): Promise<void> {
     const course = await this.getCourse(courseId);
     if (!course) {
-      throw new Error('Course not found');
+      throw new Error("Course not found");
     }
 
     const batch = writeBatch(firestore);
@@ -447,7 +481,7 @@ class FirestoreService {
       const batch = writeBatch(firestore);
       const batchData = scoresData.slice(i, i + batchSize);
 
-      batchData.forEach(scoreData => {
+      batchData.forEach((scoreData) => {
         const docId = `${scoreData.holeId}_${scoreData.playerId}`;
         const docRef = doc(this.scoresCollection, docId);
         batch.set(docRef, scoreData, { merge: true });
@@ -458,24 +492,30 @@ class FirestoreService {
   }
 
   async getScoresForHole(holeId: string): Promise<Score[]> {
-    const q = query(this.scoresCollection, where('holeId', '==', holeId));
+    const q = query(this.scoresCollection, where("holeId", "==", holeId));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Score));
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Score);
   }
 
   async getScoresForGame(gameId: string): Promise<Score[]> {
-    const q = query(this.scoresCollection, where('gameId', '==', gameId));
+    const q = query(this.scoresCollection, where("gameId", "==", gameId));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Score));
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Score);
   }
 
-  streamScoresForGame(gameId: string, callback: (scores: Score[]) => void): Unsubscribe {
-    const q = query(this.scoresCollection, where('gameId', '==', gameId));
-    return onSnapshot(q, snapshot => {
-      const scores: Score[] = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      } as Score));
+  streamScoresForGame(
+    gameId: string,
+    callback: (scores: Score[]) => void,
+  ): Unsubscribe {
+    const q = query(this.scoresCollection, where("gameId", "==", gameId));
+    return onSnapshot(q, (snapshot) => {
+      const scores: Score[] = snapshot.docs.map(
+        (doc) =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          }) as Score,
+      );
       callback(scores);
     });
   }
@@ -512,7 +552,7 @@ class FirestoreService {
     createdBy?: string,
     userNumber?: string,
     userId?: string,
-    isGuest: boolean = false
+    isGuest: boolean = false,
   ): Promise<string> {
     const playerData: PlayerData = {
       name,
@@ -538,7 +578,7 @@ class FirestoreService {
   }
 
   async getPlayer(playerId: string): Promise<Player | null> {
-    const docRef = doc(firestore, 'players', playerId);
+    const docRef = doc(firestore, "players", playerId);
     const docSnap = await getDoc(docRef);
 
     if (!docSnap.exists()) {
@@ -549,44 +589,55 @@ class FirestoreService {
   }
 
   async getAllPlayers(): Promise<Player[]> {
-    const q = query(this.playersCollection, orderBy('name', 'asc'));
+    const q = query(this.playersCollection, orderBy("name", "asc"));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Player));
+    return snapshot.docs.map(
+      (doc) => ({ id: doc.id, ...doc.data() }) as Player,
+    );
   }
 
-  async updatePlayer(playerId: string, updates: Partial<PlayerData>): Promise<void> {
-    const docRef = doc(firestore, 'players', playerId);
+  async updatePlayer(
+    playerId: string,
+    updates: Partial<PlayerData>,
+  ): Promise<void> {
+    const docRef = doc(firestore, "players", playerId);
     await updateDoc(docRef, updates);
   }
 
   async deletePlayer(playerId: string): Promise<void> {
-    const docRef = doc(firestore, 'players', playerId);
+    const docRef = doc(firestore, "players", playerId);
     await deleteDoc(docRef);
   }
 
   streamAllPlayers(callback: (players: Player[]) => void): Unsubscribe {
-    const q = query(this.playersCollection, orderBy('name', 'asc'));
-    return onSnapshot(q, snapshot => {
-      const players: Player[] = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      } as Player));
+    const q = query(this.playersCollection, orderBy("name", "asc"));
+    return onSnapshot(q, (snapshot) => {
+      const players: Player[] = snapshot.docs.map(
+        (doc) =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          }) as Player,
+      );
       callback(players);
     });
   }
 
-  streamPlayersForUser(userId: string, callback: (players: Player[]) => void): Unsubscribe {
+  streamPlayersForUser(
+    userId: string,
+    callback: (players: Player[]) => void,
+  ): Unsubscribe {
     // Query by userId only, then sort in memory to avoid needing a composite index
-    const q = query(
-      this.playersCollection,
-      where('userId', '==', userId)
-    );
-    return onSnapshot(q, snapshot => {
+    const q = query(this.playersCollection, where("userId", "==", userId));
+    return onSnapshot(q, (snapshot) => {
       const players: Player[] = snapshot.docs
-        .map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        } as Player))
+        .map(
+          (doc) =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            }) as Player,
+        )
         .sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically in memory
       callback(players);
     });
@@ -594,7 +645,11 @@ class FirestoreService {
 
   // COURSE OPERATIONS
 
-  async createCourse(name: string, holes: { holeNumber: number; par: number }[], userId?: string): Promise<string> {
+  async createCourse(
+    name: string,
+    holes: { holeNumber: number; par: number }[],
+    userId?: string,
+  ): Promise<string> {
     const courseData: CourseData = {
       name,
       holes,
@@ -612,7 +667,7 @@ class FirestoreService {
   }
 
   async getCourse(courseId: string): Promise<Course | null> {
-    const docRef = doc(firestore, 'courses', courseId);
+    const docRef = doc(firestore, "courses", courseId);
     const docSnap = await getDoc(docRef);
 
     if (!docSnap.exists()) {
@@ -625,13 +680,20 @@ class FirestoreService {
       name: data.name,
       holes: data.holes,
       createdBy: data.createdBy,
-      createdAt: data.createdAt ? this.timestampToDate(data.createdAt) : undefined,
-      updatedAt: data.updatedAt ? this.timestampToDate(data.updatedAt) : undefined,
+      createdAt: data.createdAt
+        ? this.timestampToDate(data.createdAt)
+        : undefined,
+      updatedAt: data.updatedAt
+        ? this.timestampToDate(data.updatedAt)
+        : undefined,
     };
   }
 
-  async updateCourse(courseId: string, updates: Partial<CourseData>): Promise<void> {
-    const docRef = doc(firestore, 'courses', courseId);
+  async updateCourse(
+    courseId: string,
+    updates: Partial<CourseData>,
+  ): Promise<void> {
+    const docRef = doc(firestore, "courses", courseId);
     await updateDoc(docRef, {
       ...updates,
       updatedAt: Timestamp.now(),
@@ -639,45 +701,64 @@ class FirestoreService {
   }
 
   async deleteCourse(courseId: string): Promise<void> {
-    const docRef = doc(firestore, 'courses', courseId);
+    const docRef = doc(firestore, "courses", courseId);
     await deleteDoc(docRef);
   }
 
   async getAllCourses(userId?: string): Promise<Course[]> {
     let q;
     if (userId) {
-      q = query(this.coursesCollection, where('createdBy', '==', userId), orderBy('name', 'asc'));
+      q = query(
+        this.coursesCollection,
+        where("createdBy", "==", userId),
+        orderBy("name", "asc"),
+      );
     } else {
-      q = query(this.coursesCollection, orderBy('name', 'asc'));
+      q = query(this.coursesCollection, orderBy("name", "asc"));
     }
 
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
+    return snapshot.docs.map((doc) => ({
       id: doc.id,
       name: doc.data().name,
       holes: doc.data().holes,
       createdBy: doc.data().createdBy,
-      createdAt: doc.data().createdAt ? this.timestampToDate(doc.data().createdAt) : undefined,
-      updatedAt: doc.data().updatedAt ? this.timestampToDate(doc.data().updatedAt) : undefined,
+      createdAt: doc.data().createdAt
+        ? this.timestampToDate(doc.data().createdAt)
+        : undefined,
+      updatedAt: doc.data().updatedAt
+        ? this.timestampToDate(doc.data().updatedAt)
+        : undefined,
     }));
   }
 
-  streamAllCourses(callback: (courses: Course[]) => void, userId?: string): Unsubscribe {
+  streamAllCourses(
+    callback: (courses: Course[]) => void,
+    userId?: string,
+  ): Unsubscribe {
     let q;
     if (userId) {
-      q = query(this.coursesCollection, where('createdBy', '==', userId), orderBy('name', 'asc'));
+      q = query(
+        this.coursesCollection,
+        where("createdBy", "==", userId),
+        orderBy("name", "asc"),
+      );
     } else {
-      q = query(this.coursesCollection, orderBy('name', 'asc'));
+      q = query(this.coursesCollection, orderBy("name", "asc"));
     }
 
-    return onSnapshot(q, snapshot => {
-      const courses: Course[] = snapshot.docs.map(doc => ({
+    return onSnapshot(q, (snapshot) => {
+      const courses: Course[] = snapshot.docs.map((doc) => ({
         id: doc.id,
         name: doc.data().name,
         holes: doc.data().holes,
         createdBy: doc.data().createdBy,
-        createdAt: doc.data().createdAt ? this.timestampToDate(doc.data().createdAt) : undefined,
-        updatedAt: doc.data().updatedAt ? this.timestampToDate(doc.data().updatedAt) : undefined,
+        createdAt: doc.data().createdAt
+          ? this.timestampToDate(doc.data().createdAt)
+          : undefined,
+        updatedAt: doc.data().updatedAt
+          ? this.timestampToDate(doc.data().updatedAt)
+          : undefined,
       }));
       callback(courses);
     });
@@ -703,7 +784,7 @@ class FirestoreService {
   // USER OPERATIONS
 
   async getNextUserNumber(): Promise<string> {
-    const counterRef = doc(this.countersCollection, 'userNumbers');
+    const counterRef = doc(this.countersCollection, "userNumbers");
 
     try {
       const counterSnap = await getDoc(counterRef);
@@ -711,7 +792,7 @@ class FirestoreService {
       if (!counterSnap.exists()) {
         // Initialize counter if it doesn't exist
         await setDoc(counterRef, { current: 1 });
-        return '001';
+        return "001";
       }
 
       const currentNumber = counterSnap.data().current || 0;
@@ -721,15 +802,19 @@ class FirestoreService {
       await updateDoc(counterRef, { current: nextNumber });
 
       // Format as 3-digit string
-      return String(nextNumber).padStart(3, '0');
+      return String(nextNumber).padStart(3, "0");
     } catch (error) {
       // If document doesn't exist, create it
       await setDoc(counterRef, { current: 1 });
-      return '001';
+      return "001";
     }
   }
 
-  async createUserProfile(userId: string, email: string, displayName: string): Promise<string> {
+  async createUserProfile(
+    userId: string,
+    email: string,
+    displayName: string,
+  ): Promise<string> {
     const userNumber = await this.getNextUserNumber();
 
     const userData = {
@@ -747,7 +832,13 @@ class FirestoreService {
     await setDoc(doc(this.usersCollection, userId), userData);
 
     // Also create a player profile for this user
-    await this.createPlayerLegacy(displayName, userId, userNumber, userId, false);
+    await this.createPlayerLegacy(
+      displayName,
+      userId,
+      userNumber,
+      userId,
+      false,
+    );
 
     return userNumber;
   }
@@ -769,35 +860,32 @@ class FirestoreService {
 
   async searchUsers(searchTerm: string): Promise<Player[]> {
     // Get all players (registered users only)
-    const q = query(
-      this.playersCollection,
-      where('isGuest', '==', false)
-    );
+    const q = query(this.playersCollection, where("isGuest", "==", false));
     const snapshot = await getDocs(q);
 
-    const allPlayers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Player));
+    const allPlayers = snapshot.docs.map(
+      (doc) => ({ id: doc.id, ...doc.data() }) as Player,
+    );
 
     // Filter by name or user number
     const lowerSearch = searchTerm.toLowerCase();
-    return allPlayers.filter(player =>
-      player.name.toLowerCase().includes(lowerSearch) ||
-      player.userNumber?.includes(searchTerm)
+    return allPlayers.filter(
+      (player) =>
+        player.name.toLowerCase().includes(lowerSearch) ||
+        player.userNumber?.includes(searchTerm),
     );
   }
 
   async getAllRegisteredPlayers(): Promise<Player[]> {
-    const q = query(
-      this.playersCollection,
-      where('isGuest', '!=', true)
-    );
+    const q = query(this.playersCollection, where("isGuest", "!=", true));
     const snapshot = await getDocs(q);
 
     return snapshot.docs
-      .map(doc => ({ id: doc.id, ...doc.data() } as Player))
+      .map((doc) => ({ id: doc.id, ...doc.data() }) as Player)
       .sort((a, b) => {
         // Sort by user number
-        const numA = parseInt(a.userNumber || '999');
-        const numB = parseInt(b.userNumber || '999');
+        const numA = parseInt(a.userNumber || "999");
+        const numB = parseInt(b.userNumber || "999");
         return numA - numB;
       });
   }
@@ -809,15 +897,12 @@ class FirestoreService {
     cutoff.setDate(cutoff.getDate() - days);
     const cutoffTimestamp = Timestamp.fromDate(cutoff);
 
-    const q = query(
-      this.gamesCollection,
-      where('createdBy', '==', userId)
-    );
+    const q = query(this.gamesCollection, where("createdBy", "==", userId));
     const snapshot = await getDocs(q);
 
     const gamesToDelete: string[] = [];
 
-    snapshot.docs.forEach(docSnap => {
+    snapshot.docs.forEach((docSnap) => {
       const data = docSnap.data() as GameData;
       const gameDate = data.completedAt || data.createdAt || data.date;
 
@@ -834,14 +919,11 @@ class FirestoreService {
   }
 
   async enforceGameLimit(userId: string, maxGames: number): Promise<void> {
-    const q = query(
-      this.gamesCollection,
-      where('createdBy', '==', userId)
-    );
+    const q = query(this.gamesCollection, where("createdBy", "==", userId));
     const snapshot = await getDocs(q);
 
     const completedGames = snapshot.docs
-      .map(docSnap => {
+      .map((docSnap) => {
         const data = docSnap.data() as GameData;
         return {
           id: docSnap.id,
@@ -849,7 +931,7 @@ class FirestoreService {
           status: data.status,
         };
       })
-      .filter(g => g.status === 'completed')
+      .filter((g) => g.status === "completed")
       .sort((a, b) => {
         const aTime = a.completedAt?.toMillis() || 0;
         const bTime = b.completedAt?.toMillis() || 0;
@@ -871,11 +953,11 @@ class FirestoreService {
       const docRef = doc(this.usersCollection, userId);
       const docSnap = await getDoc(docRef);
 
-      if (!docSnap.exists()) return 'user';
-      return docSnap.data().role || 'user';
+      if (!docSnap.exists()) return "user";
+      return docSnap.data().role || "user";
     } catch (error) {
-      console.error('Error getting user role:', error);
-      return 'user';
+      console.error("Error getting user role:", error);
+      return "user";
     }
   }
 
@@ -889,11 +971,11 @@ class FirestoreService {
       const docRef = doc(this.usersCollection, userId);
       const docSnap = await getDoc(docRef);
 
-      if (!docSnap.exists()) return 'approved';
-      return docSnap.data().approvalStatus || 'approved';
+      if (!docSnap.exists()) return "approved";
+      return docSnap.data().approvalStatus || "approved";
     } catch (error) {
-      console.error('Error getting approval status:', error);
-      return 'approved';
+      console.error("Error getting approval status:", error);
+      return "approved";
     }
   }
 
@@ -904,7 +986,7 @@ class FirestoreService {
 
   // PENDING USERS MANAGEMENT
 
-  private pendingUsersCollection = collection(firestore, 'pendingUsers');
+  private pendingUsersCollection = collection(firestore, "pendingUsers");
 
   async addPendingUser(userId: string, userData: any): Promise<void> {
     const pendingUserData = {
@@ -921,7 +1003,7 @@ class FirestoreService {
   async getPendingUsers(): Promise<any[]> {
     try {
       const snapshot = await getDocs(this.pendingUsersCollection);
-      return snapshot.docs.map(docSnap => ({
+      return snapshot.docs.map((docSnap) => ({
         id: docSnap.id,
         ...docSnap.data(),
         createdAt: docSnap.data().createdAt
@@ -929,7 +1011,7 @@ class FirestoreService {
           : new Date(),
       }));
     } catch (error) {
-      console.error('Error getting pending users:', error);
+      console.error("Error getting pending users:", error);
       return [];
     }
   }
@@ -939,12 +1021,12 @@ class FirestoreService {
   }
 
   async approvePendingUser(userId: string): Promise<void> {
-    await this.setApprovalStatus(userId, 'approved');
+    await this.setApprovalStatus(userId, "approved");
     await this.removePendingUser(userId);
   }
 
   async rejectPendingUser(userId: string): Promise<void> {
-    await this.setApprovalStatus(userId, 'rejected');
+    await this.setApprovalStatus(userId, "rejected");
     await this.removePendingUser(userId);
   }
 
@@ -959,26 +1041,28 @@ class FirestoreService {
         const data = docSnap.data();
 
         // Skip guest users
-        if (data.role === 'guest' || data.isOffline) continue;
+        if (data.role === "guest" || data.isOffline) continue;
 
         users.push({
           id: docSnap.id,
           email: data.email,
           displayName: data.displayName,
           userNumber: data.userNumber,
-          role: data.role || 'user',
-          approvalStatus: data.approvalStatus || 'approved',
-          createdAt: data.createdAt ? this.timestampToDate(data.createdAt) : new Date(),
+          role: data.role || "user",
+          approvalStatus: data.approvalStatus || "approved",
+          createdAt: data.createdAt
+            ? this.timestampToDate(data.createdAt)
+            : new Date(),
         });
       }
 
       return users.sort((a, b) => {
-        const numA = parseInt(a.userNumber || '999');
-        const numB = parseInt(b.userNumber || '999');
+        const numA = parseInt(a.userNumber || "999");
+        const numB = parseInt(b.userNumber || "999");
         return numA - numB;
       });
     } catch (error) {
-      console.error('Error getting all users:', error);
+      console.error("Error getting all users:", error);
       return [];
     }
   }
@@ -986,7 +1070,7 @@ class FirestoreService {
   async getUserStats(userId: string): Promise<any> {
     try {
       const games = await this.getGamesForUser(userId);
-      const completedGames = games.filter(g => g.status === 'completed');
+      const completedGames = games.filter((g) => g.status === "completed");
 
       let totalPoints = 0;
       let wins = 0;
@@ -999,15 +1083,15 @@ class FirestoreService {
         const { holes, scores } = gameDetails;
 
         const scoresByHoleId: Record<string, any[]> = {};
-        scores.forEach(score => {
+        scores.forEach((score) => {
           if (!scoresByHoleId[score.holeId]) scoresByHoleId[score.holeId] = [];
           scoresByHoleId[score.holeId].push(score);
         });
 
         let gamePoints = 0;
-        holes.forEach(hole => {
+        holes.forEach((hole) => {
           const holeScores = scoresByHoleId[hole.id] || [];
-          const userScore = holeScores.find(s => s.playerId === userId);
+          const userScore = holeScores.find((s) => s.playerId === userId);
           if (userScore) {
             gamePoints += userScore.points || 0;
           }
@@ -1024,16 +1108,19 @@ class FirestoreService {
         totalPoints,
         wins,
         losses,
-        winRate: completedGames.length > 0 ? ((wins / completedGames.length) * 100).toFixed(1) : '0.0',
+        winRate:
+          completedGames.length > 0
+            ? ((wins / completedGames.length) * 100).toFixed(1)
+            : "0.0",
       };
     } catch (error) {
-      console.error('Error getting user stats:', error);
+      console.error("Error getting user stats:", error);
       return {
         gamesPlayed: 0,
         totalPoints: 0,
         wins: 0,
         losses: 0,
-        winRate: '0.0',
+        winRate: "0.0",
       };
     }
   }
@@ -1049,7 +1136,7 @@ class FirestoreService {
       // Delete user's players
       const playersQuery = query(
         this.playersCollection,
-        where('userId', '==', userId)
+        where("userId", "==", userId),
       );
       const playersSnapshot = await getDocs(playersQuery);
       for (const docSnap of playersSnapshot.docs) {
@@ -1059,7 +1146,7 @@ class FirestoreService {
       // Delete user's courses
       const coursesQuery = query(
         this.coursesCollection,
-        where('createdBy', '==', userId)
+        where("createdBy", "==", userId),
       );
       const coursesSnapshot = await getDocs(coursesQuery);
       for (const docSnap of coursesSnapshot.docs) {
@@ -1072,9 +1159,11 @@ class FirestoreService {
       // Delete user profile
       await deleteDoc(doc(this.usersCollection, userId));
 
-      console.log(`Deleted user ${userId} and all associated data from Firestore`);
+      console.log(
+        `Deleted user ${userId} and all associated data from Firestore`,
+      );
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error);
       throw error;
     }
   }

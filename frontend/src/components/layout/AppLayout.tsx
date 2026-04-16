@@ -157,9 +157,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     alignItems: "center",
                     justifyContent: "center",
                     width: 48,
-                    color: active
-                      ? colors.accent.gold
-                      : colors.text.tertiary,
+                    color: active ? colors.accent.gold : colors.text.tertiary,
                     "& .MuiSvgIcon-root": {
                       fontSize: 24,
                     },
@@ -176,9 +174,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     letterSpacing: "0.8px",
                     textTransform: "uppercase",
                     mt: "4px",
-                    color: active
-                      ? colors.accent.gold
-                      : colors.text.tertiary,
+                    color: active ? colors.accent.gold : colors.text.tertiary,
                     transition: "color 200ms ease",
                     lineHeight: 1,
                   }}

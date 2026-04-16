@@ -21,9 +21,9 @@ export const borderRadius = {
 
 // CSS box-shadow equivalents of React Native shadow objects
 export const shadows = {
-  small: '0px 2px 6px rgba(0, 0, 0, 0.05)',
-  medium: '0px 8px 30px rgba(0, 0, 0, 0.08)',
-  large: '0px 12px 40px rgba(0, 0, 0, 0.12)',
+  small: "0px 2px 6px rgba(0, 0, 0, 0.05)",
+  medium: "0px 8px 30px rgba(0, 0, 0, 0.08)",
+  large: "0px 12px 40px rgba(0, 0, 0, 0.12)",
 };
 
 export type Spacing = typeof spacing;

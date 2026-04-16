@@ -10,8 +10,8 @@ import {
   Course,
   CourseData,
   CourseHole,
-} from '../../types';
-import { CONSTANTS } from '../../utils/constants';
+} from "../../types";
+import { CONSTANTS } from "../../utils/constants";
 import {
   generateId,
   serializeStoredGame,
@@ -21,7 +21,7 @@ import {
   isGameExpired,
   StorageKeys,
   StoredGame,
-} from './storageUtils';
+} from "./storageUtils";
 
 /**
  * Helper to get all localStorage keys.
@@ -55,7 +55,7 @@ class LocalStorageService {
     playerIds: string[],
     userId?: string,
     courseId?: string,
-    courseName?: string
+    courseName?: string,
   ): Promise<string> {
     const gameId = generateId();
     const now = new Date();
@@ -63,7 +63,7 @@ class LocalStorageService {
     const game: Game = {
       id: gameId,
       date: now,
-      status: 'active',
+      status: "active",
       playerIds,
       createdAt: now,
       createdBy: userId,
@@ -77,10 +77,13 @@ class LocalStorageService {
       scores: [],
     };
 
-    localStorage.setItem(StorageKeys.game(gameId), serializeStoredGame(storedGame));
+    localStorage.setItem(
+      StorageKeys.game(gameId),
+      serializeStoredGame(storedGame),
+    );
 
     // Add to games index
-    await this.addToGamesIndex(userId || 'default', gameId);
+    await this.addToGamesIndex(userId || "default", gameId);
 
     return gameId;
   }
@@ -93,7 +96,7 @@ class LocalStorageService {
       const { game } = deserializeStoredGame(stored);
       return game;
     } catch (error) {
-      console.error('Error getting game:', error);
+      console.error("Error getting game:", error);
       return null;
     }
   }
@@ -101,7 +104,7 @@ class LocalStorageService {
   async updateGame(gameId: string, updates: Partial<GameData>): Promise<void> {
     const stored = localStorage.getItem(StorageKeys.game(gameId));
     if (!stored) {
-      throw new Error('Game not found');
+      throw new Error("Game not found");
     }
 
     const storedGame = deserializeStoredGame(stored);
@@ -110,12 +113,15 @@ class LocalStorageService {
       ...updates,
     };
 
-    localStorage.setItem(StorageKeys.game(gameId), serializeStoredGame(storedGame));
+    localStorage.setItem(
+      StorageKeys.game(gameId),
+      serializeStoredGame(storedGame),
+    );
   }
 
   async completeGame(gameId: string): Promise<void> {
     await this.updateGame(gameId, {
-      status: 'completed',
+      status: "completed",
       completedAt: new Date(),
     });
 
@@ -132,7 +138,7 @@ class LocalStorageService {
   async deleteGame(gameId: string): Promise<void> {
     // Get game to find userId
     const game = await this.getGame(gameId);
-    const userId = game?.createdBy || 'default';
+    const userId = game?.createdBy || "default";
 
     // Delete game data
     localStorage.removeItem(StorageKeys.game(gameId));
@@ -144,7 +150,7 @@ class LocalStorageService {
   async getActiveGamesForUser(userId: string): Promise<Game[]> {
     const allGames = await this.getGamesForUser(userId);
     return allGames
-      .filter((game) => game.status === 'active')
+      .filter((game) => game.status === "active")
       .sort((a, b) => {
         const aTime = a.createdAt?.getTime() || 0;
         const bTime = b.createdAt?.getTime() || 0;
@@ -173,7 +179,7 @@ class LocalStorageService {
 
       return games.sort((a, b) => b.date.getTime() - a.date.getTime());
     } catch (error) {
-      console.error('Error getting games for user:', error);
+      console.error("Error getting games for user:", error);
       return [];
     }
   }
@@ -198,7 +204,7 @@ class LocalStorageService {
         players,
       };
     } catch (error) {
-      console.error('Error getting game with details:', error);
+      console.error("Error getting game with details:", error);
       return null;
     }
   }
@@ -221,7 +227,7 @@ class LocalStorageService {
   async enforceGameLimit(userId: string, maxGames: number): Promise<void> {
     const games = await this.getGamesForUser(userId);
     const completedGames = games
-      .filter((game) => game.status === 'completed')
+      .filter((game) => game.status === "completed")
       .sort((a, b) => {
         const aTime = a.completedAt?.getTime() || 0;
         const bTime = b.completedAt?.getTime() || 0;
@@ -248,13 +254,16 @@ class LocalStorageService {
     // Get the game and add hole to it
     const stored = localStorage.getItem(StorageKeys.game(holeData.gameId));
     if (!stored) {
-      throw new Error('Game not found');
+      throw new Error("Game not found");
     }
 
     const storedGame = deserializeStoredGame(stored);
     storedGame.holes.push(hole);
 
-    localStorage.setItem(StorageKeys.game(holeData.gameId), serializeStoredGame(storedGame));
+    localStorage.setItem(
+      StorageKeys.game(holeData.gameId),
+      serializeStoredGame(storedGame),
+    );
 
     return holeId;
   }
@@ -262,7 +271,7 @@ class LocalStorageService {
   async updateHole(holeId: string, updates: Partial<HoleData>): Promise<void> {
     // Find the game that contains this hole
     const allKeys = getAllKeys();
-    const gameKeys = allKeys.filter((key) => key.startsWith('@game:'));
+    const gameKeys = allKeys.filter((key) => key.startsWith("@game:"));
 
     for (const gameKey of gameKeys) {
       const stored = localStorage.getItem(gameKey);
@@ -281,11 +290,11 @@ class LocalStorageService {
       }
     }
 
-    throw new Error('Hole not found');
+    throw new Error("Hole not found");
   }
 
   async batchUpdateHoles(
-    holeUpdates: Array<{ holeId: string; updates: Partial<HoleData> }>
+    holeUpdates: Array<{ holeId: string; updates: Partial<HoleData> }>,
   ): Promise<void> {
     for (const { holeId, updates } of holeUpdates) {
       await this.updateHole(holeId, updates);
@@ -320,19 +329,25 @@ class LocalStorageService {
     // Get the game and add holes
     const stored = localStorage.getItem(StorageKeys.game(gameId));
     if (!stored) {
-      throw new Error('Game not found');
+      throw new Error("Game not found");
     }
 
     const storedGame = deserializeStoredGame(stored);
     storedGame.holes = holes;
 
-    localStorage.setItem(StorageKeys.game(gameId), serializeStoredGame(storedGame));
+    localStorage.setItem(
+      StorageKeys.game(gameId),
+      serializeStoredGame(storedGame),
+    );
   }
 
-  async initializeHolesForGameFromCourse(gameId: string, courseId: string): Promise<void> {
+  async initializeHolesForGameFromCourse(
+    gameId: string,
+    courseId: string,
+  ): Promise<void> {
     const course = await this.getCourse(courseId);
     if (!course) {
-      throw new Error('Course not found');
+      throw new Error("Course not found");
     }
 
     const holes: Hole[] = [];
@@ -354,13 +369,16 @@ class LocalStorageService {
     // Get the game and add holes
     const stored = localStorage.getItem(StorageKeys.game(gameId));
     if (!stored) {
-      throw new Error('Game not found');
+      throw new Error("Game not found");
     }
 
     const storedGame = deserializeStoredGame(stored);
     storedGame.holes = holes;
 
-    localStorage.setItem(StorageKeys.game(gameId), serializeStoredGame(storedGame));
+    localStorage.setItem(
+      StorageKeys.game(gameId),
+      serializeStoredGame(storedGame),
+    );
   }
 
   // SCORE OPERATIONS
@@ -371,16 +389,18 @@ class LocalStorageService {
     // Find the game and update/add score
     const gameId = scoreData.gameId;
     if (!gameId) {
-      throw new Error('gameId is required in scoreData');
+      throw new Error("gameId is required in scoreData");
     }
 
     const stored = localStorage.getItem(StorageKeys.game(gameId));
     if (!stored) {
-      throw new Error('Game not found');
+      throw new Error("Game not found");
     }
 
     const storedGame = deserializeStoredGame(stored);
-    const existingScoreIndex = storedGame.scores.findIndex((s) => s.id === scoreId);
+    const existingScoreIndex = storedGame.scores.findIndex(
+      (s) => s.id === scoreId,
+    );
 
     const score: Score = {
       id: scoreId,
@@ -393,7 +413,10 @@ class LocalStorageService {
       storedGame.scores.push(score);
     }
 
-    localStorage.setItem(StorageKeys.game(gameId), serializeStoredGame(storedGame));
+    localStorage.setItem(
+      StorageKeys.game(gameId),
+      serializeStoredGame(storedGame),
+    );
 
     return scoreId;
   }
@@ -402,14 +425,17 @@ class LocalStorageService {
     if (scoresData.length === 0) return;
 
     // Group scores by gameId
-    const scoresByGame = scoresData.reduce((acc, score) => {
-      const gameId = score.gameId || '';
-      if (!acc[gameId]) {
-        acc[gameId] = [];
-      }
-      acc[gameId].push(score);
-      return acc;
-    }, {} as Record<string, ScoreData[]>);
+    const scoresByGame = scoresData.reduce(
+      (acc, score) => {
+        const gameId = score.gameId || "";
+        if (!acc[gameId]) {
+          acc[gameId] = [];
+        }
+        acc[gameId].push(score);
+        return acc;
+      },
+      {} as Record<string, ScoreData[]>,
+    );
 
     // Update each game
     for (const [gameId, scores] of Object.entries(scoresByGame)) {
@@ -420,7 +446,9 @@ class LocalStorageService {
 
       for (const scoreData of scores) {
         const scoreId = `${scoreData.holeId}_${scoreData.playerId}`;
-        const existingScoreIndex = storedGame.scores.findIndex((s) => s.id === scoreId);
+        const existingScoreIndex = storedGame.scores.findIndex(
+          (s) => s.id === scoreId,
+        );
 
         const score: Score = {
           id: scoreId,
@@ -434,14 +462,17 @@ class LocalStorageService {
         }
       }
 
-      localStorage.setItem(StorageKeys.game(gameId), serializeStoredGame(storedGame));
+      localStorage.setItem(
+        StorageKeys.game(gameId),
+        serializeStoredGame(storedGame),
+      );
     }
   }
 
   async getScoresForHole(holeId: string): Promise<Score[]> {
     // Find all games and search for scores with this holeId
     const allKeys = getAllKeys();
-    const gameKeys = allKeys.filter((key) => key.startsWith('@game:'));
+    const gameKeys = allKeys.filter((key) => key.startsWith("@game:"));
     const scores: Score[] = [];
 
     for (const gameKey of gameKeys) {
@@ -467,12 +498,17 @@ class LocalStorageService {
   // Stream methods for compatibility with real-time updates
   // Note: These are not true streams since localStorage doesn't support real-time updates
   // They load data once and return an unsubscribe function (no-op)
-  streamHolesForGame(gameId: string, callback: (holes: Hole[]) => void): () => void {
+  streamHolesForGame(
+    gameId: string,
+    callback: (holes: Hole[]) => void,
+  ): () => void {
     // Load holes once and call callback
-    this.getHolesForGame(gameId).then(callback).catch(error => {
-      console.error('Error streaming holes:', error);
-      callback([]);
-    });
+    this.getHolesForGame(gameId)
+      .then(callback)
+      .catch((error) => {
+        console.error("Error streaming holes:", error);
+        callback([]);
+      });
 
     // Return unsubscribe function (no-op for localStorage)
     return () => {
@@ -480,12 +516,17 @@ class LocalStorageService {
     };
   }
 
-  streamScoresForGame(gameId: string, callback: (scores: Score[]) => void): () => void {
+  streamScoresForGame(
+    gameId: string,
+    callback: (scores: Score[]) => void,
+  ): () => void {
     // Load scores once and call callback
-    this.getScoresForGame(gameId).then(callback).catch(error => {
-      console.error('Error streaming scores:', error);
-      callback([]);
-    });
+    this.getScoresForGame(gameId)
+      .then(callback)
+      .catch((error) => {
+        console.error("Error streaming scores:", error);
+        callback([]);
+      });
 
     // Return unsubscribe function (no-op for localStorage)
     return () => {
@@ -515,7 +556,10 @@ class LocalStorageService {
     const players = await this.getAllPlayers(playerData.userId);
     players.push(player);
 
-    localStorage.setItem(StorageKeys.players(playerData.userId), JSON.stringify(players));
+    localStorage.setItem(
+      StorageKeys.players(playerData.userId),
+      JSON.stringify(players),
+    );
 
     return playerId;
   }
@@ -525,7 +569,7 @@ class LocalStorageService {
     createdBy?: string,
     userNumber?: string,
     userId?: string,
-    isGuest: boolean = false
+    isGuest: boolean = false,
   ): Promise<string> {
     const playerId = generateId();
     const player: Player = {
@@ -537,11 +581,14 @@ class LocalStorageService {
       userId,
     };
 
-    const effectiveUserId = userId || createdBy || 'default';
+    const effectiveUserId = userId || createdBy || "default";
     const players = await this.getAllPlayers(effectiveUserId);
     players.push(player);
 
-    localStorage.setItem(StorageKeys.players(effectiveUserId), JSON.stringify(players));
+    localStorage.setItem(
+      StorageKeys.players(effectiveUserId),
+      JSON.stringify(players),
+    );
 
     return playerId;
   }
@@ -549,7 +596,7 @@ class LocalStorageService {
   async getPlayer(playerId: string): Promise<Player | null> {
     // Search through all player lists
     const allKeys = getAllKeys();
-    const playerKeys = allKeys.filter((key) => key.startsWith('@players:'));
+    const playerKeys = allKeys.filter((key) => key.startsWith("@players:"));
 
     for (const key of playerKeys) {
       const stored = localStorage.getItem(key);
@@ -574,7 +621,7 @@ class LocalStorageService {
 
       // Get all players from all users
       const allKeys = getAllKeys();
-      const playerKeys = allKeys.filter((key) => key.startsWith('@players:'));
+      const playerKeys = allKeys.filter((key) => key.startsWith("@players:"));
       const allPlayers: Player[] = [];
 
       for (const key of playerKeys) {
@@ -587,15 +634,18 @@ class LocalStorageService {
 
       return allPlayers.sort((a, b) => a.name.localeCompare(b.name));
     } catch (error) {
-      console.error('Error getting players:', error);
+      console.error("Error getting players:", error);
       return [];
     }
   }
 
-  async updatePlayer(playerId: string, updates: Partial<PlayerData>): Promise<void> {
+  async updatePlayer(
+    playerId: string,
+    updates: Partial<PlayerData>,
+  ): Promise<void> {
     // Find the player and update it
     const allKeys = getAllKeys();
-    const playerKeys = allKeys.filter((key) => key.startsWith('@players:'));
+    const playerKeys = allKeys.filter((key) => key.startsWith("@players:"));
 
     for (const key of playerKeys) {
       const stored = localStorage.getItem(key);
@@ -614,12 +664,12 @@ class LocalStorageService {
       }
     }
 
-    throw new Error('Player not found');
+    throw new Error("Player not found");
   }
 
   async deletePlayer(playerId: string): Promise<void> {
     const allKeys = getAllKeys();
-    const playerKeys = allKeys.filter((key) => key.startsWith('@players:'));
+    const playerKeys = allKeys.filter((key) => key.startsWith("@players:"));
 
     for (const key of playerKeys) {
       const stored = localStorage.getItem(key);
@@ -640,8 +690,8 @@ class LocalStorageService {
     return allPlayers
       .filter((p) => !p.isGuest)
       .sort((a, b) => {
-        const numA = parseInt(a.userNumber || '999');
-        const numB = parseInt(b.userNumber || '999');
+        const numA = parseInt(a.userNumber || "999");
+        const numB = parseInt(b.userNumber || "999");
         return numA - numB;
       });
   }
@@ -653,7 +703,7 @@ class LocalStorageService {
     return allPlayers.filter(
       (player) =>
         player.name.toLowerCase().includes(lowerSearch) ||
-        player.userNumber?.includes(searchTerm)
+        player.userNumber?.includes(searchTerm),
     );
   }
 
@@ -662,7 +712,7 @@ class LocalStorageService {
   async createCourse(
     name: string,
     holes: CourseHole[],
-    userId?: string
+    userId?: string,
   ): Promise<string> {
     const courseId = generateId();
     const now = new Date();
@@ -676,7 +726,7 @@ class LocalStorageService {
       updatedAt: now,
     };
 
-    const effectiveUserId = userId || 'default';
+    const effectiveUserId = userId || "default";
     const courses = await this.getAllCourses(effectiveUserId);
     courses.push(course);
 
@@ -688,8 +738,8 @@ class LocalStorageService {
           ...c,
           createdAt: c.createdAt?.toISOString(),
           updatedAt: c.updatedAt?.toISOString(),
-        }))
-      )
+        })),
+      ),
     );
 
     return courseId;
@@ -698,7 +748,7 @@ class LocalStorageService {
   async getCourse(courseId: string): Promise<Course | null> {
     // Search through all course lists
     const allKeys = getAllKeys();
-    const courseKeys = allKeys.filter((key) => key.startsWith('@courses:'));
+    const courseKeys = allKeys.filter((key) => key.startsWith("@courses:"));
 
     for (const key of courseKeys) {
       const stored = localStorage.getItem(key);
@@ -718,9 +768,12 @@ class LocalStorageService {
     return null;
   }
 
-  async updateCourse(courseId: string, updates: Partial<CourseData>): Promise<void> {
+  async updateCourse(
+    courseId: string,
+    updates: Partial<CourseData>,
+  ): Promise<void> {
     const allKeys = getAllKeys();
-    const courseKeys = allKeys.filter((key) => key.startsWith('@courses:'));
+    const courseKeys = allKeys.filter((key) => key.startsWith("@courses:"));
 
     for (const key of courseKeys) {
       const stored = localStorage.getItem(key);
@@ -749,19 +802,19 @@ class LocalStorageService {
               ...c,
               createdAt: c.createdAt?.toISOString(),
               updatedAt: c.updatedAt?.toISOString(),
-            }))
-          )
+            })),
+          ),
         );
         return;
       }
     }
 
-    throw new Error('Course not found');
+    throw new Error("Course not found");
   }
 
   async deleteCourse(courseId: string): Promise<void> {
     const allKeys = getAllKeys();
-    const courseKeys = allKeys.filter((key) => key.startsWith('@courses:'));
+    const courseKeys = allKeys.filter((key) => key.startsWith("@courses:"));
 
     for (const key of courseKeys) {
       const stored = localStorage.getItem(key);
@@ -784,8 +837,8 @@ class LocalStorageService {
               ...c,
               createdAt: c.createdAt?.toISOString(),
               updatedAt: c.updatedAt?.toISOString(),
-            }))
-          )
+            })),
+          ),
         );
         return;
       }
@@ -810,7 +863,7 @@ class LocalStorageService {
 
       // Get all courses from all users
       const allKeys = getAllKeys();
-      const courseKeys = allKeys.filter((key) => key.startsWith('@courses:'));
+      const courseKeys = allKeys.filter((key) => key.startsWith("@courses:"));
       const allCourses: Course[] = [];
 
       for (const key of courseKeys) {
@@ -828,7 +881,7 @@ class LocalStorageService {
 
       return allCourses.sort((a, b) => a.name.localeCompare(b.name));
     } catch (error) {
-      console.error('Error getting courses:', error);
+      console.error("Error getting courses:", error);
       return [];
     }
   }
@@ -837,20 +890,24 @@ class LocalStorageService {
 
   async getNextUserNumber(): Promise<string> {
     try {
-      const stored = localStorage.getItem('@userCounter');
+      const stored = localStorage.getItem("@userCounter");
       const currentNumber = stored ? parseInt(stored) : 0;
       const nextNumber = currentNumber + 1;
 
-      localStorage.setItem('@userCounter', nextNumber.toString());
+      localStorage.setItem("@userCounter", nextNumber.toString());
 
-      return String(nextNumber).padStart(3, '0');
+      return String(nextNumber).padStart(3, "0");
     } catch (error) {
-      console.error('Error getting next user number:', error);
-      return '001';
+      console.error("Error getting next user number:", error);
+      return "001";
     }
   }
 
-  async createUserProfile(userId: string, email: string, displayName: string): Promise<string> {
+  async createUserProfile(
+    userId: string,
+    email: string,
+    displayName: string,
+  ): Promise<string> {
     const userNumber = await this.getNextUserNumber();
 
     const userData = {
@@ -868,7 +925,13 @@ class LocalStorageService {
     localStorage.setItem(`@user:${userId}`, JSON.stringify(userData));
 
     // Also create a player profile for this user
-    await this.createPlayerLegacy(displayName, userId, userNumber, userId, false);
+    await this.createPlayerLegacy(
+      displayName,
+      userId,
+      userNumber,
+      userId,
+      false,
+    );
 
     return userNumber;
   }
@@ -885,7 +948,7 @@ class LocalStorageService {
         createdAt: new Date(userData.createdAt),
       };
     } catch (error) {
-      console.error('Error getting user profile:', error);
+      console.error("Error getting user profile:", error);
       return null;
     }
   }
@@ -920,7 +983,10 @@ class LocalStorageService {
     }
   }
 
-  private async removeFromGamesIndex(userId: string, gameId: string): Promise<void> {
+  private async removeFromGamesIndex(
+    userId: string,
+    gameId: string,
+  ): Promise<void> {
     const indexKey = StorageKeys.gamesIndex(userId);
     const stored = localStorage.getItem(indexKey);
     if (!stored) return;
@@ -941,7 +1007,10 @@ class LocalStorageService {
       })
       .map((g) => g.id);
 
-    localStorage.setItem(StorageKeys.gamesIndex(userId), JSON.stringify(sortedGameIds));
+    localStorage.setItem(
+      StorageKeys.gamesIndex(userId),
+      JSON.stringify(sortedGameIds),
+    );
   }
 
   // GUEST USER MANAGEMENT
@@ -951,10 +1020,10 @@ class LocalStorageService {
       uid: deviceId,
       id: deviceId,
       email: null,
-      displayName: 'Guest',
-      userNumber: 'GUEST',
-      role: 'guest' as const,
-      approvalStatus: 'approved' as const,
+      displayName: "Guest",
+      userNumber: "GUEST",
+      role: "guest" as const,
+      approvalStatus: "approved" as const,
       isOffline: true,
       createdAt: new Date(),
       settings: {
@@ -964,10 +1033,13 @@ class LocalStorageService {
       },
     };
 
-    localStorage.setItem(`@user:${deviceId}`, JSON.stringify({
-      ...guestUser,
-      createdAt: guestUser.createdAt.toISOString(),
-    }));
+    localStorage.setItem(
+      `@user:${deviceId}`,
+      JSON.stringify({
+        ...guestUser,
+        createdAt: guestUser.createdAt.toISOString(),
+      }),
+    );
 
     return guestUser;
   }
@@ -987,10 +1059,10 @@ class LocalStorageService {
 
       // Fall back to checking user profile
       const profile = await this.getUserProfile(userId);
-      return profile?.role || 'user';
+      return profile?.role || "user";
     } catch (error) {
-      console.error('Error getting user role:', error);
-      return 'user';
+      console.error("Error getting user role:", error);
+      return "user";
     }
   }
 
@@ -1000,11 +1072,16 @@ class LocalStorageService {
     // Also update in user profile
     const profile = await this.getUserProfile(userId);
     if (profile) {
-      localStorage.setItem(`@user:${userId}`, JSON.stringify({
-        ...profile,
-        role,
-        createdAt: profile.createdAt?.toISOString ? profile.createdAt.toISOString() : profile.createdAt,
-      }));
+      localStorage.setItem(
+        `@user:${userId}`,
+        JSON.stringify({
+          ...profile,
+          role,
+          createdAt: profile.createdAt?.toISOString
+            ? profile.createdAt.toISOString()
+            : profile.createdAt,
+        }),
+      );
     }
   }
 
@@ -1015,15 +1092,15 @@ class LocalStorageService {
       const stored = localStorage.getItem(StorageKeys.userApprovalData(userId));
       if (stored) {
         const data = JSON.parse(stored);
-        return data.status || 'approved';
+        return data.status || "approved";
       }
 
       // Fall back to checking user profile
       const profile = await this.getUserProfile(userId);
-      return profile?.approvalStatus || 'approved';
+      return profile?.approvalStatus || "approved";
     } catch (error) {
-      console.error('Error getting approval status:', error);
-      return 'approved';
+      console.error("Error getting approval status:", error);
+      return "approved";
     }
   }
 
@@ -1032,16 +1109,24 @@ class LocalStorageService {
       status,
       updatedAt: new Date().toISOString(),
     };
-    localStorage.setItem(StorageKeys.userApprovalData(userId), JSON.stringify(approvalData));
+    localStorage.setItem(
+      StorageKeys.userApprovalData(userId),
+      JSON.stringify(approvalData),
+    );
 
     // Also update in user profile
     const profile = await this.getUserProfile(userId);
     if (profile) {
-      localStorage.setItem(`@user:${userId}`, JSON.stringify({
-        ...profile,
-        approvalStatus: status,
-        createdAt: profile.createdAt?.toISOString ? profile.createdAt.toISOString() : profile.createdAt,
-      }));
+      localStorage.setItem(
+        `@user:${userId}`,
+        JSON.stringify({
+          ...profile,
+          approvalStatus: status,
+          createdAt: profile.createdAt?.toISOString
+            ? profile.createdAt.toISOString()
+            : profile.createdAt,
+        }),
+      );
     }
   }
 
@@ -1060,7 +1145,10 @@ class LocalStorageService {
     };
 
     pendingUsers.push(pendingUser);
-    localStorage.setItem(StorageKeys.pendingUsers(), JSON.stringify(pendingUsers));
+    localStorage.setItem(
+      StorageKeys.pendingUsers(),
+      JSON.stringify(pendingUsers),
+    );
   }
 
   async getPendingUsers(): Promise<any[]> {
@@ -1074,29 +1162,34 @@ class LocalStorageService {
         createdAt: new Date(u.createdAt),
       }));
     } catch (error) {
-      console.error('Error getting pending users:', error);
+      console.error("Error getting pending users:", error);
       return [];
     }
   }
 
   async removePendingUser(userId: string): Promise<void> {
     const pendingUsers = await this.getPendingUsers();
-    const filtered = pendingUsers.filter(u => u.id !== userId);
-    localStorage.setItem(StorageKeys.pendingUsers(), JSON.stringify(
-      filtered.map(u => ({
-        ...u,
-        createdAt: u.createdAt?.toISOString ? u.createdAt.toISOString() : u.createdAt,
-      }))
-    ));
+    const filtered = pendingUsers.filter((u) => u.id !== userId);
+    localStorage.setItem(
+      StorageKeys.pendingUsers(),
+      JSON.stringify(
+        filtered.map((u) => ({
+          ...u,
+          createdAt: u.createdAt?.toISOString
+            ? u.createdAt.toISOString()
+            : u.createdAt,
+        })),
+      ),
+    );
   }
 
   async approvePendingUser(userId: string): Promise<void> {
-    await this.setApprovalStatus(userId, 'approved');
+    await this.setApprovalStatus(userId, "approved");
     await this.removePendingUser(userId);
   }
 
   async rejectPendingUser(userId: string): Promise<void> {
-    await this.setApprovalStatus(userId, 'rejected');
+    await this.setApprovalStatus(userId, "rejected");
     await this.removePendingUser(userId);
   }
 
@@ -1105,7 +1198,12 @@ class LocalStorageService {
   async migrateExistingUsers(): Promise<void> {
     try {
       const allKeys = getAllKeys();
-      const userKeys = allKeys.filter(key => key.startsWith('@user:') && !key.includes(':approval:') && !key.includes(':role:'));
+      const userKeys = allKeys.filter(
+        (key) =>
+          key.startsWith("@user:") &&
+          !key.includes(":approval:") &&
+          !key.includes(":role:"),
+      );
 
       for (const key of userKeys) {
         const stored = localStorage.getItem(key);
@@ -1119,29 +1217,35 @@ class LocalStorageService {
         // Add new fields
         const migrated = {
           ...userData,
-          role: 'user', // Default to regular user
-          approvalStatus: 'approved', // Existing users are auto-approved
-          isOffline: userData.isOffline !== undefined ? userData.isOffline : false,
+          role: "user", // Default to regular user
+          approvalStatus: "approved", // Existing users are auto-approved
+          isOffline:
+            userData.isOffline !== undefined ? userData.isOffline : false,
         };
 
         localStorage.setItem(key, JSON.stringify(migrated));
 
         // Set role in separate storage too
-        const userId = key.replace('@user:', '');
-        await this.setUserRole(userId, 'user');
-        await this.setApprovalStatus(userId, 'approved');
+        const userId = key.replace("@user:", "");
+        await this.setUserRole(userId, "user");
+        await this.setApprovalStatus(userId, "approved");
       }
 
-      console.log('User migration completed');
+      console.log("User migration completed");
     } catch (error) {
-      console.error('Error migrating users:', error);
+      console.error("Error migrating users:", error);
     }
   }
 
   async initializeSuperAdmin(): Promise<void> {
     try {
       const allKeys = getAllKeys();
-      const userKeys = allKeys.filter(key => key.startsWith('@user:') && !key.includes(':approval:') && !key.includes(':role:'));
+      const userKeys = allKeys.filter(
+        (key) =>
+          key.startsWith("@user:") &&
+          !key.includes(":approval:") &&
+          !key.includes(":role:"),
+      );
 
       for (const key of userKeys) {
         const stored = localStorage.getItem(key);
@@ -1150,37 +1254,41 @@ class LocalStorageService {
         const userData = JSON.parse(stored);
 
         // Check if this is KP by email or if already user 001
-        if (userData.email === 'kp.tey@outlook.com' || userData.userNumber === '001') {
-          const userId = key.replace('@user:', '');
-          await this.setUserRole(userId, 'super_admin');
+        if (
+          userData.email === "kp.tey@outlook.com" ||
+          userData.userNumber === "001"
+        ) {
+          const userId = key.replace("@user:", "");
+          await this.setUserRole(userId, "super_admin");
 
           // Update user profile with super_admin role and user number 001
           const updated = {
             ...userData,
-            userNumber: '001',
-            role: 'super_admin',
-            approvalStatus: 'approved',
+            userNumber: "001",
+            role: "super_admin",
+            approvalStatus: "approved",
           };
           localStorage.setItem(key, JSON.stringify(updated));
 
-          console.log('Super admin initialized:', userData.email);
+          console.log("Super admin initialized:", userData.email);
           break;
         }
       }
     } catch (error) {
-      console.error('Error initializing super admin:', error);
+      console.error("Error initializing super admin:", error);
     }
   }
 
   async clearAllUsers(): Promise<{ success: boolean; message: string }> {
     try {
-      console.log('Clearing all users...');
+      console.log("Clearing all users...");
 
       const allKeys = getAllKeys();
-      const userKeys = allKeys.filter(key =>
-        key.startsWith('@user:') ||
-        key.startsWith('@userCounter') ||
-        key.startsWith('@auth:pendingUsers')
+      const userKeys = allKeys.filter(
+        (key) =>
+          key.startsWith("@user:") ||
+          key.startsWith("@userCounter") ||
+          key.startsWith("@auth:pendingUsers"),
       );
 
       console.log(`Found ${userKeys.length} user-related keys to delete`);
@@ -1189,19 +1297,20 @@ class LocalStorageService {
       multiRemove(userKeys);
 
       // Reset user counter to 0
-      localStorage.setItem('@userCounter', '0');
+      localStorage.setItem("@userCounter", "0");
 
-      console.log('All users cleared. Next signup will be User #001');
+      console.log("All users cleared. Next signup will be User #001");
 
       return {
         success: true,
-        message: 'All users cleared successfully. Next signup will be User #001 (super admin)',
+        message:
+          "All users cleared successfully. Next signup will be User #001 (super admin)",
       };
     } catch (error) {
-      console.error('Error clearing users:', error);
+      console.error("Error clearing users:", error);
       return {
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -1212,9 +1321,10 @@ class LocalStorageService {
     try {
       const allKeys = getAllKeys();
       const userKeys = allKeys.filter(
-        key => key.startsWith('@user:') &&
-        !key.includes(':approval:') &&
-        !key.includes(':role:')
+        (key) =>
+          key.startsWith("@user:") &&
+          !key.includes(":approval:") &&
+          !key.includes(":role:"),
       );
 
       const users = [];
@@ -1223,19 +1333,21 @@ class LocalStorageService {
         if (!stored) continue;
 
         const userData = JSON.parse(stored);
-        const userId = key.replace('@user:', '');
+        const userId = key.replace("@user:", "");
 
         // Skip guest users
-        if (userData.role === 'guest' || userData.isOffline) continue;
+        if (userData.role === "guest" || userData.isOffline) continue;
 
         users.push({
           id: userId,
           email: userData.email,
           displayName: userData.displayName,
           userNumber: userData.userNumber,
-          role: userData.role || 'user',
-          approvalStatus: userData.approvalStatus || 'approved',
-          createdAt: userData.createdAt ? new Date(userData.createdAt) : new Date(),
+          role: userData.role || "user",
+          approvalStatus: userData.approvalStatus || "approved",
+          createdAt: userData.createdAt
+            ? new Date(userData.createdAt)
+            : new Date(),
         });
       }
 
@@ -1246,7 +1358,7 @@ class LocalStorageService {
         return numA - numB;
       });
     } catch (error) {
-      console.error('Error getting all users:', error);
+      console.error("Error getting all users:", error);
       return [];
     }
   }
@@ -1254,7 +1366,7 @@ class LocalStorageService {
   async getUserStats(userId: string): Promise<any> {
     try {
       const games = await this.getGamesForUser(userId);
-      const completedGames = games.filter(g => g.status === 'completed');
+      const completedGames = games.filter((g) => g.status === "completed");
 
       let totalPoints = 0;
       let wins = 0;
@@ -1268,15 +1380,15 @@ class LocalStorageService {
 
         // Calculate total points for this user
         const scoresByHoleId: Record<string, any[]> = {};
-        scores.forEach(score => {
+        scores.forEach((score) => {
           if (!scoresByHoleId[score.holeId]) scoresByHoleId[score.holeId] = [];
           scoresByHoleId[score.holeId].push(score);
         });
 
         let gamePoints = 0;
-        holes.forEach(hole => {
+        holes.forEach((hole) => {
           const holeScores = scoresByHoleId[hole.id] || [];
-          const userScore = holeScores.find(s => s.playerId === userId);
+          const userScore = holeScores.find((s) => s.playerId === userId);
           if (userScore) {
             // Simple points calculation (you can enhance this based on your scoring logic)
             gamePoints += userScore.points || 0;
@@ -1295,16 +1407,19 @@ class LocalStorageService {
         totalPoints,
         wins,
         losses,
-        winRate: completedGames.length > 0 ? ((wins / completedGames.length) * 100).toFixed(1) : '0.0',
+        winRate:
+          completedGames.length > 0
+            ? ((wins / completedGames.length) * 100).toFixed(1)
+            : "0.0",
       };
     } catch (error) {
-      console.error('Error getting user stats:', error);
+      console.error("Error getting user stats:", error);
       return {
         gamesPlayed: 0,
         totalPoints: 0,
         wins: 0,
         losses: 0,
-        winRate: '0.0',
+        winRate: "0.0",
       };
     }
   }
@@ -1340,7 +1455,7 @@ class LocalStorageService {
 
       console.log(`Deleted user ${userId} and all associated data`);
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error);
       throw error;
     }
   }

@@ -1,6 +1,6 @@
-import { StateCreator } from 'zustand';
-import { Game, Hole, Score, Player } from '../../types';
-import { ScoreCalculator } from '../../utils/scoreCalculator';
+import { StateCreator } from "zustand";
+import { Game, Hole, Score, Player } from "../../types";
+import { ScoreCalculator } from "../../utils/scoreCalculator";
 
 export interface GameSlice {
   // Current game state
@@ -69,31 +69,43 @@ export const createGameSlice: StateCreator<GameSlice> = (set, get) => ({
     })),
   setGames: (games) =>
     set({
-      games: games.reduce((acc, game) => {
-        acc[game.id] = game;
-        return acc;
-      }, {} as Record<string, Game>),
+      games: games.reduce(
+        (acc, game) => {
+          acc[game.id] = game;
+          return acc;
+        },
+        {} as Record<string, Game>,
+      ),
     }),
   setHoles: (holes) =>
     set({
-      holes: holes.reduce((acc, hole) => {
-        acc[hole.id] = hole;
-        return acc;
-      }, {} as Record<string, Hole>),
+      holes: holes.reduce(
+        (acc, hole) => {
+          acc[hole.id] = hole;
+          return acc;
+        },
+        {} as Record<string, Hole>,
+      ),
     }),
   setScores: (scores) =>
     set({
-      scores: scores.reduce((acc, score) => {
-        acc[score.id] = score;
-        return acc;
-      }, {} as Record<string, Score>),
+      scores: scores.reduce(
+        (acc, score) => {
+          acc[score.id] = score;
+          return acc;
+        },
+        {} as Record<string, Score>,
+      ),
     }),
   setPlayers: (players) =>
     set({
-      players: players.reduce((acc, player) => {
-        acc[player.id] = player;
-        return acc;
-      }, {} as Record<string, Player>),
+      players: players.reduce(
+        (acc, player) => {
+          acc[player.id] = player;
+          return acc;
+        },
+        {} as Record<string, Player>,
+      ),
     }),
   clearGame: () =>
     set({
@@ -116,7 +128,9 @@ export const createGameSlice: StateCreator<GameSlice> = (set, get) => ({
     if (!state.currentGameId) return [];
     const holes = state.getCurrentGameHoles();
     const holeIds = new Set(holes.map((h) => h.id));
-    return Object.values(state.scores).filter((score) => holeIds.has(score.holeId));
+    return Object.values(state.scores).filter((score) =>
+      holeIds.has(score.holeId),
+    );
   },
 
   getCurrentGamePlayers: () => {
@@ -149,7 +163,12 @@ export const createGameSlice: StateCreator<GameSlice> = (set, get) => ({
     const players = state.getCurrentGamePlayers();
     const gameHandicaps = state.currentGame?.handicaps;
 
-    return ScoreCalculator.calculateTotalPoints(holes, scoresByHoleId, players, gameHandicaps);
+    return ScoreCalculator.calculateTotalPoints(
+      holes,
+      scoresByHoleId,
+      players,
+      gameHandicaps,
+    );
   },
 
   getRunningTotals: () => {
@@ -159,6 +178,11 @@ export const createGameSlice: StateCreator<GameSlice> = (set, get) => ({
     const players = state.getCurrentGamePlayers();
     const gameHandicaps = state.currentGame?.handicaps;
 
-    return ScoreCalculator.calculateRunningTotals(holes, scoresByHoleId, players, gameHandicaps);
+    return ScoreCalculator.calculateRunningTotals(
+      holes,
+      scoresByHoleId,
+      players,
+      gameHandicaps,
+    );
   },
 });

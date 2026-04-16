@@ -1,1 +1,1 @@
-export { connectivityManager } from './ConnectivityManager';
+export { connectivityManager } from "./ConnectivityManager";

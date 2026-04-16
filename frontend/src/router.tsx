@@ -36,7 +36,10 @@ function ProtectedRoutes() {
         <Route path="/game/setup" element={<GameSetupPage />} />
         <Route path="/game/handicap/:gameId" element={<HandicapSetupPage />} />
         <Route path="/game/scoring/:gameId" element={<ScoringPage />} />
-        <Route path="/game/standings/:gameId" element={<OverallStandingsPage />} />
+        <Route
+          path="/game/standings/:gameId"
+          element={<OverallStandingsPage />}
+        />
         <Route path="/game/summary/:gameId" element={<GameSummaryPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

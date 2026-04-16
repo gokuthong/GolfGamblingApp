@@ -1,5 +1,13 @@
-import { Hole, Score, Player, HoleResult, PlayerHoleResult, MultiplierInfo, MatchupResult } from '../types';
-import { getHandicapForHole } from './handicapUtils';
+import {
+  Hole,
+  Score,
+  Player,
+  HoleResult,
+  PlayerHoleResult,
+  MultiplierInfo,
+  MatchupResult,
+} from "../types";
+import { getHandicapForHole } from "./handicapUtils";
 
 export class ScoreCalculator {
   /**
@@ -22,10 +30,15 @@ export class ScoreCalculator {
     score: Score,
     holeNumber: number,
     opponentId: string,
-    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } }
+    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } },
   ): number {
     // Get handicap strokes this player receives from opponent on this specific hole
-    const handicapStrokes = getHandicapForHole(gameHandicaps, holeNumber, opponentId, score.playerId);
+    const handicapStrokes = getHandicapForHole(
+      gameHandicaps,
+      holeNumber,
+      opponentId,
+      score.playerId,
+    );
     return score.strokes - handicapStrokes;
   }
 
@@ -37,11 +50,11 @@ export class ScoreCalculator {
     hole: Hole,
     scoresForHole: Score[],
     allPlayers: Player[],
-    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } }
+    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } },
   ): Record<string, number> {
     // Initialize points map for all players
     const playerPoints: Record<string, number> = {};
-    allPlayers.forEach(player => {
+    allPlayers.forEach((player) => {
       playerPoints[player.id] = 0;
     });
 
@@ -51,11 +64,11 @@ export class ScoreCalculator {
 
     // Build complete scores list - use existing scores or create virtual scores at par
     const existingScoresByPlayer = new Map<string, Score>();
-    scoresForHole.forEach(score => {
+    scoresForHole.forEach((score) => {
       existingScoresByPlayer.set(score.playerId, score);
     });
 
-    const completeScores: Score[] = allPlayers.map(player => {
+    const completeScores: Score[] = allPlayers.map((player) => {
       const existingScore = existingScoresByPlayer.get(player.id);
       if (existingScore) {
         return existingScore;
@@ -81,24 +94,38 @@ export class ScoreCalculator {
         const score2 = completeScores[j];
 
         // Calculate net scores using per-hole player-vs-player handicaps
-        const netScore1 = this.calculateNetScoreForMatchup(score1, hole.holeNumber, score2.playerId, gameHandicaps);
-        const netScore2 = this.calculateNetScoreForMatchup(score2, hole.holeNumber, score1.playerId, gameHandicaps);
+        const netScore1 = this.calculateNetScoreForMatchup(
+          score1,
+          hole.holeNumber,
+          score2.playerId,
+          gameHandicaps,
+        );
+        const netScore2 = this.calculateNetScoreForMatchup(
+          score2,
+          hole.holeNumber,
+          score1.playerId,
+          gameHandicaps,
+        );
 
         // Calculate each player's personal multiplier
         // Use new multiplier field if available, otherwise fall back to isUp/isBurn
-        const player1Mult = score1.multiplier && score1.multiplier > 1
-          ? score1.multiplier
-          : (score1.isUp ? 2.0 : 1.0) * (score1.isBurn ? 3.0 : 1.0);
-        const player2Mult = score2.multiplier && score2.multiplier > 1
-          ? score2.multiplier
-          : (score2.isUp ? 2.0 : 1.0) * (score2.isBurn ? 3.0 : 1.0);
+        const player1Mult =
+          score1.multiplier && score1.multiplier > 1
+            ? score1.multiplier
+            : (score1.isUp ? 2.0 : 1.0) * (score1.isBurn ? 3.0 : 1.0);
+        const player2Mult =
+          score2.multiplier && score2.multiplier > 1
+            ? score2.multiplier
+            : (score2.isUp ? 2.0 : 1.0) * (score2.isBurn ? 3.0 : 1.0);
 
         // Calculate birdie/eagle/albatross/hole-in-one multiplier for THIS MATCHUP ONLY
         // Only applies if one of the TWO players in this specific matchup achieved the special score
-        const matchupBirdieEagleMultiplier = this.calculateBirdieEagleMultiplier(hole, [score1, score2]);
+        const matchupBirdieEagleMultiplier =
+          this.calculateBirdieEagleMultiplier(hole, [score1, score2]);
 
         // STACK all multipliers: player1 × player2 × birdie/eagle (for this matchup only)
-        const matchupValue = player1Mult * player2Mult * matchupBirdieEagleMultiplier;
+        const matchupValue =
+          player1Mult * player2Mult * matchupBirdieEagleMultiplier;
 
         // Determine winner and award points
         if (netScore1 < netScore2) {
@@ -126,7 +153,7 @@ export class ScoreCalculator {
 
     // Check for Hole-in-one (1 stroke on any hole) - highest priority
     // IMPORTANT: Only count valid scores (strokes > 0)
-    const hasHoleInOne = scores.some(score => score.strokes === 1);
+    const hasHoleInOne = scores.some((score) => score.strokes === 1);
     if (hasHoleInOne) {
       multiplier *= 12.0;
       return multiplier;
@@ -134,7 +161,8 @@ export class ScoreCalculator {
 
     // Check for Albatross (2 strokes on par 5) - second priority
     // IMPORTANT: Only count valid scores (strokes > 0)
-    const hasAlbatross = hole.par === 5 && scores.some(score => score.strokes === 2);
+    const hasAlbatross =
+      hole.par === 5 && scores.some((score) => score.strokes === 2);
     if (hasAlbatross) {
       multiplier *= 6.0;
       return multiplier;
@@ -142,13 +170,17 @@ export class ScoreCalculator {
 
     // Check for Eagle (2 or more strokes under par) - third priority
     // IMPORTANT: Only count valid scores (strokes > 0)
-    const hasEagle = scores.some(score => score.strokes > 0 && score.strokes <= hole.par - 2);
+    const hasEagle = scores.some(
+      (score) => score.strokes > 0 && score.strokes <= hole.par - 2,
+    );
     if (hasEagle) {
       multiplier *= 3.0;
     } else {
       // Check for Birdie (exactly 1 stroke under par)
       // IMPORTANT: Only count valid scores (strokes > 0)
-      const hasBirdie = scores.some(score => score.strokes > 0 && score.strokes === hole.par - 1);
+      const hasBirdie = scores.some(
+        (score) => score.strokes > 0 && score.strokes === hole.par - 1,
+      );
       if (hasBirdie) {
         multiplier *= 2.0;
       }
@@ -176,14 +208,18 @@ export class ScoreCalculator {
 
     // Check for Birdie (exactly 1 stroke under par)
     // IMPORTANT: Only count valid scores (strokes > 0)
-    const hasBirdie = scores.some(score => score.strokes > 0 && score.strokes === hole.par - 1);
+    const hasBirdie = scores.some(
+      (score) => score.strokes > 0 && score.strokes === hole.par - 1,
+    );
     if (hasBirdie) {
       multiplier *= 2.0;
     }
 
     // Check for Eagle (2 or more strokes under par)
     // IMPORTANT: Only count valid scores (strokes > 0)
-    const hasEagle = scores.some(score => score.strokes > 0 && score.strokes <= hole.par - 2);
+    const hasEagle = scores.some(
+      (score) => score.strokes > 0 && score.strokes <= hole.par - 2,
+    );
     if (hasEagle) {
       multiplier *= 3.0;
     }
@@ -199,7 +235,11 @@ export class ScoreCalculator {
     const isHoleInOne = score.strokes === 1;
     const isAlbatross = hole.par === 5 && score.strokes === 2;
     const isBirdie = score.strokes > 0 && score.strokes === hole.par - 1;
-    const isEagle = score.strokes > 0 && score.strokes <= hole.par - 2 && !isAlbatross && !isHoleInOne;
+    const isEagle =
+      score.strokes > 0 &&
+      score.strokes <= hole.par - 2 &&
+      !isAlbatross &&
+      !isHoleInOne;
 
     // Use new multiplier field if available, otherwise fall back to isUp/isBurn
     let playerMultiplier = 1.0;
@@ -240,14 +280,14 @@ export class ScoreCalculator {
     holes: Hole[],
     scoresByHoleId: Record<string, Score[]>,
     allPlayers: Player[],
-    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } }
+    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } },
   ): Record<string, number> {
     const totalPoints: Record<string, number> = {};
-    allPlayers.forEach(player => {
+    allPlayers.forEach((player) => {
       totalPoints[player.id] = 0;
     });
 
-    holes.forEach(hole => {
+    holes.forEach((hole) => {
       // Only include confirmed holes in cumulative totals
       // Use === false to preserve backward compatibility (undefined = confirmed for legacy data)
       if (hole.confirmed === false) {
@@ -255,7 +295,12 @@ export class ScoreCalculator {
       }
 
       const scoresForHole = scoresByHoleId[hole.id] || [];
-      const holePoints = this.calculateHolePoints(hole, scoresForHole, allPlayers, gameHandicaps);
+      const holePoints = this.calculateHolePoints(
+        hole,
+        scoresForHole,
+        allPlayers,
+        gameHandicaps,
+      );
 
       // Add hole points to total points
       Object.entries(holePoints).forEach(([playerId, points]) => {
@@ -273,28 +318,43 @@ export class ScoreCalculator {
     holes: Hole[],
     scoresByHoleId: Record<string, Score[]>,
     allPlayers: Player[],
-    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } }
+    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } },
   ): HoleResult[] {
     const results: HoleResult[] = [];
 
-    holes.forEach(hole => {
+    holes.forEach((hole) => {
       const scoresForHole = scoresByHoleId[hole.id] || [];
-      const holePoints = this.calculateHolePoints(hole, scoresForHole, allPlayers, gameHandicaps);
+      const holePoints = this.calculateHolePoints(
+        hole,
+        scoresForHole,
+        allPlayers,
+        gameHandicaps,
+      );
       const multiplier = this.calculateHoleMultiplier(hole, scoresForHole);
 
-      const playerResults: PlayerHoleResult[] = scoresForHole.map(score => {
-        const player = allPlayers.find(p => p.id === score.playerId);
+      const playerResults: PlayerHoleResult[] = scoresForHole.map((score) => {
+        const player = allPlayers.find((p) => p.id === score.playerId);
         // Sum up all handicap strokes this player receives from all opponents on this hole
         const strokesReceived = allPlayers
-          .filter(p => p.id !== score.playerId)
-          .reduce((sum, p) => sum + getHandicapForHole(gameHandicaps, hole.holeNumber, p.id, score.playerId), 0);
+          .filter((p) => p.id !== score.playerId)
+          .reduce(
+            (sum, p) =>
+              sum +
+              getHandicapForHole(
+                gameHandicaps,
+                hole.holeNumber,
+                p.id,
+                score.playerId,
+              ),
+            0,
+          );
         const netScore = score.strokes - strokesReceived;
         const points = holePoints[score.playerId] || 0;
         const multipliers = this.getMultiplierInfo(hole, score);
 
         return {
           playerId: score.playerId,
-          playerName: player?.name || 'Unknown',
+          playerName: player?.name || "Unknown",
           strokes: score.strokes,
           handicap: strokesReceived,
           netScore,
@@ -322,9 +382,14 @@ export class ScoreCalculator {
     holesUpTo: Hole[],
     scoresByHoleId: Record<string, Score[]>,
     allPlayers: Player[],
-    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } }
+    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } },
   ): Record<string, number> {
-    return this.calculateTotalPoints(holesUpTo, scoresByHoleId, allPlayers, gameHandicaps);
+    return this.calculateTotalPoints(
+      holesUpTo,
+      scoresByHoleId,
+      allPlayers,
+      gameHandicaps,
+    );
   }
 
   /**
@@ -334,13 +399,18 @@ export class ScoreCalculator {
     holes: Hole[],
     scoresByHoleId: Record<string, Score[]>,
     allPlayers: Player[],
-    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } }
+    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } },
   ): Record<string, number>[] {
     const runningTotals: Record<string, number>[] = [];
 
     holes.forEach((_, index) => {
       const holesUpTo = holes.slice(0, index + 1);
-      const totals = this.calculateRunningTotal(holesUpTo, scoresByHoleId, allPlayers, gameHandicaps);
+      const totals = this.calculateRunningTotal(
+        holesUpTo,
+        scoresByHoleId,
+        allPlayers,
+        gameHandicaps,
+      );
       runningTotals.push(totals);
     });
 
@@ -353,7 +423,7 @@ export class ScoreCalculator {
   static getHoleMatchups(
     hole: Hole,
     scoresForHole: Score[],
-    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } }
+    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } },
   ): MatchupResult[] {
     const matchups: MatchupResult[] = [];
 
@@ -362,8 +432,18 @@ export class ScoreCalculator {
         const score1 = scoresForHole[i];
         const score2 = scoresForHole[j];
 
-        const net1 = this.calculateNetScoreForMatchup(score1, hole.holeNumber, score2.playerId, gameHandicaps);
-        const net2 = this.calculateNetScoreForMatchup(score2, hole.holeNumber, score1.playerId, gameHandicaps);
+        const net1 = this.calculateNetScoreForMatchup(
+          score1,
+          hole.holeNumber,
+          score2.playerId,
+          gameHandicaps,
+        );
+        const net2 = this.calculateNetScoreForMatchup(
+          score2,
+          hole.holeNumber,
+          score1.playerId,
+          gameHandicaps,
+        );
 
         let winnerId: string | undefined;
         if (net1 < net2) {

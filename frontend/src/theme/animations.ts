@@ -14,11 +14,11 @@ export const animations = {
     snappy: { damping: 18, stiffness: 150, mass: 0.8 },
   },
   easing: {
-    default: 'ease-in-out',
-    linear: 'linear',
-    enter: 'ease-out',
-    exit: 'ease-in',
-    emphasize: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    default: "ease-in-out",
+    linear: "linear",
+    enter: "ease-out",
+    exit: "ease-in",
+    emphasize: "cubic-bezier(0.4, 0, 0.2, 1)",
   },
   scale: {
     pressIn: 0.95,

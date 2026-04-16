@@ -1,5 +1,5 @@
-export type UserRole = 'guest' | 'user' | 'super_admin';
-export type ApprovalStatus = 'approved' | 'pending' | 'rejected';
+export type UserRole = "guest" | "user" | "super_admin";
+export type ApprovalStatus = "approved" | "pending" | "rejected";
 
 export interface User {
   id: string;
@@ -14,7 +14,7 @@ export interface User {
   isOffline: boolean;
 }
 
-export interface UserData extends Omit<User, 'id' | 'createdAt'> {
+export interface UserData extends Omit<User, "id" | "createdAt"> {
   createdAt: any;
 }
 

@@ -13,7 +13,10 @@ export interface CourseHole {
   index?: number;
 }
 
-export interface CourseData extends Omit<Course, 'id' | 'createdAt' | 'updatedAt'> {
+export interface CourseData extends Omit<
+  Course,
+  "id" | "createdAt" | "updatedAt"
+> {
   createdAt?: any;
   updatedAt?: any;
 }

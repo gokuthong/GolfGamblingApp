@@ -148,10 +148,7 @@ export default function App() {
           bgcolor: darkColors.background.primary,
         }}
       >
-        <CircularProgress
-          sx={{ color: darkColors.accent.gold }}
-          size={40}
-        />
+        <CircularProgress sx={{ color: darkColors.accent.gold }} size={40} />
         <Typography
           sx={{
             mt: 2,

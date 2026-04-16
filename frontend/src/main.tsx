@@ -5,7 +5,9 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import App from "./App";
 
 // Skip service worker registration on Capacitor native (like PhotoAlbumApp)
-const isNative = typeof window !== "undefined" && (window as any).Capacitor?.isNativePlatform?.();
+const isNative =
+  typeof window !== "undefined" &&
+  (window as any).Capacitor?.isNativePlatform?.();
 
 if ("serviceWorker" in navigator && !isNative) {
   window.addEventListener("load", () => {

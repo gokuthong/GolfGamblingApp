@@ -1,2 +1,2 @@
-export { localStorageService } from './LocalStorageService';
-export * from './storageUtils';
+export { localStorageService } from "./LocalStorageService";
+export * from "./storageUtils";

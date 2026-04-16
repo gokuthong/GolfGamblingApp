@@ -10,7 +10,7 @@ export interface Score {
   multiplier?: number;
 }
 
-export interface ScoreData extends Omit<Score, 'id'> {}
+export interface ScoreData extends Omit<Score, "id"> {}
 
 export interface ScoreWithDetails extends Score {
   playerName?: string;

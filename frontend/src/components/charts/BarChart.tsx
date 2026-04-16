@@ -1,9 +1,15 @@
-import React from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { motion } from 'framer-motion';
-import { useThemedColors } from '../../contexts/ThemeContext';
-import { typography, fontFamilies, spacing, borderRadius, animations } from '../../theme';
+import React from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { motion } from "framer-motion";
+import { useThemedColors } from "../../contexts/ThemeContext";
+import {
+  typography,
+  fontFamilies,
+  spacing,
+  borderRadius,
+  animations,
+} from "../../theme";
 
 export interface BarChartData {
   label: string;
@@ -50,8 +56,9 @@ export const BarChart: React.FC<BarChartProps> = ({
   };
 
   const getGradientColors = (item: BarChartData): [string, string] => {
-    if (item.value < 0) return [colors.scoring.negative, '#D32F2F'];
-    if (item.value > 0) return [colors.gradients.victory[0], colors.gradients.victory[1]];
+    if (item.value < 0) return [colors.scoring.negative, "#D32F2F"];
+    if (item.value > 0)
+      return [colors.gradients.victory[0], colors.gradients.victory[1]];
     return [colors.scoring.neutral, colors.text.secondary];
   };
 
@@ -61,25 +68,25 @@ export const BarChart: React.FC<BarChartProps> = ({
         px: `${spacing.md}px`,
         py: `${spacing.sm}px`,
         height: height + 40,
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       {/* Chart Area */}
       <Box
         sx={{
           flex: 1,
-          display: 'flex',
-          justifyContent: 'flex-end',
-          flexDirection: 'column',
+          display: "flex",
+          justifyContent: "flex-end",
+          flexDirection: "column",
         }}
       >
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'flex-end',
-            justifyContent: 'space-between',
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
             gap: `${spacing.sm}px`,
           }}
         >
@@ -94,9 +101,9 @@ export const BarChart: React.FC<BarChartProps> = ({
                 key={index}
                 sx={{
                   flex: 1,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
                 }}
               >
                 {/* Value label above bar */}
@@ -113,7 +120,7 @@ export const BarChart: React.FC<BarChartProps> = ({
                         : colors.scoring.positive,
                     }}
                   >
-                    {item.value > 0 ? '+' : ''}
+                    {item.value > 0 ? "+" : ""}
                     {item.value.toFixed(1)}
                   </Typography>
                 )}
@@ -126,15 +133,15 @@ export const BarChart: React.FC<BarChartProps> = ({
                     animated
                       ? {
                           delay: index * 0.05,
-                          type: 'spring',
+                          type: "spring",
                           ...animations.spring.bouncy,
                         }
                       : { duration: 0 }
                   }
                   style={{
-                    width: '100%',
+                    width: "100%",
                     borderRadius: borderRadius.xs,
-                    overflow: 'hidden',
+                    overflow: "hidden",
                     minHeight: 2,
                     background: gradient
                       ? `linear-gradient(to bottom, ${gradStart}, ${gradEnd})`
@@ -150,9 +157,9 @@ export const BarChart: React.FC<BarChartProps> = ({
       {/* X-axis labels */}
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
           mt: `${spacing.sm}px`,
           gap: `${spacing.sm}px`,
         }}
@@ -162,9 +169,9 @@ export const BarChart: React.FC<BarChartProps> = ({
             key={index}
             sx={{
               flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <Typography

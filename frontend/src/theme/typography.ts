@@ -92,7 +92,7 @@ export const typography = {
     fontFamily: fontFamilies.bodyMedium,
     fontWeight: 500,
     letterSpacing: 1.2,
-    textTransform: 'uppercase' as const,
+    textTransform: "uppercase" as const,
   },
   labelLarge: {
     fontSize: 13,
@@ -133,7 +133,7 @@ export const typography = {
     fontFamily: fontFamilies.bodySemiBold,
     fontWeight: 600,
     letterSpacing: 1.4,
-    textTransform: 'uppercase' as const,
+    textTransform: "uppercase" as const,
   },
   tableNumber: {
     fontSize: 14,

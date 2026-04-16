@@ -8,7 +8,10 @@
  * @param toPlayerId Player receiving strokes
  * @returns A key in format "fromPlayerId_toPlayerId" (NOT alphabetically sorted - directional!)
  */
-export function createHandicapKey(fromPlayerId: string, toPlayerId: string): string {
+export function createHandicapKey(
+  fromPlayerId: string,
+  toPlayerId: string,
+): string {
   return `${fromPlayerId}_${toPlayerId}`;
 }
 
@@ -21,10 +24,12 @@ export function createHandicapKey(fromPlayerId: string, toPlayerId: string): str
  * @returns The number of strokes toPlayerId receives from fromPlayerId on this hole
  */
 export function getHandicapForHole(
-  handicaps: { [pairKey: string]: { [holeNumber: string]: number } } | undefined,
+  handicaps:
+    | { [pairKey: string]: { [holeNumber: string]: number } }
+    | undefined,
   holeNumber: number,
   fromPlayerId: string,
-  toPlayerId: string
+  toPlayerId: string,
 ): number {
   if (!handicaps) return 0;
 
@@ -50,7 +55,7 @@ export function setHandicapForHole(
   holeNumber: number,
   fromPlayerId: string,
   toPlayerId: string,
-  strokes: number
+  strokes: number,
 ): { [pairKey: string]: { [holeNumber: string]: number } } {
   const key = createHandicapKey(fromPlayerId, toPlayerId);
   const holeKey = holeNumber.toString();
@@ -84,9 +89,11 @@ export function setHandicapForHole(
  * @returns Object mapping hole numbers to strokes
  */
 export function getHandicapsForPair(
-  handicaps: { [pairKey: string]: { [holeNumber: string]: number } } | undefined,
+  handicaps:
+    | { [pairKey: string]: { [holeNumber: string]: number } }
+    | undefined,
   fromPlayerId: string,
-  toPlayerId: string
+  toPlayerId: string,
 ): { [holeNumber: string]: number } {
   if (!handicaps) return {};
 
@@ -102,12 +109,21 @@ export function getHandicapsForPair(
  * @returns Total number of strokes across all holes
  */
 export function getTotalHandicapForMatchup(
-  handicaps: { [pairKey: string]: { [holeNumber: string]: number } } | undefined,
+  handicaps:
+    | { [pairKey: string]: { [holeNumber: string]: number } }
+    | undefined,
   fromPlayerId: string,
-  toPlayerId: string
+  toPlayerId: string,
 ): number {
-  const pairHandicaps = getHandicapsForPair(handicaps, fromPlayerId, toPlayerId);
-  return Object.values(pairHandicaps).reduce((sum, strokes) => sum + strokes, 0);
+  const pairHandicaps = getHandicapsForPair(
+    handicaps,
+    fromPlayerId,
+    toPlayerId,
+  );
+  return Object.values(pairHandicaps).reduce(
+    (sum, strokes) => sum + strokes,
+    0,
+  );
 }
 
 /**
@@ -118,16 +134,30 @@ export function getTotalHandicapForMatchup(
  * @returns Array of { opponentId, totalStrokesReceived, totalStrokesGiven }
  */
 export function getPlayerHandicaps(
-  handicaps: { [pairKey: string]: { [holeNumber: string]: number } } | undefined,
+  handicaps:
+    | { [pairKey: string]: { [holeNumber: string]: number } }
+    | undefined,
   playerId: string,
-  allPlayerIds: string[]
-): Array<{ opponentId: string; totalStrokesReceived: number; totalStrokesGiven: number }> {
+  allPlayerIds: string[],
+): Array<{
+  opponentId: string;
+  totalStrokesReceived: number;
+  totalStrokesGiven: number;
+}> {
   return allPlayerIds
-    .filter(id => id !== playerId)
-    .map(opponentId => ({
+    .filter((id) => id !== playerId)
+    .map((opponentId) => ({
       opponentId,
-      totalStrokesReceived: getTotalHandicapForMatchup(handicaps, opponentId, playerId),
-      totalStrokesGiven: getTotalHandicapForMatchup(handicaps, playerId, opponentId),
+      totalStrokesReceived: getTotalHandicapForMatchup(
+        handicaps,
+        opponentId,
+        playerId,
+      ),
+      totalStrokesGiven: getTotalHandicapForMatchup(
+        handicaps,
+        playerId,
+        opponentId,
+      ),
     }));
 }
 
@@ -136,9 +166,11 @@ export function getPlayerHandicaps(
  * @deprecated Use getTotalHandicapForMatchup instead
  */
 export function getHandicapForMatchup(
-  handicaps: { [pairKey: string]: { [holeNumber: string]: number } } | undefined,
+  handicaps:
+    | { [pairKey: string]: { [holeNumber: string]: number } }
+    | undefined,
   fromPlayerId: string,
-  toPlayerId: string
+  toPlayerId: string,
 ): number {
   return getTotalHandicapForMatchup(handicaps, fromPlayerId, toPlayerId);
 }
@@ -151,10 +183,12 @@ export function setHandicapForPair(
   handicaps: { [pairKey: string]: { [holeNumber: string]: number } } = {},
   fromPlayerId: string,
   toPlayerId: string,
-  strokes: number
+  strokes: number,
 ): { [pairKey: string]: { [holeNumber: string]: number } } {
   // This is a compatibility shim - it doesn't make sense in the new system
   // Just return the handicaps unchanged
-  console.warn('setHandicapForPair is deprecated - use setHandicapForHole instead');
+  console.warn(
+    "setHandicapForPair is deprecated - use setHandicapForHole instead",
+  );
   return handicaps;
 }

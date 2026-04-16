@@ -1,4 +1,4 @@
-import { Hole, Score, Player } from '../types';
+import { Hole, Score, Player } from "../types";
 
 interface GenerateScorecardPDFParams {
   holes: Hole[];
@@ -14,23 +14,28 @@ export const generateScorecardPDF = async ({
   holes,
   scores,
   players,
-  gameName = 'Golf Game',
+  gameName = "Golf Game",
   courseName,
   gameDate,
   gameId,
 }: GenerateScorecardPDFParams) => {
   // Sort all holes by hole number
   const sortedHoles = [...holes].sort((a, b) => a.holeNumber - b.holeNumber);
-  const frontNine = sortedHoles.filter(h => h.holeNumber <= 9);
-  const backNine = sortedHoles.filter(h => h.holeNumber > 9);
+  const frontNine = sortedHoles.filter((h) => h.holeNumber <= 9);
+  const backNine = sortedHoles.filter((h) => h.holeNumber > 9);
 
   // Helper to get strokes (returns null for non-confirmed holes)
-  const getStrokesForHole = (playerId: string, holeId: string): number | null => {
-    const hole = holes.find(h => h.id === holeId);
+  const getStrokesForHole = (
+    playerId: string,
+    holeId: string,
+  ): number | null => {
+    const hole = holes.find((h) => h.id === holeId);
     if (hole && hole.confirmed === false) {
       return null;
     }
-    const score = scores.find(s => s.playerId === playerId && s.holeId === holeId);
+    const score = scores.find(
+      (s) => s.playerId === playerId && s.holeId === holeId,
+    );
     if (!score) {
       return hole?.par || 0;
     }
@@ -50,54 +55,64 @@ export const generateScorecardPDF = async ({
     const ninePar = getTotalPar(holes);
 
     // Build hole number headers
-    const holeHeaders = holes.map(h => `<th class="hole-cell">${h.holeNumber}</th>`).join('');
+    const holeHeaders = holes
+      .map((h) => `<th class="hole-cell">${h.holeNumber}</th>`)
+      .join("");
 
     // Build stroke index row
-    const strokeIndex = holes.map(h => `<td class="index-cell">${h.index || ''}</td>`).join('');
+    const strokeIndex = holes
+      .map((h) => `<td class="index-cell">${h.index || ""}</td>`)
+      .join("");
 
     // Build par row
-    const parCells = holes.map(h => `<td class="par-cell">${h.par}</td>`).join('');
+    const parCells = holes
+      .map((h) => `<td class="par-cell">${h.par}</td>`)
+      .join("");
 
     // Build player score rows
-    const playerRows = players.map(player => {
-      const scoreCells = holes.map(hole => {
-        const strokes = getStrokesForHole(player.id, hole.id);
-        if (strokes === null) {
-          return `<td class="score-cell" style="background-color: #ffffff;">-</td>`;
-        }
-        const par = hole.par;
-        const diff = strokes - par;
-        let className = 'score-cell';
-        let backgroundColor = '#ffffff';
+    const playerRows = players
+      .map((player) => {
+        const scoreCells = holes
+          .map((hole) => {
+            const strokes = getStrokesForHole(player.id, hole.id);
+            if (strokes === null) {
+              return `<td class="score-cell" style="background-color: #ffffff;">-</td>`;
+            }
+            const par = hole.par;
+            const diff = strokes - par;
+            let className = "score-cell";
+            let backgroundColor = "#ffffff";
 
-        if (diff < -1) {
-          backgroundColor = '#2196F3';
-          className += ' excellent-score';
-        } else if (diff === -1) {
-          backgroundColor = '#90CAF9';
-          className += ' good-score';
-        } else if (diff > 0) {
-          backgroundColor = '#FFCDD2';
-          className += ' over-par-score';
-        }
+            if (diff < -1) {
+              backgroundColor = "#2196F3";
+              className += " excellent-score";
+            } else if (diff === -1) {
+              backgroundColor = "#90CAF9";
+              className += " good-score";
+            } else if (diff > 0) {
+              backgroundColor = "#FFCDD2";
+              className += " over-par-score";
+            }
 
-        return `<td class="${className}" style="background-color: ${backgroundColor};">${strokes}</td>`;
-      }).join('');
+            return `<td class="${className}" style="background-color: ${backgroundColor};">${strokes}</td>`;
+          })
+          .join("");
 
-      const total = holes.reduce((sum, hole) => {
-        if (hole.confirmed === false) return sum;
-        const s = getStrokesForHole(player.id, hole.id);
-        return sum + (s ?? 0);
-      }, 0);
+        const total = holes.reduce((sum, hole) => {
+          if (hole.confirmed === false) return sum;
+          const s = getStrokesForHole(player.id, hole.id);
+          return sum + (s ?? 0);
+        }, 0);
 
-      return `
+        return `
         <tr class="player-row">
           <td class="player-name-cell">${player.name}</td>
           ${scoreCells}
           <td class="total-cell">${total}</td>
         </tr>
       `;
-    }).join('');
+      })
+      .join("");
 
     return `
       <div class="nine-section">
@@ -134,29 +149,31 @@ export const generateScorecardPDF = async ({
     const backNinePar = getTotalPar(backNine);
     const totalPar = frontNinePar + backNinePar;
 
-    const playerTotalsRows = players.map(player => {
-      const frontTotal = frontNine.reduce((sum, hole) => {
-        if (hole.confirmed === false) return sum;
-        const s = getStrokesForHole(player.id, hole.id);
-        return sum + (s ?? 0);
-      }, 0);
-      const backTotal = backNine.reduce((sum, hole) => {
-        if (hole.confirmed === false) return sum;
-        const s = getStrokesForHole(player.id, hole.id);
-        return sum + (s ?? 0);
-      }, 0);
-      const grandTotal = frontTotal + backTotal;
-      const totalToPar = grandTotal - totalPar;
+    const playerTotalsRows = players
+      .map((player) => {
+        const frontTotal = frontNine.reduce((sum, hole) => {
+          if (hole.confirmed === false) return sum;
+          const s = getStrokesForHole(player.id, hole.id);
+          return sum + (s ?? 0);
+        }, 0);
+        const backTotal = backNine.reduce((sum, hole) => {
+          if (hole.confirmed === false) return sum;
+          const s = getStrokesForHole(player.id, hole.id);
+          return sum + (s ?? 0);
+        }, 0);
+        const grandTotal = frontTotal + backTotal;
+        const totalToPar = grandTotal - totalPar;
 
-      return `
+        return `
         <tr class="player-row">
           <td class="player-name-cell">${player.name}</td>
           <td class="total-cell">${frontTotal}</td>
           <td class="total-cell">${backTotal}</td>
-          <td class="grand-total-cell">${grandTotal} ${totalToPar !== 0 ? `(${totalToPar > 0 ? '+' : ''}${totalToPar})` : ''}</td>
+          <td class="grand-total-cell">${grandTotal} ${totalToPar !== 0 ? `(${totalToPar > 0 ? "+" : ""}${totalToPar})` : ""}</td>
         </tr>
       `;
-    }).join('');
+      })
+      .join("");
 
     return `
       <div class="totals-section">
@@ -187,8 +204,8 @@ export const generateScorecardPDF = async ({
   // Generate both front and back nine tables plus totals
   const generateScorecardTables = () => {
     return `
-      ${generateNineHoleTable(frontNine, 'Front Nine (Holes 1-9)')}
-      ${generateNineHoleTable(backNine, 'Back Nine (Holes 10-18)')}
+      ${generateNineHoleTable(frontNine, "Front Nine (Holes 1-9)")}
+      ${generateNineHoleTable(backNine, "Back Nine (Holes 10-18)")}
       ${generateTotalsSummary()}
     `;
   };
@@ -196,15 +213,17 @@ export const generateScorecardPDF = async ({
   // Format date for display
   const formatDateDisplay = (date: Date): string => {
     const options: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     };
-    return date.toLocaleDateString('en-US', options);
+    return date.toLocaleDateString("en-US", options);
   };
 
-  const displayDate = gameDate ? formatDateDisplay(gameDate) : formatDateDisplay(new Date());
+  const displayDate = gameDate
+    ? formatDateDisplay(gameDate)
+    : formatDateDisplay(new Date());
 
   // Generate complete HTML
   const html = `
@@ -403,7 +422,7 @@ export const generateScorecardPDF = async ({
   // Check if running on Capacitor native platform
   let isNative = false;
   try {
-    const { Capacitor } = await import('@capacitor/core');
+    const { Capacitor } = await import("@capacitor/core");
     isNative = Capacitor.isNativePlatform();
   } catch {
     // @capacitor/core not available, assume web
@@ -412,27 +431,27 @@ export const generateScorecardPDF = async ({
   if (isNative) {
     // Native: use Capacitor Share plugin
     try {
-      const { Share } = await import('@capacitor/share');
+      const { Share } = await import("@capacitor/share");
       // Create a Blob URL for the HTML content
-      const blob = new Blob([html], { type: 'text/html' });
+      const blob = new Blob([html], { type: "text/html" });
       const url = URL.createObjectURL(blob);
 
       await Share.share({
         title: `${courseName || gameName} Scorecard`,
         text: `${courseName || gameName} - Golf Scorecard`,
         url: url,
-        dialogTitle: 'Save Scorecard',
+        dialogTitle: "Save Scorecard",
       });
 
       // Clean up the blob URL
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error sharing scorecard:', error);
+      console.error("Error sharing scorecard:", error);
       throw error;
     }
   } else {
     // Web: open in new window for print/save
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (printWindow) {
       printWindow.document.write(html);
       printWindow.document.close();

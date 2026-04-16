@@ -1,11 +1,11 @@
-import { createTheme, ThemeOptions } from '@mui/material/styles';
-import { lightColors, darkColors, ColorPalette } from './colors';
-import { fontFamilies, typography } from './typography';
-import { borderRadius } from './spacing';
+import { createTheme, ThemeOptions } from "@mui/material/styles";
+import { lightColors, darkColors, ColorPalette } from "./colors";
+import { fontFamilies, typography } from "./typography";
+import { borderRadius } from "./spacing";
 
 const getThemeOptions = (colors: ColorPalette): ThemeOptions => ({
   palette: {
-    mode: colors === lightColors ? 'light' : 'dark',
+    mode: colors === lightColors ? "light" : "dark",
     primary: {
       main: colors.accent.gold,
       dark: colors.accent.goldDark,
@@ -84,12 +84,12 @@ const getThemeOptions = (colors: ColorPalette): ThemeOptions => ({
       fontSize: typography.button.fontSize,
       fontWeight: typography.button.fontWeight,
       letterSpacing: `${typography.button.letterSpacing}px`,
-      textTransform: 'none',
+      textTransform: "none",
     },
     caption: {
       fontFamily: fontFamilies.body,
       fontSize: 12,
-      lineHeight: '16px',
+      lineHeight: "16px",
     },
     overline: {
       fontFamily: fontFamilies.bodyMedium,
@@ -97,7 +97,7 @@ const getThemeOptions = (colors: ColorPalette): ThemeOptions => ({
       lineHeight: `${typography.label.lineHeight}px`,
       fontWeight: typography.label.fontWeight,
       letterSpacing: `${typography.label.letterSpacing}px`,
-      textTransform: 'uppercase',
+      textTransform: "uppercase",
     },
   },
   shape: {
@@ -108,7 +108,7 @@ const getThemeOptions = (colors: ColorPalette): ThemeOptions => ({
       styleOverrides: {
         root: {
           borderRadius: borderRadius.full,
-          textTransform: 'none',
+          textTransform: "none",
           fontFamily: fontFamilies.bodySemiBold,
           fontWeight: 600,
         },
@@ -118,21 +118,21 @@ const getThemeOptions = (colors: ColorPalette): ThemeOptions => ({
       styleOverrides: {
         root: {
           borderRadius: borderRadius.xl,
-          backgroundImage: 'none',
+          backgroundImage: "none",
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundImage: 'none',
+          backgroundImage: "none",
         },
       },
     },
     MuiTextField: {
       styleOverrides: {
         root: {
-          '& .MuiOutlinedInput-root': {
+          "& .MuiOutlinedInput-root": {
             borderRadius: borderRadius.lg,
           },
         },
@@ -158,4 +158,5 @@ const getThemeOptions = (colors: ColorPalette): ThemeOptions => ({
 export const lightTheme = createTheme(getThemeOptions(lightColors));
 export const darkTheme = createTheme(getThemeOptions(darkColors));
 
-export const getMuiTheme = (isDarkMode: boolean) => isDarkMode ? darkTheme : lightTheme;
+export const getMuiTheme = (isDarkMode: boolean) =>
+  isDarkMode ? darkTheme : lightTheme;

@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, CircularProgress } from "@mui/material";
-import {
-  Add as AddIcon,
-  Remove as RemoveIcon,
-} from "@mui/icons-material";
+import { Add as AddIcon, Remove as RemoveIcon } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "../components/common/Button";
 import { Card } from "../components/common/Card";
@@ -260,11 +257,7 @@ export const HandicapSetupPage = () => {
                       onClick={() => {
                         const current = player1Receives ? strokeCount : 0;
                         if (current > 0) {
-                          updateHandicap(
-                            player2.id,
-                            player1.id,
-                            current - 1,
-                          );
+                          updateHandicap(player2.id, player1.id, current - 1);
                         }
                       }}
                       sx={{
@@ -310,11 +303,7 @@ export const HandicapSetupPage = () => {
                       onClick={() => {
                         const current = player1Receives ? strokeCount : 0;
                         if (current < 2) {
-                          updateHandicap(
-                            player2.id,
-                            player1.id,
-                            current + 1,
-                          );
+                          updateHandicap(player2.id, player1.id, current + 1);
                         }
                       }}
                       sx={{
@@ -330,8 +319,7 @@ export const HandicapSetupPage = () => {
                           player1Receives && strokeCount >= 2
                             ? "default"
                             : "pointer",
-                        opacity:
-                          player1Receives && strokeCount >= 2 ? 0.4 : 1,
+                        opacity: player1Receives && strokeCount >= 2 ? 0.4 : 1,
                         transition: "all 0.12s ease",
                       }}
                     >
@@ -394,11 +382,7 @@ export const HandicapSetupPage = () => {
                       onClick={() => {
                         const current = player2Receives ? strokeCount : 0;
                         if (current > 0) {
-                          updateHandicap(
-                            player1.id,
-                            player2.id,
-                            current - 1,
-                          );
+                          updateHandicap(player1.id, player2.id, current - 1);
                         }
                       }}
                       sx={{
@@ -444,11 +428,7 @@ export const HandicapSetupPage = () => {
                       onClick={() => {
                         const current = player2Receives ? strokeCount : 0;
                         if (current < 2) {
-                          updateHandicap(
-                            player1.id,
-                            player2.id,
-                            current + 1,
-                          );
+                          updateHandicap(player1.id, player2.id, current + 1);
                         }
                       }}
                       sx={{
@@ -464,8 +444,7 @@ export const HandicapSetupPage = () => {
                           player2Receives && strokeCount >= 2
                             ? "default"
                             : "pointer",
-                        opacity:
-                          player2Receives && strokeCount >= 2 ? 0.4 : 1,
+                        opacity: player2Receives && strokeCount >= 2 ? 0.4 : 1,
                         transition: "all 0.12s ease",
                       }}
                     >

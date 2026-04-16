@@ -1,5 +1,5 @@
-import { User as FirebaseUser } from 'firebase/auth';
-import { StateCreator } from 'zustand';
+import { User as FirebaseUser } from "firebase/auth";
+import { StateCreator } from "zustand";
 
 export interface AuthSlice {
   user: FirebaseUser | null;

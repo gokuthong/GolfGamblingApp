@@ -1,12 +1,19 @@
-import React from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { motion } from 'framer-motion';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { useThemedColors } from '../../contexts/ThemeContext';
-import { typography, fontFamilies, spacing, borderRadius, shadows, animations } from '../../theme';
+import React from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { motion } from "framer-motion";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import { useThemedColors } from "../../contexts/ThemeContext";
+import {
+  typography,
+  fontFamilies,
+  spacing,
+  borderRadius,
+  shadows,
+  animations,
+} from "../../theme";
 
 export interface LeaderboardEntry {
   id: string;
@@ -35,10 +42,10 @@ export interface LeaderboardProps {
 }
 
 const getMedalColor = (rank: number): string => {
-  if (rank === 1) return '#FFD700'; // Gold
-  if (rank === 2) return '#C0C0C0'; // Silver
-  if (rank === 3) return '#CD7F32'; // Bronze
-  return 'inherit';
+  if (rank === 1) return "#FFD700"; // Gold
+  if (rank === 2) return "#C0C0C0"; // Silver
+  if (rank === 3) return "#CD7F32"; // Bronze
+  return "inherit";
 };
 
 /**
@@ -68,9 +75,11 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
         const isTop = index === 0;
         const isTopThree = index < 3 && showMedals;
         const isGradient = isTop && gradientTop;
-        const textColor = isGradient ? colors.text.inverse : colors.text.primary;
+        const textColor = isGradient
+          ? colors.text.inverse
+          : colors.text.primary;
         const secondaryColor = isGradient
-          ? 'rgba(255, 255, 255, 0.8)'
+          ? "rgba(255, 255, 255, 0.8)"
           : colors.text.secondary;
 
         return (
@@ -81,18 +90,20 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             exit={{ opacity: 0, y: -20 }}
             transition={{
               delay: index * 0.05,
-              type: 'spring',
+              type: "spring",
               ...animations.spring.bouncy,
             }}
             style={{ marginBottom: spacing.sm }}
           >
             <Box
               sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
                 p: `${spacing.md}px`,
-                backgroundColor: isGradient ? undefined : colors.background.card,
+                backgroundColor: isGradient
+                  ? undefined
+                  : colors.background.card,
                 background: isGradient
                   ? `linear-gradient(to right, ${colors.gradients.victory[0]}, ${colors.gradients.victory[1]})`
                   : undefined,
@@ -104,9 +115,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
               <Box
                 sx={{
                   width: 40,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   mr: `${spacing.md}px`,
                 }}
               >
@@ -122,11 +133,11 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                     sx={{
                       width: 32,
                       height: 32,
-                      borderRadius: '50%',
+                      borderRadius: "50%",
                       backgroundColor: colors.surfaces.level2,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
                     <Typography
@@ -148,9 +159,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
               <Box sx={{ flex: 1 }}>
                 <Box
                   sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
                     mb: `${spacing.xs}px`,
                   }}
                 >
@@ -174,19 +185,25 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                     item.positionChange !== 0 && (
                       <Box
                         sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          alignItems: 'center',
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
                           ml: `${spacing.sm}px`,
                         }}
                       >
                         {item.positionChange > 0 ? (
                           <ArrowUpwardIcon
-                            sx={{ fontSize: 14, color: colors.scoring.positive }}
+                            sx={{
+                              fontSize: 14,
+                              color: colors.scoring.positive,
+                            }}
                           />
                         ) : (
                           <ArrowDownwardIcon
-                            sx={{ fontSize: 14, color: colors.scoring.negative }}
+                            sx={{
+                              fontSize: 14,
+                              color: colors.scoring.negative,
+                            }}
                           />
                         )}
                         <Typography
@@ -195,7 +212,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                             lineHeight: `${typography.bodySmall.lineHeight}px`,
                             fontFamily: fontFamilies.body,
                             fontWeight: 700,
-                            ml: '2px',
+                            ml: "2px",
                             color:
                               item.positionChange > 0
                                 ? colors.scoring.positive
@@ -211,9 +228,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                 {showStats && item.stats && item.stats.length > 0 && (
                   <Box
                     sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      flexWrap: 'wrap',
+                      display: "flex",
+                      flexDirection: "row",
+                      flexWrap: "wrap",
                     }}
                   >
                     {item.stats.map((stat, idx) => (
@@ -238,9 +255,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
               {/* Points */}
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'flex-end',
-                  justifyContent: 'center',
+                  display: "flex",
+                  alignItems: "flex-end",
+                  justifyContent: "center",
                   minWidth: 60,
                 }}
               >
@@ -254,7 +271,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                     color: textColor,
                   }}
                 >
-                  {item.points > 0 ? '+' : ''}
+                  {item.points > 0 ? "+" : ""}
                   {item.points.toFixed(1)}
                 </Typography>
               </Box>

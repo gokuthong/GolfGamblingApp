@@ -439,9 +439,7 @@ export const SettingsPage = () => {
         )}
       </Box>
       {onPress && (
-        <ChevronRightIcon
-          sx={{ fontSize: 18, color: colors.text.tertiary }}
-        />
+        <ChevronRightIcon sx={{ fontSize: 18, color: colors.text.tertiary }} />
       )}
     </Box>
   );
@@ -525,7 +523,13 @@ export const SettingsPage = () => {
             >
               Sign up to sync your data and access online features.
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: `${spacing.md}px` }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: `${spacing.md}px`,
+              }}
+            >
               <Button
                 fullWidth
                 variant="contained"
@@ -557,7 +561,10 @@ export const SettingsPage = () => {
                   fontSize: typography.button.fontSize,
                   borderRadius: "9999px",
                   textTransform: "none",
-                  "&:hover": { borderColor: colors.accent.gold, bgcolor: "transparent" },
+                  "&:hover": {
+                    borderColor: colors.accent.gold,
+                    bgcolor: "transparent",
+                  },
                 }}
               >
                 Sign in
@@ -694,7 +701,10 @@ export const SettingsPage = () => {
                           borderRadius: "9999px",
                           textTransform: "none",
                           letterSpacing: 0.3,
-                          "&:hover": { borderColor: colors.border.medium, bgcolor: "transparent" },
+                          "&:hover": {
+                            borderColor: colors.border.medium,
+                            bgcolor: "transparent",
+                          },
                         }}
                       >
                         Reject
@@ -868,8 +878,7 @@ export const SettingsPage = () => {
                                   sx={{
                                     fontFamily: fontFamilies.monoBold,
                                     fontSize: 18,
-                                    color:
-                                      stat.color || colors.text.primary,
+                                    color: stat.color || colors.text.primary,
                                     letterSpacing: 0.3,
                                   }}
                                 >

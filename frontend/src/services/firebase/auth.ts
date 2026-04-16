@@ -7,12 +7,20 @@ import {
   User as FirebaseUser,
   sendPasswordResetEmail,
   deleteUser,
-} from 'firebase/auth';
-import { auth } from './config';
+} from "firebase/auth";
+import { auth } from "./config";
 
 class AuthService {
-  async signUp(email: string, password: string, displayName: string): Promise<FirebaseUser> {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  async signUp(
+    email: string,
+    password: string,
+    displayName: string,
+  ): Promise<FirebaseUser> {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
 
     // Update display name
     if (userCredential.user) {
@@ -23,7 +31,11 @@ class AuthService {
   }
 
   async signIn(email: string, password: string): Promise<FirebaseUser> {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
     return userCredential.user;
   }
 
@@ -43,10 +55,13 @@ class AuthService {
     return auth.currentUser;
   }
 
-  async updateUserProfile(displayName?: string, photoURL?: string): Promise<void> {
+  async updateUserProfile(
+    displayName?: string,
+    photoURL?: string,
+  ): Promise<void> {
     const user = this.getCurrentUser();
     if (!user) {
-      throw new Error('No user logged in');
+      throw new Error("No user logged in");
     }
 
     await updateProfile(user, { displayName, photoURL });
@@ -55,7 +70,7 @@ class AuthService {
   async deleteAccount(): Promise<void> {
     const user = this.getCurrentUser();
     if (!user) {
-      throw new Error('No user logged in');
+      throw new Error("No user logged in");
     }
 
     await deleteUser(user);
