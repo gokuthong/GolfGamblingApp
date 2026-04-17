@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { useShallow } from "zustand/react/shallow";
 import { AuthSlice, createAuthSlice } from "./slices/authSlice";
 import { GameSlice, createGameSlice } from "./slices/gameSlice";
 import { SettingsSlice, createSettingsSlice } from "./slices/settingsSlice";
@@ -11,13 +12,18 @@ export const useStore = create<StoreState>()((...a) => ({
   ...createSettingsSlice(...a),
 }));
 
-// Selector hooks to prevent unnecessary re-renders
+// Object-returning selectors must use useShallow to avoid infinite re-renders
+// (Zustand's default Object.is equality treats each new {} as different).
 export const useAuth = () =>
-  useStore((state) => ({ user: state.user, isLoading: state.isLoading }));
+  useStore(
+    useShallow((state) => ({ user: state.user, isLoading: state.isLoading })),
+  );
 export const useSettings = () => useStore((state) => state.settings);
 export const useCurrentGame = () =>
-  useStore((state) => ({
-    currentGameId: state.currentGameId,
-    currentGame: state.currentGame,
-    currentHoleIndex: state.currentHoleIndex,
-  }));
+  useStore(
+    useShallow((state) => ({
+      currentGameId: state.currentGameId,
+      currentGame: state.currentGame,
+      currentHoleIndex: state.currentHoleIndex,
+    })),
+  );
