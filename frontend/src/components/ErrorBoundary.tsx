@@ -36,7 +36,7 @@ export class ErrorBoundary extends Component<Props, State> {
             bgcolor: "#1a0000",
             p: "20px",
             pt: "60px",
-            minHeight: "100vh",
+            minHeight: "100dvh",
             display: "flex",
             flexDirection: "column",
           }}
