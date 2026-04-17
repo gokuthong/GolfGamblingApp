@@ -74,7 +74,7 @@ export const ForgotPasswordPage = () => {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        minHeight: "100dvh",
         bgcolor: colors.background.primary,
         display: "flex",
         flexDirection: "column",
