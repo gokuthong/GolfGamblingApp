@@ -108,6 +108,10 @@ export const LoginPage = () => {
         display: "flex",
         flexDirection: "column",
         overflow: "auto",
+        paddingTop: "env(safe-area-inset-top, 0px)",
+        paddingBottom: "max(env(safe-area-inset-bottom, 0px), 12px)",
+        paddingLeft: "env(safe-area-inset-left, 0px)",
+        paddingRight: "env(safe-area-inset-right, 0px)",
       }}
     >
       <Box
