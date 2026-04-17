@@ -84,7 +84,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       sx={{
         display: "flex",
         flexDirection: "column",
+        // 100dvh accounts for dynamic browser chrome on mobile; fallback to 100vh.
         height: "100vh",
+        "@supports (height: 100dvh)": { height: "100dvh" },
+        // Respect top safe area (status bar / notch) so content doesn't sit
+        // underneath the system clock/notifications row.
+        paddingTop: "env(safe-area-inset-top, 0px)",
+        paddingLeft: "env(safe-area-inset-left, 0px)",
+        paddingRight: "env(safe-area-inset-right, 0px)",
         bgcolor: colors.background.primary,
         overflow: "hidden",
       }}
@@ -95,6 +102,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           flex: 1,
           overflow: "auto",
           WebkitOverflowScrolling: "touch",
+          // On screens where the bottom tab bar is hidden (game flows),
+          // reserve room for the system gesture bar. max() with a floor
+          // covers Xiaomi/MIUI WebViews that report 0 for the inset.
+          ...(hideTabBar && {
+            paddingBottom: "max(env(safe-area-inset-bottom, 0px), 12px)",
+          }),
         }}
       >
         {children}
@@ -107,7 +120,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           sx={{
             display: "flex",
             alignItems: "stretch",
-            height: 68,
+            // Base height 68px + whatever the OS reports for the gesture bar,
+            // with a 12px floor so MIUI (which sometimes reports 0) still
+            // leaves the nav visible above the system pill.
+            minHeight: 68,
+            paddingBottom: "max(env(safe-area-inset-bottom, 0px), 12px)",
             bgcolor: colors.background.primary,
             borderTop: `1px solid ${colors.border.light}`,
             flexShrink: 0,
