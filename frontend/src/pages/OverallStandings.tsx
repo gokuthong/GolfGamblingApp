@@ -79,7 +79,7 @@ export const OverallStandingsPage = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          minHeight: "100vh",
+          minHeight: "100dvh",
           bgcolor: colors.background.primary,
         }}
       >
@@ -109,7 +109,7 @@ export const OverallStandingsPage = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        minHeight: "100vh",
+        minHeight: "100dvh",
         bgcolor: colors.background.primary,
       }}
     >
