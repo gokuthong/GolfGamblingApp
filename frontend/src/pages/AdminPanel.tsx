@@ -99,7 +99,7 @@ export const AdminPanelPage = () => {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          minHeight: "100vh",
+          minHeight: "100dvh",
           bgcolor: colors.background.primary,
         }}
       >
