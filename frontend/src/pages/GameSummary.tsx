@@ -260,7 +260,7 @@ export const GameSummaryPage = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        minHeight: "100vh",
+        minHeight: "100dvh",
         bgcolor: colors.background.primary,
         position: "relative",
       }}
