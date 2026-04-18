@@ -451,13 +451,14 @@ export const ScoringPage = () => {
 
   // Compact sizing helpers
   const cmpCard = isCompactLayout;
-  const multiplierPy = cmpCard ? "6px" : `${spacing.sm}px`;
-  const multiplierFontSize = cmpCard ? 14 : 15;
-  const counterSize = cmpCard ? 40 : 46;
-  const strokesFontSize = cmpCard ? 32 : 40;
-  const strokesLineHeight = cmpCard ? "36px" : "46px";
-  const playerNameFontSize = cmpCard ? 18 : 20;
-  const pointsFontSize = cmpCard ? 16 : 20;
+  const multiplierPy = cmpCard ? "3px" : `${spacing.sm}px`;
+  const multiplierFontSize = cmpCard ? 12 : 15;
+  const counterSize = cmpCard ? 34 : 46;
+  const strokesFontSize = cmpCard ? 26 : 40;
+  const strokesLineHeight = cmpCard ? "30px" : "46px";
+  const playerNameFontSize = cmpCard ? 16 : 20;
+  const pointsFontSize = cmpCard ? 14 : 20;
+  const cardPadding = cmpCard ? "6px" : `${spacing.sm}px`;
 
   return (
     <Box
