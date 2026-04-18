@@ -636,15 +636,14 @@ export const ScoringPage = () => {
             <Box
               key={player.id}
               sx={{
-                flexShrink: 0,
-                mb: cmpCard ? "8px" : `${spacing.lg}px`,
-                ...(cmpCard ? { flex: 1 } : {}),
+                mb: cmpCard ? "6px" : `${spacing.lg}px`,
+                ...(cmpCard ? { flex: 1, minHeight: 0 } : { flexShrink: 0 }),
               }}
             >
               <Card
                 goldBorder={playerPts > 0}
                 sx={{
-                  p: `${spacing.sm}px`,
+                  p: cardPadding,
                   bgcolor: "rgba(212, 175, 55, 0.05)",
                   border: `2px solid ${playerPts > 0 ? colors.border.goldSubtle : playerPts < 0 ? colors.border.light : colors.border.medium}`,
                   borderLeft: `8px solid ${playerColor}`,
