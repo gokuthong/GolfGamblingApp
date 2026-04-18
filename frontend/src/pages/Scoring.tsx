@@ -664,7 +664,7 @@ export const ScoringPage = () => {
                     gap: `${spacing.xs}px`,
                     alignItems: "center",
                     justifyContent: "space-between",
-                    mb: `${spacing.sm}px`,
+                    mb: cmpCard ? "4px" : `${spacing.sm}px`,
                   }}
                 >
                   {[2, 3, 4, 6].map((mult) => (
