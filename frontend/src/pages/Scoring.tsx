@@ -1105,9 +1105,10 @@ export const ScoringPage = () => {
           gap: `${spacing.xs}px`,
           pt: `${spacing.sm}px`,
           px: `${spacing.sm}px`,
-          pb: `${spacing.lg}px`,
+          pb: `${spacing.sm}px`,
           bgcolor: colors.background.secondary,
           borderTop: `1px solid ${colors.border.light}`,
+          flexShrink: 0,
         }}
       >
         <Box sx={{ flex: 0.8, minWidth: 0 }}>
