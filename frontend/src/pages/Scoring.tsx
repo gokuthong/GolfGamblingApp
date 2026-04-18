@@ -948,6 +948,7 @@ export const ScoringPage = () => {
             p: cmpCard ? `${spacing.xs - 2}px` : `${spacing.sm}px`,
             mt: cmpCard ? `${spacing.xs - 2}px` : `${spacing.xs}px`,
             border: `1px solid ${colors.border.light}`,
+            flexShrink: 0,
           }}
         >
           <Typography
