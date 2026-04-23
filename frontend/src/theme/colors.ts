@@ -212,7 +212,12 @@ export const darkColors = {
     level3: "#242424",
     level4: "#2E2E2E",
   },
-  confirmedHoleBg: "rgba(26, 137, 96, 0.28)",
+  confirmedHoleBg: "rgba(26, 137, 96, 0.42)",
+  confirmedHoleHeaderBg: "rgba(26, 137, 96, 0.55)",
+  confirmedHolePillBg: "#1A8960",
+  confirmedHoleBorder: "rgba(74, 222, 128, 0.60)",
+  holeWideAccent: "#FF7E4F",
+  holeWideAccentGlow: "rgba(255, 126, 79, 0.55)",
   glow: {
     gold: "rgba(232, 200, 102, 0.32)",
     goldStrong: "rgba(232, 200, 102, 0.50)",
