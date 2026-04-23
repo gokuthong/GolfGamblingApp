@@ -9,6 +9,7 @@ export interface Game {
   courseId?: string;
   courseName?: string;
   handicaps?: { [pairKey: string]: { [holeNumber: string]: number } };
+  second9Activated?: boolean;
 }
 
 export interface GameData extends Omit<
