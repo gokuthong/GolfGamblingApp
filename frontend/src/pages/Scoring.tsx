@@ -66,6 +66,7 @@ export const ScoringPage = () => {
   const [hasChanges, setHasChanges] = useState(false);
   const [originalScores, setOriginalScores] = useState<Score[]>([]);
   const [finishingGame, setFinishingGame] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const pendingUpdatesRef = useRef<Set<string>>(new Set());
 
