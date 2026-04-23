@@ -669,6 +669,136 @@ export const ScoringPage = () => {
     confirmedHolesCount >= 9 &&
     !game?.second9Activated;
 
+  const multiplierButtons = (
+    <>
+      {/* Hole-wide 2x toggle */}
+      <Box
+        onClick={holeWideLocked ? undefined : toggleHoleMultiplier}
+        sx={{
+          width: 38,
+          height: 38,
+          borderRadius: "50%",
+          bgcolor: holeWideActive
+            ? colors.holeWideAccent
+            : colors.background.card,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: `1px solid ${
+            holeWideActive
+              ? colors.holeWideAccent
+              : colors.border.goldSubtle
+          }`,
+          cursor: holeWideLocked ? "not-allowed" : "pointer",
+          opacity: holeWideLocked ? 0.85 : 1,
+          position: "relative",
+          transition: "all 0.15s ease",
+          boxShadow: holeWideActive
+            ? `0 0 10px ${colors.holeWideAccentGlow}`
+            : "none",
+          flexShrink: 0,
+          "&:hover": holeWideLocked
+            ? undefined
+            : { borderColor: colors.holeWideAccent },
+        }}
+        title={
+          holeWideLocked
+            ? "Locked by 2nd-9 multiplier"
+            : holeWideActive
+              ? "Hole-wide x2 active. Tap to turn off."
+              : "Apply x2 to every outcome on this hole"
+        }
+      >
+        <Typography
+          sx={{
+            fontFamily: fontFamilies.monoBold,
+            fontWeight: 700,
+            fontSize: 15,
+            color: holeWideActive ? "#FFFFFF" : colors.holeWideAccent,
+            letterSpacing: "-0.5px",
+            lineHeight: 1,
+          }}
+        >
+          2x
+        </Typography>
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: -3,
+            right: -3,
+            width: 16,
+            height: 16,
+            borderRadius: "50%",
+            bgcolor: holeWideActive ? "#FFFFFF" : colors.background.card,
+            border: `1px solid ${colors.holeWideAccent}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <WhatshotIcon
+            sx={{ fontSize: 11, color: colors.holeWideAccent }}
+          />
+        </Box>
+      </Box>
+
+      {/* 2nd-9 button (conditional) */}
+      {showSecond9Button && (
+        <Box
+          onClick={activateSecond9}
+          sx={{
+            width: 38,
+            height: 38,
+            borderRadius: "50%",
+            bgcolor: colors.background.card,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: `1px solid ${colors.status.error}`,
+            cursor: "pointer",
+            position: "relative",
+            transition: "all 0.15s ease",
+            flexShrink: 0,
+            "&:hover": {
+              bgcolor: colors.status.error,
+              "& .second9-icon": { color: "#FFFFFF" },
+              "& .second9-badge": {
+                bgcolor: "#FFFFFF",
+                color: colors.status.error,
+              },
+            },
+          }}
+          title="Activate x2 for all remaining holes (2nd 9)"
+        >
+          <DoubleArrowIcon
+            className="second9-icon"
+            sx={{ fontSize: 18, color: colors.status.error }}
+          />
+          <Typography
+            className="second9-badge"
+            sx={{
+              position: "absolute",
+              bottom: -2,
+              right: -4,
+              fontFamily: fontFamilies.monoBold,
+              fontWeight: 700,
+              fontSize: 9,
+              bgcolor: colors.background.card,
+              color: colors.status.error,
+              borderRadius: "8px",
+              px: "3px",
+              lineHeight: 1.2,
+              border: `1px solid ${colors.status.error}`,
+              whiteSpace: "nowrap",
+            }}
+          >
+            9x2
+          </Typography>
+        </Box>
+      )}
+    </>
+  );
+
   return (
     <Box
       sx={{
