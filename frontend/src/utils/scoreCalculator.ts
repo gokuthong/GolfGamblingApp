@@ -123,9 +123,16 @@ export class ScoreCalculator {
         const matchupBirdieEagleMultiplier =
           this.calculateBirdieEagleMultiplier(hole, [score1, score2]);
 
-        // STACK all multipliers: player1 × player2 × birdie/eagle (for this matchup only)
+        // Hole-wide 2x: manual toggle OR 2nd-9 stamp. Capped at 2 (the two flags do NOT stack).
+        const holeWideMultiplier =
+          hole.holeMultiplier === 2 || hole.second9Applied ? 2 : 1;
+
+        // STACK all multipliers: player1 × player2 × birdie/eagle × hole-wide (for this matchup only)
         const matchupValue =
-          player1Mult * player2Mult * matchupBirdieEagleMultiplier;
+          player1Mult *
+          player2Mult *
+          matchupBirdieEagleMultiplier *
+          holeWideMultiplier;
 
         // Determine winner and award points
         if (netScore1 < netScore2) {
