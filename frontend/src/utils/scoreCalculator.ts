@@ -257,6 +257,8 @@ export class ScoreCalculator {
       if (score.isBurn) playerMultiplier *= 3.0;
     }
 
+    const isHoleWide = hole.holeMultiplier === 2 || hole.second9Applied === true;
+
     let totalMultiplier = playerMultiplier;
     if (isHoleInOne) {
       totalMultiplier *= 12.0;
@@ -267,6 +269,9 @@ export class ScoreCalculator {
     } else if (isBirdie) {
       totalMultiplier *= 2.0;
     }
+    if (isHoleWide) {
+      totalMultiplier *= 2.0;
+    }
 
     return {
       isUp: score.isUp || false,
@@ -275,6 +280,7 @@ export class ScoreCalculator {
       isEagle,
       isAlbatross,
       isHoleInOne,
+      isHoleWide,
       totalMultiplier,
     };
   }
