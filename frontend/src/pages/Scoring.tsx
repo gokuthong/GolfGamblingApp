@@ -1628,6 +1628,320 @@ export const ScoringPage = () => {
         </Box>
       )}
 
+      {/* Settings Drawer */}
+      <Drawer
+        anchor="left"
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        PaperProps={{
+          sx: {
+            width: { xs: "85vw", sm: 380 },
+            maxWidth: 420,
+            bgcolor: colors.background.primary,
+            backgroundImage: "none",
+          },
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+          }}
+        >
+          {/* Drawer header */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              px: `${spacing.md}px`,
+              py: `${spacing.md}px`,
+              bgcolor: colors.background.secondary,
+              borderBottom: `1px solid ${colors.border.light}`,
+            }}
+          >
+            <Typography
+              sx={{
+                fontFamily: fontFamilies.bodySemiBold,
+                fontWeight: 600,
+                fontSize: 18,
+                color: colors.text.primary,
+                letterSpacing: "-0.2px",
+              }}
+            >
+              Game Settings
+            </Typography>
+            <Box
+              onClick={() => setSettingsOpen(false)}
+              sx={{
+                width: 32,
+                height: 32,
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                "&:hover": { bgcolor: colors.background.card },
+              }}
+            >
+              <CloseIcon sx={{ fontSize: 20, color: colors.text.secondary }} />
+            </Box>
+          </Box>
+
+          {/* Scrollable content */}
+          <Box
+            sx={{
+              flex: 1,
+              overflow: "auto",
+              px: `${spacing.md}px`,
+              py: `${spacing.md}px`,
+            }}
+          >
+            {/* Current Standings */}
+            <Typography
+              sx={{
+                fontFamily: fontFamilies.bodySemiBold,
+                fontWeight: 600,
+                fontSize: 11,
+                color: colors.accent.gold,
+                letterSpacing: "1px",
+                textTransform: "uppercase",
+                mb: `${spacing.sm}px`,
+              }}
+            >
+              Current Standings
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: `${spacing.xs}px`,
+                mb: `${spacing.lg}px`,
+              }}
+            >
+              {[...players]
+                .map((p, idx) => ({
+                  player: p,
+                  color: getPlayerColor(idx),
+                  points: cumulativePoints[p.id] || 0,
+                }))
+                .sort((a, b) => b.points - a.points)
+                .map((row, rank) => (
+                  <Box
+                    key={row.player.id}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      py: `${spacing.sm}px`,
+                      px: `${spacing.md}px`,
+                      bgcolor: colors.background.card,
+                      borderRadius: `${borderRadius.md}px`,
+                      border: `1px solid ${colors.border.light}`,
+                      borderLeft: `6px solid ${row.color}`,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: `${spacing.sm}px`,
+                        flex: 1,
+                        minWidth: 0,
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontFamily: fontFamilies.monoBold,
+                          fontWeight: 700,
+                          fontSize: 13,
+                          color: colors.text.tertiary,
+                          width: 20,
+                        }}
+                      >
+                        {rank + 1}.
+                      </Typography>
+                      <Typography
+                        noWrap
+                        sx={{
+                          fontFamily: fontFamilies.bodySemiBold,
+                          fontWeight: 600,
+                          fontSize: 15,
+                          color: colors.text.primary,
+                        }}
+                      >
+                        {row.player.name}
+                      </Typography>
+                    </Box>
+                    <Typography
+                      sx={{
+                        fontFamily: fontFamilies.monoBold,
+                        fontWeight: 700,
+                        fontSize: 16,
+                        color:
+                          row.points > 0
+                            ? colors.scoring.positive
+                            : row.points < 0
+                              ? colors.scoring.negative
+                              : colors.text.secondary,
+                      }}
+                    >
+                      {row.points > 0 ? "+" : ""}
+                      {row.points}
+                    </Typography>
+                  </Box>
+                ))}
+            </Box>
+
+            <Divider sx={{ my: `${spacing.md}px` }} />
+
+            {/* Actions */}
+            <Typography
+              sx={{
+                fontFamily: fontFamilies.bodySemiBold,
+                fontWeight: 600,
+                fontSize: 11,
+                color: colors.accent.gold,
+                letterSpacing: "1px",
+                textTransform: "uppercase",
+                mb: `${spacing.sm}px`,
+              }}
+            >
+              Actions
+            </Typography>
+
+            {/* Complete all remaining */}
+            <Box
+              onClick={completeAllRemainingHoles}
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: `${spacing.sm}px`,
+                p: `${spacing.md}px`,
+                bgcolor: colors.background.card,
+                borderRadius: `${borderRadius.md}px`,
+                border: `1px solid ${colors.border.light}`,
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+                mb: `${spacing.sm}px`,
+                "&:hover": {
+                  borderColor: colors.accent.gold,
+                  bgcolor: colors.background.elevated,
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: "50%",
+                  bgcolor: colors.glow.positive,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <DoneAllIcon
+                  sx={{ fontSize: 18, color: colors.scoring.positive }}
+                />
+              </Box>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography
+                  sx={{
+                    fontFamily: fontFamilies.bodySemiBold,
+                    fontWeight: 600,
+                    fontSize: 14,
+                    color: colors.text.primary,
+                  }}
+                >
+                  Complete all remaining holes
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: fontFamilies.body,
+                    fontSize: 11,
+                    color: colors.text.secondary,
+                    mt: "2px",
+                  }}
+                >
+                  Mark every remaining hole confirmed. Missing scores recorded
+                  at par.
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Undo 2nd-9 (conditional) */}
+            {game?.second9Activated && (
+              <Box
+                onClick={undoSecond9}
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: `${spacing.sm}px`,
+                  p: `${spacing.md}px`,
+                  bgcolor: colors.background.card,
+                  borderRadius: `${borderRadius.md}px`,
+                  border: `1px solid ${colors.holeWideAccent}`,
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                  "&:hover": {
+                    bgcolor: colors.background.elevated,
+                    boxShadow: `0 0 10px ${colors.holeWideAccentGlow}`,
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: "50%",
+                    bgcolor: colors.holeWideAccentGlow,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  <RestoreIcon
+                    sx={{ fontSize: 18, color: colors.holeWideAccent }}
+                  />
+                </Box>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography
+                    sx={{
+                      fontFamily: fontFamilies.bodySemiBold,
+                      fontWeight: 600,
+                      fontSize: 14,
+                      color: colors.text.primary,
+                    }}
+                  >
+                    Undo 2x 2nd-9
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: fontFamilies.body,
+                      fontSize: 11,
+                      color: colors.text.secondary,
+                      mt: "2px",
+                    }}
+                  >
+                    Clear the x2 stamp from affected holes. They become
+                    individually toggleable again.
+                  </Typography>
+                </Box>
+              </Box>
+            )}
+          </Box>
+        </Box>
+      </Drawer>
+
       {/* Handicap Modal */}
       {selectedPlayer && (
         <HandicapModal
