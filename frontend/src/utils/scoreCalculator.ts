@@ -257,7 +257,8 @@ export class ScoreCalculator {
       if (score.isBurn) playerMultiplier *= 3.0;
     }
 
-    const isHoleWide = hole.holeMultiplier === 2 || hole.second9Applied === true;
+    const isHoleWide =
+      hole.holeMultiplier === 2 || hole.second9Applied === true;
 
     let totalMultiplier = playerMultiplier;
     if (isHoleInOne) {

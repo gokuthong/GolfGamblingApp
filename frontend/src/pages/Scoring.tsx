@@ -1953,9 +1953,7 @@ export const ScoringPage = () => {
       {/* Confirm Dialog */}
       <Dialog
         open={confirmDialog.open}
-        onClose={() =>
-          setConfirmDialog((prev) => ({ ...prev, open: false }))
-        }
+        onClose={() => setConfirmDialog((prev) => ({ ...prev, open: false }))}
         slotProps={{
           paper: {
             sx: {
