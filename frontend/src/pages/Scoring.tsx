@@ -408,7 +408,10 @@ export const ScoringPage = () => {
               setHoles(updatedHoles);
               if (updatedGame) setGame(updatedGame);
             } catch (error) {
-              crossPlatformAlert("Error", "Failed to activate 2nd-9 multiplier");
+              crossPlatformAlert(
+                "Error",
+                "Failed to activate 2nd-9 multiplier",
+              );
             }
           },
         },
@@ -648,6 +651,16 @@ export const ScoringPage = () => {
   const pointsFontSize = cmpCard ? 14 : 20;
   const cardPadding = cmpCard ? "6px" : `${spacing.sm}px`;
 
+  // Hole-wide 2x derived state
+  const holeWideActive =
+    currentHole.holeMultiplier === 2 || currentHole.second9Applied === true;
+  const holeWideLocked = currentHole.second9Applied === true;
+  const confirmedHolesCount = holes.filter((h) => h.confirmed).length;
+  const showSecond9Button =
+    !currentHole.confirmed &&
+    confirmedHolesCount >= 9 &&
+    !game?.second9Activated;
+
   return (
     <Box
       sx={{
@@ -669,12 +682,19 @@ export const ScoringPage = () => {
           justifyContent: "space-between",
           px: `${spacing.md}px`,
           py: `${spacing.sm}px`,
-          bgcolor: colors.background.primary,
-          borderBottom: `1px solid ${colors.border.light}`,
+          bgcolor: currentHole.confirmed
+            ? colors.confirmedHoleHeaderBg
+            : colors.background.primary,
+          borderBottom: currentHole.confirmed
+            ? `2px solid ${colors.confirmedHoleBorder}`
+            : `1px solid ${colors.border.light}`,
+          transition: "background-color 0.3s ease, border-color 0.3s ease",
+          gap: `${spacing.xs}px`,
         }}
       >
+        {/* Settings button (replaces podium) */}
         <Box
-          onClick={() => navigate(`/game/standings/${gameId}`)}
+          onClick={() => setSettingsOpen(true)}
           sx={{
             width: 38,
             height: 38,
@@ -686,18 +706,24 @@ export const ScoringPage = () => {
             border: `1px solid ${colors.border.goldSubtle}`,
             cursor: "pointer",
             transition: "all 0.15s ease",
+            flexShrink: 0,
             "&:hover": { borderColor: colors.accent.gold },
           }}
         >
-          <PodiumIcon sx={{ fontSize: 18, color: colors.accent.gold }} />
+          <SettingsIcon sx={{ fontSize: 18, color: colors.accent.gold }} />
         </Box>
 
+        {/* Center cluster: Hole N + Par + #index (+ COMPLETED pill if confirmed) */}
         <Box
           sx={{
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
             gap: `${spacing.sm}px`,
+            flex: 1,
+            justifyContent: "center",
+            minWidth: 0,
+            flexWrap: "wrap",
           }}
         >
           <Typography
@@ -707,9 +733,28 @@ export const ScoringPage = () => {
               fontSize: 20,
               color: colors.text.primary,
               letterSpacing: "-0.2px",
+              textShadow: holeWideActive
+                ? `0 0 8px ${colors.holeWideAccentGlow}`
+                : "none",
+              transition: "text-shadow 0.2s ease",
             }}
           >
             Hole {currentHole.holeNumber}
+            {currentHole.second9Applied && (
+              <Typography
+                component="sup"
+                sx={{
+                  fontFamily: fontFamilies.mono,
+                  fontSize: 9,
+                  color: colors.holeWideAccent,
+                  ml: "2px",
+                  verticalAlign: "super",
+                  letterSpacing: 0,
+                }}
+              >
+                9
+              </Typography>
+            )}
           </Typography>
           <Box
             sx={{
@@ -755,22 +800,199 @@ export const ScoringPage = () => {
               </Typography>
             </Box>
           )}
+          {currentHole.confirmed && (
+            <Box
+              sx={{
+                px: `${spacing.sm}px`,
+                py: "3px",
+                borderRadius: `${borderRadius.full}px`,
+                bgcolor: colors.confirmedHolePillBg,
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+              }}
+            >
+              <CheckCircleIcon sx={{ fontSize: 12, color: "#FFFFFF" }} />
+              <Typography
+                sx={{
+                  fontFamily: fontFamilies.bodySemiBold,
+                  fontWeight: 700,
+                  fontSize: 10,
+                  color: "#FFFFFF",
+                  letterSpacing: "0.8px",
+                  textTransform: "uppercase",
+                }}
+              >
+                Completed
+              </Typography>
+            </Box>
+          )}
         </Box>
 
-        <Box sx={{ minWidth: 44, textAlign: "center" }}>
-          <Typography
+        {/* Right cluster: hole-wide 2x toggle, 2nd-9 button, N/total counter */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: `${spacing.xs}px`,
+            flexShrink: 0,
+          }}
+        >
+          {/* Hole-wide 2x toggle */}
+          <Box
+            onClick={holeWideLocked ? undefined : toggleHoleMultiplier}
             sx={{
-              fontFamily: fontFamilies.monoMedium,
-              fontWeight: 500,
-              fontSize: 12,
-              color: colors.text.secondary,
-              letterSpacing: "0.5px",
+              width: 38,
+              height: 38,
+              borderRadius: "50%",
+              bgcolor: holeWideActive
+                ? colors.holeWideAccent
+                : colors.background.card,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: `1px solid ${
+                holeWideActive
+                  ? colors.holeWideAccent
+                  : colors.border.goldSubtle
+              }`,
+              cursor: holeWideLocked ? "not-allowed" : "pointer",
+              opacity: holeWideLocked ? 0.85 : 1,
+              position: "relative",
+              transition: "all 0.15s ease",
+              boxShadow: holeWideActive
+                ? `0 0 10px ${colors.holeWideAccentGlow}`
+                : "none",
+              "&:hover": holeWideLocked
+                ? undefined
+                : {
+                    borderColor: colors.holeWideAccent,
+                  },
             }}
+            title={
+              holeWideLocked
+                ? "Locked by 2nd-9 multiplier"
+                : holeWideActive
+                  ? "Hole-wide x2 active. Tap to turn off."
+                  : "Apply x2 to every outcome on this hole"
+            }
           >
-            {currentHoleIndex + 1}/{holes.length}
-          </Typography>
+            <WhatshotIcon
+              sx={{
+                fontSize: 18,
+                color: holeWideActive
+                  ? "#FFFFFF"
+                  : colors.holeWideAccent,
+              }}
+            />
+            <Typography
+              sx={{
+                position: "absolute",
+                bottom: -2,
+                right: -2,
+                fontFamily: fontFamilies.monoBold,
+                fontWeight: 700,
+                fontSize: 9,
+                bgcolor: holeWideActive
+                  ? "#FFFFFF"
+                  : colors.background.card,
+                color: holeWideActive
+                  ? colors.holeWideAccent
+                  : colors.text.primary,
+                borderRadius: "8px",
+                px: "3px",
+                lineHeight: 1.2,
+                border: `1px solid ${colors.holeWideAccent}`,
+              }}
+            >
+              2x
+            </Typography>
+          </Box>
+
+          {/* 2nd-9 button (conditional) */}
+          {showSecond9Button && (
+            <Box
+              onClick={activateSecond9}
+              sx={{
+                width: 38,
+                height: 38,
+                borderRadius: "50%",
+                bgcolor: colors.background.card,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                border: `1px solid ${colors.status.error}`,
+                cursor: "pointer",
+                position: "relative",
+                transition: "all 0.15s ease",
+                "&:hover": {
+                  bgcolor: colors.status.error,
+                  "& .second9-icon": { color: "#FFFFFF" },
+                  "& .second9-badge": {
+                    bgcolor: "#FFFFFF",
+                    color: colors.status.error,
+                  },
+                },
+              }}
+              title="Activate x2 for all remaining holes (2nd 9)"
+            >
+              <DoubleArrowIcon
+                className="second9-icon"
+                sx={{ fontSize: 18, color: colors.status.error }}
+              />
+              <Typography
+                className="second9-badge"
+                sx={{
+                  position: "absolute",
+                  bottom: -2,
+                  right: -4,
+                  fontFamily: fontFamilies.monoBold,
+                  fontWeight: 700,
+                  fontSize: 9,
+                  bgcolor: colors.background.card,
+                  color: colors.status.error,
+                  borderRadius: "8px",
+                  px: "3px",
+                  lineHeight: 1.2,
+                  border: `1px solid ${colors.status.error}`,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                9x2
+              </Typography>
+            </Box>
+          )}
+
+          {/* N/total counter */}
+          <Box sx={{ minWidth: 36, textAlign: "center" }}>
+            <Typography
+              sx={{
+                fontFamily: fontFamilies.monoMedium,
+                fontWeight: 500,
+                fontSize: 12,
+                color: colors.text.secondary,
+                letterSpacing: "0.5px",
+              }}
+            >
+              {currentHoleIndex + 1}/{holes.length}
+            </Typography>
+          </Box>
         </Box>
       </Box>
+
+      {/* Fire accent bar for hole-wide 2x */}
+      {holeWideActive && (
+        <Box
+          sx={{
+            height: 3,
+            width: "100%",
+            background: `linear-gradient(90deg, ${colors.holeWideAccent} 0%, ${colors.holeWideAccentGlow} 50%, ${colors.holeWideAccent} 100%)`,
+            boxShadow: `0 0 8px ${colors.holeWideAccentGlow}`,
+            flexShrink: 0,
+          }}
+        />
+      )}
 
       {/* Player Cards */}
       <Box
