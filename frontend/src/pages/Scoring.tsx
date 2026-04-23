@@ -881,9 +881,7 @@ export const ScoringPage = () => {
             <WhatshotIcon
               sx={{
                 fontSize: 18,
-                color: holeWideActive
-                  ? "#FFFFFF"
-                  : colors.holeWideAccent,
+                color: holeWideActive ? "#FFFFFF" : colors.holeWideAccent,
               }}
             />
             <Typography
@@ -894,9 +892,7 @@ export const ScoringPage = () => {
                 fontFamily: fontFamilies.monoBold,
                 fontWeight: 700,
                 fontSize: 9,
-                bgcolor: holeWideActive
-                  ? "#FFFFFF"
-                  : colors.background.card,
+                bgcolor: holeWideActive ? "#FFFFFF" : colors.background.card,
                 color: holeWideActive
                   ? colors.holeWideAccent
                   : colors.text.primary,
@@ -1077,7 +1073,7 @@ export const ScoringPage = () => {
                     mb: cmpCard ? "4px" : `${spacing.sm}px`,
                   }}
                 >
-                  {[2, 3, 4, 6].map((mult) => (
+                  {[2, 3, 4].map((mult) => (
                     <Box
                       key={mult}
                       onClick={() => setPlayerMultiplier(player.id, mult)}
