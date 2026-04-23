@@ -88,7 +88,12 @@ export const lightColors = {
     level3: "#F4F1EA",
     level4: "#EDE9DF",
   },
-  confirmedHoleBg: "rgba(0, 103, 71, 0.12)",
+  confirmedHoleBg: "rgba(0, 103, 71, 0.22)",
+  confirmedHoleHeaderBg: "rgba(0, 103, 71, 0.30)",
+  confirmedHolePillBg: "#006747",
+  confirmedHoleBorder: "rgba(0, 103, 71, 0.55)",
+  holeWideAccent: "#FF6B35",
+  holeWideAccentGlow: "rgba(255, 107, 53, 0.45)",
   glow: {
     gold: "rgba(212, 175, 55, 0.25)",
     goldStrong: "rgba(212, 175, 55, 0.40)",
