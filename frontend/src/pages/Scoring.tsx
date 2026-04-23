@@ -884,32 +884,42 @@ export const ScoringPage = () => {
                   : "Apply x2 to every outcome on this hole"
             }
           >
-            <WhatshotIcon
-              sx={{
-                fontSize: 18,
-                color: holeWideActive ? "#FFFFFF" : colors.holeWideAccent,
-              }}
-            />
             <Typography
               sx={{
-                position: "absolute",
-                bottom: -2,
-                right: -2,
                 fontFamily: fontFamilies.monoBold,
                 fontWeight: 700,
-                fontSize: 9,
-                bgcolor: holeWideActive ? "#FFFFFF" : colors.background.card,
-                color: holeWideActive
-                  ? colors.holeWideAccent
-                  : colors.text.primary,
-                borderRadius: "8px",
-                px: "3px",
-                lineHeight: 1.2,
-                border: `1px solid ${colors.holeWideAccent}`,
+                fontSize: 15,
+                color: holeWideActive ? "#FFFFFF" : colors.holeWideAccent,
+                letterSpacing: "-0.5px",
+                lineHeight: 1,
               }}
             >
               2x
             </Typography>
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: -3,
+                right: -3,
+                width: 16,
+                height: 16,
+                borderRadius: "50%",
+                bgcolor: holeWideActive ? "#FFFFFF" : colors.background.card,
+                border: `1px solid ${colors.holeWideAccent}`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <WhatshotIcon
+                sx={{
+                  fontSize: 11,
+                  color: holeWideActive
+                    ? colors.holeWideAccent
+                    : colors.holeWideAccent,
+                }}
+              />
+            </Box>
           </Box>
 
           {/* 2nd-9 button (conditional) */}
