@@ -1950,6 +1950,78 @@ export const ScoringPage = () => {
         </Box>
       </Drawer>
 
+      {/* Confirm Dialog */}
+      <Dialog
+        open={confirmDialog.open}
+        onClose={() =>
+          setConfirmDialog((prev) => ({ ...prev, open: false }))
+        }
+        slotProps={{
+          paper: {
+            sx: {
+              bgcolor: colors.background.primary,
+              borderRadius: `${borderRadius.lg}px`,
+              border: `1px solid ${colors.border.light}`,
+              minWidth: { xs: "90vw", sm: 360 },
+              maxWidth: 440,
+            },
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontFamily: fontFamilies.bodySemiBold,
+            fontWeight: 700,
+            fontSize: 18,
+            color: colors.text.primary,
+            letterSpacing: "-0.2px",
+            pb: `${spacing.xs}px`,
+          }}
+        >
+          {confirmDialog.title}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            sx={{
+              fontFamily: fontFamilies.body,
+              fontSize: 14,
+              color: colors.text.secondary,
+              lineHeight: 1.5,
+            }}
+          >
+            {confirmDialog.message}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ px: `${spacing.md}px`, pb: `${spacing.md}px` }}>
+          <Box sx={{ flex: 1 }}>
+            <Button
+              title="Cancel"
+              variant="outline"
+              size="small"
+              onPress={() =>
+                setConfirmDialog((prev) => ({ ...prev, open: false }))
+              }
+              style={{ width: "100%" }}
+            />
+          </Box>
+          <Box sx={{ flex: 1 }}>
+            <Button
+              title={confirmDialog.confirmLabel}
+              variant={
+                confirmDialog.confirmColor === "warning" ? "gold" : "primary"
+              }
+              size="small"
+              onPress={async () => {
+                const fn = confirmDialog.onConfirm;
+                setConfirmDialog((prev) => ({ ...prev, open: false }));
+                await fn();
+              }}
+              style={{ width: "100%" }}
+            />
+          </Box>
+        </DialogActions>
+      </Dialog>
+
       {/* Handicap Modal */}
       {selectedPlayer && (
         <HandicapModal
