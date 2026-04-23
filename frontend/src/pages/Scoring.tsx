@@ -685,9 +685,7 @@ export const ScoringPage = () => {
           alignItems: "center",
           justifyContent: "center",
           border: `1px solid ${
-            holeWideActive
-              ? colors.holeWideAccent
-              : colors.border.goldSubtle
+            holeWideActive ? colors.holeWideAccent : colors.border.goldSubtle
           }`,
           cursor: holeWideLocked ? "not-allowed" : "pointer",
           opacity: holeWideLocked ? 0.85 : 1,
@@ -736,9 +734,7 @@ export const ScoringPage = () => {
             justifyContent: "center",
           }}
         >
-          <WhatshotIcon
-            sx={{ fontSize: 11, color: colors.holeWideAccent }}
-          />
+          <WhatshotIcon sx={{ fontSize: 11, color: colors.holeWideAccent }} />
         </Box>
       </Box>
 
@@ -938,6 +934,7 @@ export const ScoringPage = () => {
               </Typography>
             </Box>
           )}
+          {isDesktop && multiplierButtons}
           {currentHole.confirmed && (
             <Box
               sx={{
