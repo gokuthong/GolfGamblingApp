@@ -71,6 +71,21 @@ export const ScoringPage = () => {
   const [originalScores, setOriginalScores] = useState<Score[]>([]);
   const [finishingGame, setFinishingGame] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean;
+    title: string;
+    message: string;
+    confirmLabel: string;
+    confirmColor: "primary" | "error" | "warning";
+    onConfirm: () => void | Promise<void>;
+  }>({
+    open: false,
+    title: "",
+    message: "",
+    confirmLabel: "Confirm",
+    confirmColor: "primary",
+    onConfirm: () => {},
+  });
 
   const pendingUpdatesRef = useRef<Set<string>>(new Set());
 
