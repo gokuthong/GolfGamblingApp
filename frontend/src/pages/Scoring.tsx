@@ -59,6 +59,7 @@ export const ScoringPage = () => {
   const [searchParams] = useSearchParams();
   const isEditingFinished = searchParams.get("editing") === "true";
   const colors = useThemedColors();
+  const isDesktop = useMediaQuery("(min-width: 600px)");
 
   const [game, setGame] = useState<Game | null>(null);
   const [holes, setHoles] = useState<Hole[]>([]);
