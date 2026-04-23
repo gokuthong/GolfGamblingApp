@@ -1632,12 +1632,14 @@ export const ScoringPage = () => {
         anchor="left"
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
-        PaperProps={{
-          sx: {
-            width: { xs: "85vw", sm: 380 },
-            maxWidth: 420,
-            bgcolor: colors.background.primary,
-            backgroundImage: "none",
+        slotProps={{
+          paper: {
+            sx: {
+              width: { xs: "85vw", sm: 380 },
+              maxWidth: 420,
+              bgcolor: colors.background.primary,
+              backgroundImage: "none",
+            },
           },
         }}
       >
