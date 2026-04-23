@@ -23,6 +23,7 @@ export interface MultiplierInfo {
   isEagle: boolean;
   isAlbatross?: boolean;
   isHoleInOne?: boolean;
+  isHoleWide?: boolean;
   totalMultiplier: number;
 }
 
