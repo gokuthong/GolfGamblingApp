@@ -7,6 +7,8 @@ export interface Hole {
   isUp: boolean;
   isBurn: boolean;
   confirmed?: boolean;
+  holeMultiplier?: number;
+  second9Applied?: boolean;
 }
 
 export interface HoleData extends Omit<Hole, "id"> {}
