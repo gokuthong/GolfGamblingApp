@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Box, Typography, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Typography,
+  CircularProgress,
+  Drawer,
+  Divider,
+} from "@mui/material";
 import {
   Add as AddIcon,
   Remove as RemoveIcon,
@@ -8,6 +14,12 @@ import {
   CheckCircle as CheckCircleIcon,
   EmojiEvents as PodiumIcon,
   Flag as FlagIcon,
+  Whatshot as WhatshotIcon,
+  Settings as SettingsIcon,
+  DoubleArrow as DoubleArrowIcon,
+  Close as CloseIcon,
+  DoneAll as DoneAllIcon,
+  Restore as RestoreIcon,
 } from "@mui/icons-material";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Button } from "../components/common/Button";
