@@ -348,9 +348,184 @@ export const ScoringPage = () => {
       await dataService.updateHole(currentHole.id, { confirmed: true });
       const updatedHoles = await dataService.getHolesForGame(gameId!);
       setHoles(updatedHoles);
+
+      // Auto-advance to next hole if one exists
+      if (currentHoleIndex < updatedHoles.length - 1) {
+        setCurrentHoleIndex(currentHoleIndex + 1);
+      }
     } catch (error) {
       console.error("Error confirming hole:", error);
     }
+  };
+
+  const toggleHoleMultiplier = async () => {
+    if (!currentHole) return;
+    // Locked when 2nd-9 has been applied to this hole
+    if (currentHole.second9Applied) return;
+
+    const next = currentHole.holeMultiplier === 2 ? 1 : 2;
+    try {
+      await dataService.updateHole(currentHole.id, { holeMultiplier: next });
+      const updatedHoles = await dataService.getHolesForGame(gameId!);
+      setHoles(updatedHoles);
+    } catch (error) {
+      crossPlatformAlert("Error", "Failed to toggle hole multiplier");
+    }
+  };
+
+  const activateSecond9 = async () => {
+    if (!gameId || !game) return;
+    if (game.second9Activated) return;
+
+    crossPlatformAlert(
+      "Activate 2x for remaining holes?",
+      "Every currently-incomplete hole will be doubled (x2) for the rest of the game. This can only be undone from Settings.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Activate",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const incompleteHoles = holes.filter((h) => !h.confirmed);
+              const holeUpdates = incompleteHoles.map((h) => ({
+                holeId: h.id,
+                updates: {
+                  gameId,
+                  second9Applied: true,
+                  // clear any pre-existing manual 2x to keep effective state consistent
+                  holeMultiplier: 1,
+                },
+              }));
+
+              await dataService.batchUpdateHoles(holeUpdates);
+              await dataService.updateGame(gameId, { second9Activated: true });
+
+              const [updatedHoles, updatedGame] = await Promise.all([
+                dataService.getHolesForGame(gameId),
+                dataService.getGame(gameId),
+              ]);
+              setHoles(updatedHoles);
+              if (updatedGame) setGame(updatedGame);
+            } catch (error) {
+              crossPlatformAlert("Error", "Failed to activate 2nd-9 multiplier");
+            }
+          },
+        },
+      ],
+    );
+  };
+
+  const undoSecond9 = async () => {
+    if (!gameId || !game?.second9Activated) return;
+
+    crossPlatformAlert(
+      "Undo 2x 2nd-9?",
+      "The x2 applied to affected holes will be cleared. Individual holes can then be 2x-toggled normally.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Undo",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const flaggedHoles = holes.filter((h) => h.second9Applied);
+              const holeUpdates = flaggedHoles.map((h) => ({
+                holeId: h.id,
+                updates: {
+                  gameId,
+                  second9Applied: false,
+                },
+              }));
+
+              await dataService.batchUpdateHoles(holeUpdates);
+              await dataService.updateGame(gameId, { second9Activated: false });
+
+              const [updatedHoles, updatedGame] = await Promise.all([
+                dataService.getHolesForGame(gameId),
+                dataService.getGame(gameId),
+              ]);
+              setHoles(updatedHoles);
+              if (updatedGame) setGame(updatedGame);
+            } catch (error) {
+              crossPlatformAlert("Error", "Failed to undo 2nd-9");
+            }
+          },
+        },
+      ],
+    );
+  };
+
+  const completeAllRemainingHoles = async () => {
+    if (!gameId) return;
+    const incomplete = holes.filter((h) => !h.confirmed);
+    if (incomplete.length === 0) {
+      crossPlatformAlert("Nothing to do", "All holes are already completed.");
+      return;
+    }
+
+    crossPlatformAlert(
+      `Complete ${incomplete.length} remaining hole${incomplete.length === 1 ? "" : "s"}?`,
+      "Existing scores are preserved. Holes without entered scores will be recorded at par.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Complete All",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const missingScores: Array<{
+                holeId: string;
+                playerId: string;
+                gameId: string;
+                strokes: number;
+                handicap: number;
+                isUp: boolean;
+                isBurn: boolean;
+              }> = [];
+              incomplete.forEach((hole) => {
+                players.forEach((player) => {
+                  const existing = scores.find(
+                    (s) => s.holeId === hole.id && s.playerId === player.id,
+                  );
+                  if (!existing) {
+                    missingScores.push({
+                      holeId: hole.id,
+                      playerId: player.id,
+                      gameId,
+                      strokes: hole.par,
+                      handicap: 0,
+                      isUp: false,
+                      isBurn: false,
+                    });
+                  }
+                });
+              });
+
+              if (missingScores.length > 0) {
+                await dataService.batchUpsertScores(missingScores);
+              }
+
+              const holeUpdates = incomplete.map((h) => ({
+                holeId: h.id,
+                updates: { gameId, confirmed: true },
+              }));
+              await dataService.batchUpdateHoles(holeUpdates);
+
+              const [updatedHoles, updatedScores] = await Promise.all([
+                dataService.getHolesForGame(gameId),
+                dataService.getScoresForGame(gameId),
+              ]);
+              setHoles(updatedHoles);
+              setScores(updatedScores);
+              setSettingsOpen(false);
+            } catch (error) {
+              crossPlatformAlert("Error", "Failed to complete remaining holes");
+            }
+          },
+        },
+      ],
+    );
   };
 
   const finishGame = async () => {
