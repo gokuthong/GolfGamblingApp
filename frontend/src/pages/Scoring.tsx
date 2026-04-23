@@ -10,6 +10,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  useMediaQuery,
 } from "@mui/material";
 import {
   Add as AddIcon,
