@@ -12,7 +12,6 @@ import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
   CheckCircle as CheckCircleIcon,
-  EmojiEvents as PodiumIcon,
   Flag as FlagIcon,
   Whatshot as WhatshotIcon,
   Settings as SettingsIcon,
