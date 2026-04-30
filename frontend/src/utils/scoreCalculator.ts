@@ -434,6 +434,135 @@ export class ScoreCalculator {
   }
 
   /**
+   * Signed point delta from playerA's POV for a single A-vs-B matchup on one hole.
+   * Applies the same multiplier stacking as calculateHolePoints (player up/burn x player up/burn x birdie/eagle x hole-wide), but isolated to just this pair.
+   * Returns +N if A wins, -N if B wins, 0 if tied. Uses par as a virtual stroke value when a score is missing (mirrors calculateHolePoints behavior).
+   */
+  static calculateHeadToHeadHolePoints(
+    hole: Hole,
+    playerAId: string,
+    playerBId: string,
+    scoresForHole: Score[],
+    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } },
+  ): number {
+    const findOrVirtual = (playerId: string): Score => {
+      const existing = scoresForHole.find((s) => s.playerId === playerId);
+      if (existing) return existing;
+      return {
+        id: `virtual_${playerId}`,
+        holeId: hole.id,
+        playerId,
+        gameId: hole.gameId,
+        strokes: hole.par,
+        handicap: 0,
+        isUp: false,
+        isBurn: false,
+        multiplier: 1,
+      };
+    };
+
+    const scoreA = findOrVirtual(playerAId);
+    const scoreB = findOrVirtual(playerBId);
+
+    const netA = this.calculateNetScoreForMatchup(
+      scoreA,
+      hole.holeNumber,
+      playerBId,
+      gameHandicaps,
+    );
+    const netB = this.calculateNetScoreForMatchup(
+      scoreB,
+      hole.holeNumber,
+      playerAId,
+      gameHandicaps,
+    );
+
+    const aMult =
+      scoreA.multiplier && scoreA.multiplier > 1
+        ? scoreA.multiplier
+        : (scoreA.isUp ? 2.0 : 1.0) * (scoreA.isBurn ? 3.0 : 1.0);
+    const bMult =
+      scoreB.multiplier && scoreB.multiplier > 1
+        ? scoreB.multiplier
+        : (scoreB.isUp ? 2.0 : 1.0) * (scoreB.isBurn ? 3.0 : 1.0);
+
+    const matchupBirdieEagleMultiplier = this.calculateBirdieEagleMultiplier(
+      hole,
+      [scoreA, scoreB],
+    );
+    const holeWideMultiplier =
+      hole.holeMultiplier === 2 || hole.second9Applied ? 2 : 1;
+
+    const matchupValue =
+      aMult * bMult * matchupBirdieEagleMultiplier * holeWideMultiplier;
+
+    if (netA < netB) return matchupValue;
+    if (netB < netA) return -matchupValue;
+    return 0;
+  }
+
+  /**
+   * Aggregated head-to-head point deltas across all CONFIRMED holes.
+   * Returns a map keyed by `${p1Id}__${p2Id}` (using player order from `players[i]` / `players[j]`, i<j).
+   * Each entry has total signed delta (from p1's POV) and the per-hole breakdown.
+   * Mirrors calculateTotalPoints' confirmed-filter convention: hole.confirmed === false is excluded; undefined/true is included (legacy compat).
+   */
+  static calculateHeadToHeadTotals(
+    holes: Hole[],
+    scoresByHoleId: Record<string, Score[]>,
+    players: Player[],
+    gameHandicaps?: { [pairKey: string]: { [holeNumber: string]: number } },
+  ): Record<
+    string,
+    {
+      p1Id: string;
+      p2Id: string;
+      total: number;
+      perHole: Record<string, number>;
+    }
+  > {
+    const result: Record<
+      string,
+      {
+        p1Id: string;
+        p2Id: string;
+        total: number;
+        perHole: Record<string, number>;
+      }
+    > = {};
+
+    if (players.length < 2) return result;
+
+    for (let i = 0; i < players.length; i++) {
+      for (let j = i + 1; j < players.length; j++) {
+        const p1 = players[i];
+        const p2 = players[j];
+        const key = `${p1.id}__${p2.id}`;
+        const perHole: Record<string, number> = {};
+        let total = 0;
+
+        holes.forEach((hole) => {
+          if (hole.confirmed === false) return;
+          const scoresForHole = scoresByHoleId[hole.id] || [];
+          const delta = this.calculateHeadToHeadHolePoints(
+            hole,
+            p1.id,
+            p2.id,
+            scoresForHole,
+            gameHandicaps,
+          );
+          perHole[hole.id] = delta;
+          total += delta;
+        });
+
+        result[key] = { p1Id: p1.id, p2Id: p2.id, total, perHole };
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Get matchup results for a hole (who beat whom)
    */
   static getHoleMatchups(
