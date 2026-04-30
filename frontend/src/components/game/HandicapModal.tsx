@@ -104,13 +104,17 @@ export const HandicapModal: React.FC<HandicapModalProps> = ({
     for (let holeNum = 1; holeNum <= totalHoles; holeNum++) {
       const hole = holes.find((h) => h.holeNumber === holeNum);
       const holeIndex = hole?.index;
-      if (holeIndex != null && holeIndex >= 1 && holeIndex <= maxIndex) {
-        const current = getHandicapForHole(
-          handicaps,
-          holeNum,
-          player.id,
-          selectedOpponentId,
-        );
+      if (holeIndex == null || holeIndex < 1) continue;
+
+      const current = getHandicapForHole(
+        handicaps,
+        holeNum,
+        player.id,
+        selectedOpponentId,
+      );
+
+      if (holeIndex <= maxIndex) {
+        // In range: ensure at least 1 stroke (preserve manually-set higher values)
         if (current < 1) {
           updates.push({
             holeNumber: holeNum,
@@ -119,6 +123,14 @@ export const HandicapModal: React.FC<HandicapModalProps> = ({
             strokes: 1,
           });
         }
+      } else if (current === 1) {
+        // Out of range: revert prior 1-stroke fills (but keep manual >=2 values)
+        updates.push({
+          holeNumber: holeNum,
+          fromPlayerId: player.id,
+          toPlayerId: selectedOpponentId,
+          strokes: 0,
+        });
       }
     }
 
