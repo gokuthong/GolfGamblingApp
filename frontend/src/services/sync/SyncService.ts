@@ -74,6 +74,29 @@ class SyncService {
     return Object.keys(dirtySet).length > 0 || deletes.length > 0;
   }
 
+  /**
+   * Push a single game (game doc + holes + scores) to Firestore via setDoc, bypassing
+   * the syncAll re-entrancy lock. Used at game completion to guarantee that any
+   * fire-and-forget upsertScore writes that may have failed silently are recovered.
+   * Throws if offline or if the Firestore writes fail — caller decides whether to
+   * fall back to markDirty for later retry.
+   */
+  async pushGame(gameId: string): Promise<void> {
+    if (!connectivityManager.isOnline) {
+      throw new Error("Cannot push game while offline");
+    }
+    await this.syncGame(gameId);
+    const dirtySet = await this.getDirtyEntities();
+    const key = `game:${gameId}`;
+    if (dirtySet[key]) {
+      delete dirtySet[key];
+      localStorage.setItem(
+        StorageKeys.syncDirtyEntities(),
+        JSON.stringify(dirtySet),
+      );
+    }
+  }
+
   async syncAll(): Promise<void> {
     if (this.syncing || !connectivityManager.isOnline) return;
     this.syncing = true;
