@@ -166,22 +166,23 @@ export class ScoreCalculator {
       return multiplier;
     }
 
-    // Check for Albatross (2 strokes on par 5) - second priority
-    // IMPORTANT: Only count valid scores (strokes > 0)
-    const hasAlbatross =
-      hole.par === 5 && scores.some((score) => score.strokes === 2);
+    // Check for Albatross (3 or more strokes under par) - second priority
+    // HIO is already excluded by the early return above.
+    const hasAlbatross = scores.some(
+      (score) => score.strokes > 0 && score.strokes <= hole.par - 3,
+    );
     if (hasAlbatross) {
-      multiplier *= 6.0;
+      multiplier *= 12.0;
       return multiplier;
     }
 
     // Check for Eagle (2 or more strokes under par) - third priority
-    // IMPORTANT: Only count valid scores (strokes > 0)
+    // HIO and Albatross are already excluded by the early returns above.
     const hasEagle = scores.some(
       (score) => score.strokes > 0 && score.strokes <= hole.par - 2,
     );
     if (hasEagle) {
-      multiplier *= 3.0;
+      multiplier *= 6.0;
     } else {
       // Check for Birdie (exactly 1 stroke under par)
       // IMPORTANT: Only count valid scores (strokes > 0)
