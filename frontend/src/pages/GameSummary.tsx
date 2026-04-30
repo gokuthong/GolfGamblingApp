@@ -10,6 +10,8 @@ import { Hole, Score, Player, Game } from "../types";
 import { typography, fontFamilies, spacing, borderRadius } from "../theme";
 import { useThemedColors } from "../contexts/ThemeContext";
 import { ScoreCalculator } from "../utils/scoreCalculator";
+import { HeadToHeadPoints } from "../components/scoring/HeadToHeadPoints";
+import { HeadToHeadByHole } from "../components/scoring/HeadToHeadByHole";
 import { generateScorecardPDF } from "../utils/pdfGenerator";
 import {
   getTotalHandicapForMatchup,
