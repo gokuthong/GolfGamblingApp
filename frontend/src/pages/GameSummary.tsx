@@ -616,7 +616,19 @@ export const GameSummaryPage = () => {
           </SectionBlock>
         )}
 
-        {/* Head-to-head */}
+        {/* Head-to-head points (overall) */}
+        {players.length >= 2 && holes.length > 0 && (
+          <SectionBlock title="Head-to-head points" colors={colors}>
+            <HeadToHeadPoints
+              holes={holes}
+              scoresByHoleId={getScoresByHoleId()}
+              players={players}
+              gameHandicaps={game?.handicaps}
+            />
+          </SectionBlock>
+        )}
+
+        {/* Head-to-head holes won */}
         {headToHead.length > 0 && (
           <SectionBlock title="Head-to-head holes won" colors={colors}>
             <CardContainer colors={colors}>
