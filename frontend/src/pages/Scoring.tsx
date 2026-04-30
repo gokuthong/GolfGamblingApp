@@ -76,6 +76,7 @@ export const ScoringPage = () => {
   const [originalScores, setOriginalScores] = useState<Score[]>([]);
   const [finishingGame, setFinishingGame] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [byHoleExpanded, setByHoleExpanded] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
     title: string;
