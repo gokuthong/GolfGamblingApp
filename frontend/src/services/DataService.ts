@@ -202,11 +202,22 @@ class DataService {
 
     await localStorageService.completeGame(gameId);
 
-    // Await Firestore sync for game completion — this is a critical state
-    // change that must reach the server before the user navigates away.
-    await this.syncToFirestore("game", gameId, async () => {
-      await firestoreService.completeGame(gameId);
-    });
+    // Push the full game (game doc + holes + scores) to Firestore via setDoc.
+    // updateDoc-based completion only writes status+completedAt, and individual
+    // upsertScore writes are fire-and-forget — so without this, scores entered
+    // on this device can fail to reach Firestore and other devices read 0s.
+    if (connectivityManager.isOnline) {
+      try {
+        await syncService.pushGame(gameId);
+        return;
+      } catch (error) {
+        console.error(
+          "DataService: pushGame failed during completeGame, marking dirty for later sync",
+          error,
+        );
+      }
+    }
+    await syncService.markDirty({ entityType: "game", entityId: gameId });
   }
 
   async deleteGame(gameId: string): Promise<void> {
