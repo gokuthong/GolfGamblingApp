@@ -735,6 +735,18 @@ export const GameSummaryPage = () => {
           </SectionBlock>
         )}
 
+        {/* Head-to-head by hole */}
+        {players.length >= 2 && holes.length > 0 && (
+          <SectionBlock title="Head-to-head by hole" colors={colors}>
+            <HeadToHeadByHole
+              holes={holes}
+              scoresByHoleId={getScoresByHoleId()}
+              players={players}
+              gameHandicaps={game?.handicaps}
+            />
+          </SectionBlock>
+        )}
+
         {/* Scorecard */}
         <Box sx={{ mb: `${spacing.xl}px` }}>
           <Box
