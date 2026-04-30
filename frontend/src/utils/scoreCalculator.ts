@@ -241,7 +241,8 @@ export class ScoreCalculator {
   static getMultiplierInfo(hole: Hole, score: Score): MultiplierInfo {
     // IMPORTANT: Only count valid scores (strokes > 0) for special scores
     const isHoleInOne = score.strokes === 1;
-    const isAlbatross = hole.par === 5 && score.strokes === 2;
+    const isAlbatross =
+      score.strokes > 0 && score.strokes <= hole.par - 3 && !isHoleInOne;
     const isBirdie = score.strokes > 0 && score.strokes === hole.par - 1;
     const isEagle =
       score.strokes > 0 &&
