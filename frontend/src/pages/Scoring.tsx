@@ -1821,6 +1821,77 @@ export const ScoringPage = () => {
 
             <Divider sx={{ my: `${spacing.md}px` }} />
 
+            {/* Head-to-head points (overall) */}
+            <Typography
+              sx={{
+                fontFamily: fontFamilies.bodySemiBold,
+                fontWeight: 600,
+                fontSize: 11,
+                color: colors.accent.gold,
+                letterSpacing: "1px",
+                textTransform: "uppercase",
+                mb: `${spacing.sm}px`,
+              }}
+            >
+              Head-to-head points
+            </Typography>
+            <Box sx={{ mb: `${spacing.lg}px` }}>
+              <HeadToHeadPoints
+                holes={holes}
+                scoresByHoleId={getScoresByHoleId()}
+                players={players}
+                gameHandicaps={game?.handicaps}
+              />
+            </Box>
+
+            <Divider sx={{ my: `${spacing.md}px` }} />
+
+            {/* Head-to-head by hole (collapsible) */}
+            <Box
+              onClick={() => setByHoleExpanded((v) => !v)}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                cursor: "pointer",
+                mb: `${spacing.sm}px`,
+                userSelect: "none",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontFamily: fontFamilies.bodySemiBold,
+                  fontWeight: 600,
+                  fontSize: 11,
+                  color: colors.accent.gold,
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                }}
+              >
+                Head-to-head by hole
+              </Typography>
+              <ExpandMoreIcon
+                sx={{
+                  fontSize: 20,
+                  color: colors.text.secondary,
+                  transition: "transform 0.2s ease",
+                  transform: byHoleExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                }}
+              />
+            </Box>
+            {byHoleExpanded && (
+              <Box sx={{ mb: `${spacing.lg}px` }}>
+                <HeadToHeadByHole
+                  holes={holes}
+                  scoresByHoleId={getScoresByHoleId()}
+                  players={players}
+                  gameHandicaps={game?.handicaps}
+                />
+              </Box>
+            )}
+
+            <Divider sx={{ my: `${spacing.md}px` }} />
+
             {/* Actions */}
             <Typography
               sx={{
