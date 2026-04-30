@@ -205,8 +205,9 @@ export const HandicapModal: React.FC<HandicapModalProps> = ({
         sx={{
           display: "flex",
           flexDirection: "row",
+          alignItems: "stretch",
           overflowX: "auto",
-          maxHeight: 80,
+          overflowY: "visible",
           bgcolor: colors.surfaces.level2,
           borderBottom: `1px solid ${colors.border.light}`,
           p: `${spacing.xs}px`,
