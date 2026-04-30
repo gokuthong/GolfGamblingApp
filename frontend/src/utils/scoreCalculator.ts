@@ -266,9 +266,9 @@ export class ScoreCalculator {
     if (isHoleInOne) {
       totalMultiplier *= 12.0;
     } else if (isAlbatross) {
-      totalMultiplier *= 6.0;
+      totalMultiplier *= 12.0;
     } else if (isEagle) {
-      totalMultiplier *= 3.0;
+      totalMultiplier *= 6.0;
     } else if (isBirdie) {
       totalMultiplier *= 2.0;
     }
