@@ -31,6 +31,8 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Button } from "../components/common/Button";
 import { Card } from "../components/common/Card";
 import { HandicapModal } from "../components/game/HandicapModal";
+import { HeadToHeadPoints } from "../components/scoring/HeadToHeadPoints";
+import { HeadToHeadByHole } from "../components/scoring/HeadToHeadByHole";
 import { crossPlatformAlert } from "../utils/alert";
 import { dataService } from "../services/DataService";
 import { useThemedColors } from "../contexts/ThemeContext";
