@@ -82,7 +82,7 @@ export async function migrateLocalDataToFirestore(
 
       await setDoc(doc(firestore, "games", game.id), gameData);
 
-      // Write holes
+      // Write holes. See SyncService.syncGame for the confirmed coercion rationale.
       for (const hole of details.holes) {
         await setDoc(doc(firestore, "holes", hole.id), {
           gameId: hole.gameId,
@@ -91,7 +91,7 @@ export async function migrateLocalDataToFirestore(
           index: hole.index,
           isUp: hole.isUp || false,
           isBurn: hole.isBurn || false,
-          confirmed: hole.confirmed || false,
+          confirmed: hole.confirmed !== false,
         });
       }
 
