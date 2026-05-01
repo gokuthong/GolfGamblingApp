@@ -6,6 +6,7 @@ import { dataService } from "./services/DataService";
 import {
   migrateLocalDataToFirestore,
   seedLocalCacheFromFirestore,
+  backfillHoleConfirmedFlag,
 } from "./services/dataMigration";
 import { connectivityManager } from "./services/connectivity";
 import { syncService } from "./services/sync";
