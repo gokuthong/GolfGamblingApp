@@ -96,22 +96,29 @@ export const GameHistoryPage = () => {
           totalStrokes[playerId] = 0;
         });
 
+        const scoresByHoleId: Record<string, typeof scores> = {};
+        scores.forEach((score) => {
+          if (!scoresByHoleId[score.holeId]) {
+            scoresByHoleId[score.holeId] = [];
+          }
+          scoresByHoleId[score.holeId].push(score);
+        });
+        const computedPoints = ScoreCalculator.calculateTotalPoints(
+          holes,
+          scoresByHoleId,
+          players,
+          game.handicaps,
+        );
+        Object.keys(computedPoints).forEach((playerId) => {
+          finalPoints[playerId] = computedPoints[playerId];
+        });
+
         holes.forEach((hole) => {
-          const holeScores = scores.filter((s) => s.holeId === hole.id);
-          const holePoints = ScoreCalculator.calculateHolePoints(
-            hole,
-            holeScores,
-            players,
-            game.handicaps,
-          );
-
-          Object.keys(holePoints).forEach((playerId) => {
-            finalPoints[playerId] =
-              (finalPoints[playerId] || 0) + holePoints[playerId];
-          });
-
+          if (hole.confirmed === false) return;
           game.playerIds.forEach((playerId) => {
-            const score = holeScores.find((s) => s.playerId === playerId);
+            const score = scores.find(
+              (s) => s.holeId === hole.id && s.playerId === playerId,
+            );
             totalStrokes[playerId] += score?.strokes ?? hole.par;
           });
         });
