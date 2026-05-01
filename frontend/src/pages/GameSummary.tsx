@@ -69,9 +69,7 @@ export const GameSummaryPage = () => {
         return;
       }
       setGame(details.game);
-      setHoles(
-        [...details.holes].sort((a, b) => a.holeNumber - b.holeNumber),
-      );
+      setHoles([...details.holes].sort((a, b) => a.holeNumber - b.holeNumber));
       setScores(details.scores);
       setPlayers(details.players);
       setLoading(false);
