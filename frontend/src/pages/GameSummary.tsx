@@ -4,8 +4,6 @@ import DownloadIcon from "@mui/icons-material/Download";
 import { useParams, useNavigate } from "react-router-dom";
 import { crossPlatformAlert } from "../utils/alert";
 import { dataService } from "../services/DataService";
-import { firestoreService } from "../services/firebase";
-import { localStorageService } from "../services/storage";
 import { Hole, Score, Player, Game } from "../types";
 import { typography, fontFamilies, spacing, borderRadius } from "../theme";
 import { useThemedColors } from "../contexts/ThemeContext";
