@@ -326,3 +326,45 @@ export async function seedLocalCacheFromFirestore(
     // Don't set the flag so it can be retried
   }
 }
+
+const BACKFILL_HOLE_CONFIRMED_KEY_PREFIX = "@backfill:hole-confirmed-v1:";
+
+/**
+ * One-time backfill: rewrites the `confirmed` field on each Firestore hole doc
+ * for every game the user has locally, using local as the source of truth.
+ *
+ * Repairs Firestore rows that were corrupted by the previous `hole.confirmed || false`
+ * coercion in SyncService/dataMigration, which mapped legacy `undefined` (semantically
+ * "confirmed") to `false` (excluded from totals). Uses setDoc with merge:true so only
+ * the confirmed field is touched.
+ */
+export async function backfillHoleConfirmedFlag(userId: string): Promise<void> {
+  try {
+    const flagKey = `${BACKFILL_HOLE_CONFIRMED_KEY_PREFIX}${userId}`;
+    if (localStorage.getItem(flagKey)) return;
+    if (!connectivityManager.isOnline) return;
+
+    const localGames = await localStorageService.getGamesForUser(userId);
+    let patchedHoles = 0;
+    for (const game of localGames) {
+      const details = await localStorageService.getGameWithDetails(game.id);
+      if (!details) continue;
+      for (const hole of details.holes) {
+        await setDoc(
+          doc(firestore, "holes", hole.id),
+          { confirmed: hole.confirmed !== false },
+          { merge: true },
+        );
+        patchedHoles++;
+      }
+    }
+
+    localStorage.setItem(flagKey, "true");
+    console.log(
+      `Backfilled hole.confirmed across ${localGames.length} games (${patchedHoles} holes)`,
+    );
+  } catch (error) {
+    console.error("Error during backfillHoleConfirmedFlag:", error);
+    // Don't set the flag so it can be retried on next startup
+  }
+}
