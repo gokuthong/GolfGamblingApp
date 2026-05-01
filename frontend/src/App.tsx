@@ -56,6 +56,14 @@ export default function App() {
               console.error("Cache seeding failed:", error);
             }
 
+            // One-time backfill: repair any Firestore hole docs whose confirmed
+            // field was previously coerced from undefined to false by SyncService.
+            try {
+              await backfillHoleConfirmedFlag(firebaseUser.uid);
+            } catch (error) {
+              console.error("Hole confirmed backfill failed:", error);
+            }
+
             // Push any pending local changes to Firestore
             syncService.syncAll();
 
