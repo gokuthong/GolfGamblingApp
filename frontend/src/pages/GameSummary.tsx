@@ -63,33 +63,17 @@ export const GameSummaryPage = () => {
   useEffect(() => {
     if (!gameId) return;
 
-    Promise.all([
-      dataService.getGame(gameId),
-      localStorageService.getHolesForGame(gameId),
-      firestoreService.getHolesForGame(gameId).catch(() => [] as Hole[]),
-      localStorageService.getScoresForGame(gameId),
-      firestoreService.getScoresForGame(gameId).catch(() => [] as Score[]),
-    ]).then(async ([gameData, localHoles, fsHoles, localScores, fsScores]) => {
-      const holeMap = new Map<string, Hole>();
-      for (const h of localHoles) holeMap.set(h.id, h);
-      for (const h of fsHoles) holeMap.set(h.id, h);
-      setHoles(
-        Array.from(holeMap.values()).sort(
-          (a, b) => a.holeNumber - b.holeNumber,
-        ),
-      );
-
-      const scoreMap = new Map<string, Score>();
-      for (const s of localScores) scoreMap.set(s.id, s);
-      for (const s of fsScores) scoreMap.set(s.id, s);
-      setScores(Array.from(scoreMap.values()));
-
-      if (gameData) {
-        setGame(gameData);
-        const playersList = await dataService.getPlayersForGame(gameData);
-        setPlayers(playersList);
+    dataService.getGameWithDetails(gameId).then((details) => {
+      if (!details) {
+        setLoading(false);
+        return;
       }
-
+      setGame(details.game);
+      setHoles(
+        [...details.holes].sort((a, b) => a.holeNumber - b.holeNumber),
+      );
+      setScores(details.scores);
+      setPlayers(details.players);
       setLoading(false);
     });
   }, [gameId]);
