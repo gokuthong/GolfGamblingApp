@@ -241,7 +241,10 @@ class SyncService {
 
     await setDoc(doc(firestore, "games", gameId), gameData);
 
-    // Write holes
+    // Write holes.
+    // confirmed: undefined (legacy data, before the field existed) is treated as
+    // confirmed by readers (=== false is the exclusion check). `|| false` would
+    // coerce undefined to false and corrupt those rows; use !== false instead.
     for (const hole of holes) {
       await setDoc(doc(firestore, "holes", hole.id), {
         gameId: hole.gameId,
@@ -250,7 +253,7 @@ class SyncService {
         index: hole.index,
         isUp: hole.isUp || false,
         isBurn: hole.isBurn || false,
-        confirmed: hole.confirmed || false,
+        confirmed: hole.confirmed !== false,
       });
     }
 
