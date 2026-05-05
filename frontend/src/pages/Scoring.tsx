@@ -476,7 +476,9 @@ export const ScoringPage = () => {
 
   const completeAllRemainingHoles = () => {
     if (!gameId) return;
-    const incomplete = holes.filter((h) => !h.confirmed);
+    // Treat undefined as confirmed (matches `confirmed !== false` convention used
+    // everywhere else — legacy holes without the field are considered done).
+    const incomplete = holes.filter((h) => h.confirmed === false);
     if (incomplete.length === 0) {
       crossPlatformAlert("Nothing to do", "All holes are already completed.");
       return;
