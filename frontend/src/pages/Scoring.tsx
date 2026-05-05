@@ -867,14 +867,16 @@ export const ScoringPage = () => {
           <Typography
             sx={{
               fontFamily: fontFamilies.bodySemiBold,
-              fontWeight: 600,
-              fontSize: 20,
-              color: colors.text.primary,
-              letterSpacing: "-0.2px",
+              fontWeight: 700,
+              fontSize: 24,
+              color: currentHole.confirmed ? "#FFFFFF" : colors.text.primary,
+              letterSpacing: "-0.4px",
               textShadow: holeWideActive
                 ? `0 0 8px ${colors.holeWideAccentGlow}`
-                : "none",
-              transition: "text-shadow 0.2s ease",
+                : currentHole.confirmed
+                  ? "0 1px 2px rgba(0,0,0,0.35)"
+                  : "none",
+              transition: "text-shadow 0.2s ease, color 0.2s ease",
             }}
           >
             Hole {currentHole.holeNumber}
@@ -883,9 +885,9 @@ export const ScoringPage = () => {
                 component="sup"
                 sx={{
                   fontFamily: fontFamilies.mono,
-                  fontSize: 9,
+                  fontSize: 11,
                   color: colors.holeWideAccent,
-                  ml: "2px",
+                  ml: "3px",
                   verticalAlign: "super",
                   letterSpacing: 0,
                 }}
@@ -897,20 +899,24 @@ export const ScoringPage = () => {
           <Box
             sx={{
               px: `${spacing.sm}px`,
-              py: "3px",
+              py: "4px",
               borderRadius: `${borderRadius.full}px`,
-              border: `1px solid ${colors.border.goldSubtle}`,
-              bgcolor: "transparent",
+              border: `1px solid ${currentHole.confirmed ? "rgba(255,255,255,0.85)" : colors.border.goldSubtle}`,
+              bgcolor: currentHole.confirmed
+                ? "rgba(255,255,255,0.18)"
+                : "transparent",
+              transition: "background-color 0.2s ease, border-color 0.2s ease",
             }}
           >
             <Typography
               sx={{
                 fontFamily: fontFamilies.bodySemiBold,
-                fontWeight: 600,
-                fontSize: 11,
-                color: colors.accent.gold,
+                fontWeight: 700,
+                fontSize: 14,
+                color: currentHole.confirmed ? "#FFFFFF" : colors.accent.gold,
                 letterSpacing: "0.8px",
                 textTransform: "uppercase",
+                transition: "color 0.2s ease",
               }}
             >
               Par {currentHole.par}
@@ -920,18 +926,25 @@ export const ScoringPage = () => {
             <Box
               sx={{
                 px: `${spacing.sm}px`,
-                py: "3px",
+                py: "4px",
                 borderRadius: `${borderRadius.full}px`,
-                border: `1px solid ${colors.border.light}`,
-                bgcolor: "transparent",
+                border: `1px solid ${currentHole.confirmed ? "rgba(255,255,255,0.65)" : colors.border.light}`,
+                bgcolor: currentHole.confirmed
+                  ? "rgba(255,255,255,0.12)"
+                  : "transparent",
+                transition: "background-color 0.2s ease, border-color 0.2s ease",
               }}
             >
               <Typography
                 sx={{
-                  fontFamily: fontFamilies.mono,
-                  fontSize: 10,
-                  color: colors.text.tertiary,
+                  fontFamily: fontFamilies.monoMedium,
+                  fontWeight: 600,
+                  fontSize: 13,
+                  color: currentHole.confirmed
+                    ? "rgba(255,255,255,0.95)"
+                    : colors.text.secondary,
                   letterSpacing: "0.5px",
+                  transition: "color 0.2s ease",
                 }}
               >
                 #{currentHole.index}
