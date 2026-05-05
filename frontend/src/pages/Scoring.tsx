@@ -411,7 +411,9 @@ export const ScoringPage = () => {
       confirmColor: "warning",
       onConfirm: async () => {
         try {
-          const incompleteHoles = holes.filter((h) => !h.confirmed);
+          // Same convention as completeAllRemainingHoles: only treat explicitly
+          // unconfirmed holes as "remaining" so we don't re-flag legacy data.
+          const incompleteHoles = holes.filter((h) => h.confirmed === false);
           const holeUpdates = incompleteHoles.map((h) => ({
             holeId: h.id,
             updates: {
