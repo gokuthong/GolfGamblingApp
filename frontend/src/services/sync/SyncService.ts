@@ -238,6 +238,7 @@ class SyncService {
     if (game.courseId) gameData.courseId = game.courseId;
     if (game.courseName) gameData.courseName = game.courseName;
     if (game.handicaps) gameData.handicaps = game.handicaps;
+    if (game.second9Activated) gameData.second9Activated = true;
 
     await setDoc(doc(firestore, "games", gameId), gameData);
 
@@ -246,7 +247,7 @@ class SyncService {
     // confirmed by readers (=== false is the exclusion check). `|| false` would
     // coerce undefined to false and corrupt those rows; use !== false instead.
     for (const hole of holes) {
-      await setDoc(doc(firestore, "holes", hole.id), {
+      const holeDoc: Record<string, any> = {
         gameId: hole.gameId,
         holeNumber: hole.holeNumber,
         par: hole.par,
@@ -254,7 +255,14 @@ class SyncService {
         isUp: hole.isUp || false,
         isBurn: hole.isBurn || false,
         confirmed: hole.confirmed !== false,
-      });
+      };
+      if (hole.holeMultiplier !== undefined) {
+        holeDoc.holeMultiplier = hole.holeMultiplier;
+      }
+      if (hole.second9Applied) {
+        holeDoc.second9Applied = true;
+      }
+      await setDoc(doc(firestore, "holes", hole.id), holeDoc);
     }
 
     // Write scores
