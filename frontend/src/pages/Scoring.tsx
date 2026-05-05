@@ -869,14 +869,12 @@ export const ScoringPage = () => {
               fontFamily: fontFamilies.bodySemiBold,
               fontWeight: 700,
               fontSize: 24,
-              color: currentHole.confirmed ? "#FFFFFF" : colors.text.primary,
+              color: colors.text.primary,
               letterSpacing: "-0.4px",
               textShadow: holeWideActive
                 ? `0 0 8px ${colors.holeWideAccentGlow}`
-                : currentHole.confirmed
-                  ? "0 1px 2px rgba(0,0,0,0.35)"
-                  : "none",
-              transition: "text-shadow 0.2s ease, color 0.2s ease",
+                : "none",
+              transition: "text-shadow 0.2s ease",
             }}
           >
             Hole {currentHole.holeNumber}
@@ -901,9 +899,13 @@ export const ScoringPage = () => {
               px: `${spacing.sm}px`,
               py: "4px",
               borderRadius: `${borderRadius.full}px`,
-              border: `1px solid ${currentHole.confirmed ? "rgba(255,255,255,0.85)" : colors.border.goldSubtle}`,
+              border: `1.5px solid ${
+                currentHole.confirmed
+                  ? colors.confirmedHoleBorder
+                  : colors.border.goldSubtle
+              }`,
               bgcolor: currentHole.confirmed
-                ? "rgba(255,255,255,0.18)"
+                ? colors.background.card
                 : "transparent",
               transition: "background-color 0.2s ease, border-color 0.2s ease",
             }}
@@ -913,7 +915,9 @@ export const ScoringPage = () => {
                 fontFamily: fontFamilies.bodySemiBold,
                 fontWeight: 700,
                 fontSize: 14,
-                color: currentHole.confirmed ? "#FFFFFF" : colors.accent.gold,
+                color: currentHole.confirmed
+                  ? colors.text.primary
+                  : colors.accent.gold,
                 letterSpacing: "0.8px",
                 textTransform: "uppercase",
                 transition: "color 0.2s ease",
@@ -928,11 +932,16 @@ export const ScoringPage = () => {
                 px: `${spacing.sm}px`,
                 py: "4px",
                 borderRadius: `${borderRadius.full}px`,
-                border: `1px solid ${currentHole.confirmed ? "rgba(255,255,255,0.65)" : colors.border.light}`,
+                border: `1.5px solid ${
+                  currentHole.confirmed
+                    ? colors.confirmedHoleBorder
+                    : colors.border.light
+                }`,
                 bgcolor: currentHole.confirmed
-                  ? "rgba(255,255,255,0.12)"
+                  ? colors.background.card
                   : "transparent",
-                transition: "background-color 0.2s ease, border-color 0.2s ease",
+                transition:
+                  "background-color 0.2s ease, border-color 0.2s ease",
               }}
             >
               <Typography
@@ -941,7 +950,7 @@ export const ScoringPage = () => {
                   fontWeight: 600,
                   fontSize: 13,
                   color: currentHole.confirmed
-                    ? "rgba(255,255,255,0.95)"
+                    ? colors.text.primary
                     : colors.text.secondary,
                   letterSpacing: "0.5px",
                   transition: "color 0.2s ease",
