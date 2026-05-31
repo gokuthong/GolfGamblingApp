@@ -1405,9 +1405,17 @@ export const ScoringPage = () => {
           glassMorphism
           sx={{
             p: cmpCard ? `${spacing.xs - 2}px` : `${spacing.sm}px`,
-            mt: cmpCard ? `${spacing.xs - 2}px` : `${spacing.xs}px`,
+            mt: cmpCard ? 0 : `${spacing.xs}px`,
             border: `1px solid ${colors.border.light}`,
-            flexShrink: 0,
+            ...(cmpCard
+              ? {
+                  flex: "0.5 1 0",
+                  minHeight: 0,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }
+              : { flexShrink: 0 }),
           }}
         >
           <Typography
