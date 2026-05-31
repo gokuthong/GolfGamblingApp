@@ -1106,7 +1106,12 @@ export const ScoringPage = () => {
                       ? `0 8px 18px ${colors.shadowColors.gold}`
                       : `0 8px 18px ${colors.shadowColors.default}`,
                   ...(cmpCard
-                    ? { flex: 1, justifyContent: "space-between" }
+                    ? {
+                        flex: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                      }
                     : {}),
                 }}
               >
