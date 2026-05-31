@@ -31,7 +31,11 @@ export const registerAlertHandler = (handler: AlertHandler | null) => {
 };
 
 // Native fallback (used only when no in-app host is mounted).
-const nativeAlert = (title: string, message?: string, buttons?: AlertButton[]) => {
+const nativeAlert = (
+  title: string,
+  message?: string,
+  buttons?: AlertButton[],
+) => {
   if (!buttons || buttons.length === 0) {
     window.alert(message ? `${title}\n\n${message}` : title);
     return;
