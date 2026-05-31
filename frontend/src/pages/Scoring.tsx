@@ -663,7 +663,7 @@ export const ScoringPage = () => {
   const counterSize = cmpCard ? 34 : 46;
   const strokesFontSize = cmpCard ? 26 : 40;
   const strokesLineHeight = cmpCard ? "30px" : "46px";
-  const playerNameFontSize = cmpCard ? 16 : 20;
+  const playerNameFontSize = cmpCard ? 18 : 22;
   const pointsFontSize = cmpCard ? 14 : 20;
   const cardPadding = cmpCard ? "6px" : `${spacing.sm}px`;
 
