@@ -258,7 +258,7 @@ export const HandicapModal: React.FC<HandicapModalProps> = ({
                   fontFamily: fontFamilies.bodySemiBold,
                   fontWeight: 600,
                   fontSize: typography.bodyMedium.fontSize,
-                  color: isSelected ? colors.accent.gold : colors.text.primary,
+                  color: colors.text.primary,
                   mb: "2px",
                 }}
               >
@@ -268,9 +268,7 @@ export const HandicapModal: React.FC<HandicapModalProps> = ({
                 sx={{
                   fontFamily: fontFamilies.body,
                   fontSize: typography.bodySmall.fontSize,
-                  color: isSelected
-                    ? colors.accent.gold
-                    : colors.text.secondary,
+                  color: colors.text.secondary,
                 }}
               >
                 {totalStrokes} {totalStrokes === 1 ? "stroke" : "strokes"}
