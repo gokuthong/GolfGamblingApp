@@ -94,9 +94,8 @@ export const AppDialogHost: React.FC = () => {
 
   const handleClose = () => {
     // Backdrop / Esc dismissal behaves like the cancel action when one exists,
-    // otherwise it just closes (firing the lone button's action, if any).
-    const cancelButton = buttons.find((b) => b.style === "cancel");
-    dismiss(cancelButton ?? (buttons.length === 1 ? undefined : undefined));
+    // otherwise it just closes without firing any action.
+    dismiss(buttons.find((b) => b.style === "cancel"));
   };
 
   return (
