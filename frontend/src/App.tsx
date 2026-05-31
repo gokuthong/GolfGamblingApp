@@ -13,6 +13,7 @@ import { syncService } from "./services/sync";
 import { useStore } from "./store";
 import { darkColors } from "./theme/colors";
 import { AppRouter } from "./router";
+import { AppDialogHost } from "./components/common/AppDialogHost";
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
