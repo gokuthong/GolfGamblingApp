@@ -515,12 +515,13 @@ export const HandicapModal: React.FC<HandicapModalProps> = ({
                       <Typography
                         sx={{
                           fontFamily: fontFamilies.mono,
-                          fontSize: 10,
-                          color: colors.accent.gold,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          color: colors.text.primary,
                           bgcolor: colors.surfaces.level3,
-                          px: `${spacing.xs}px`,
-                          py: "2px",
-                          borderRadius: `${borderRadius.xs}px`,
+                          px: `${spacing.sm}px`,
+                          py: "3px",
+                          borderRadius: `${borderRadius.sm}px`,
                         }}
                       >
                         #{hole.index}
