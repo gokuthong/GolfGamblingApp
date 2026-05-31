@@ -1467,7 +1467,7 @@ export const ScoringPage = () => {
                     sx={{
                       fontFamily: fontFamilies.monoBold,
                       fontWeight: 700,
-                      fontSize: cmpCard ? 12 : 16,
+                      fontSize: cmpCard ? 15 : 20,
                       color:
                         cumPts > 0
                           ? colors.scoring.positive
