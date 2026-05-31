@@ -1088,8 +1088,10 @@ export const ScoringPage = () => {
             <Box
               key={player.id}
               sx={{
-                mb: cmpCard ? "6px" : `${spacing.lg}px`,
-                ...(cmpCard ? { flex: 1, minHeight: 0 } : { flexShrink: 0 }),
+                mb: cmpCard ? "8px" : `${spacing.lg}px`,
+                ...(cmpCard
+                  ? { flex: "1 1 0", minHeight: 0, display: "flex" }
+                  : { flexShrink: 0 }),
               }}
             >
               <Card
